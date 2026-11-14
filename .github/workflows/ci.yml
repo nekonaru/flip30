@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Headless tests (LuaJIT)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install LuaJIT
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y luajit
+
+      - name: Run unit tests
+        run: luajit tests/headless_tests.lua
+
+  lint:
+    name: StyLua
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check Lua formatting
+        uses: JohnnyMorganz/StyLua@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --check .

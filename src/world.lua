@@ -7,24 +7,24 @@ local world = {}
 
 local DEFAULTS = {
   -- Difficulty baseline (grows over time, see world.update)
-  fall_speed = 200,          -- base fall speed in px/s at t = 0
-  fall_speed_growth = 6,     -- extra px/s gained per second of play time
-  spawn_interval = 0.8,      -- seconds between spawns at t = 0
+  fall_speed = 200, -- base fall speed in px/s at t = 0
+  fall_speed_growth = 6, -- extra px/s gained per second of play time
+  spawn_interval = 0.8, -- seconds between spawns at t = 0
   spawn_interval_decay = 0.012,
   spawn_interval_min = 0.35,
 
   -- Parameters mutated by rules
-  speed_mul = 1,             -- global speed multiplier (SEMUA 2X CEPAT)
-  gravity = 1,               -- 1 = normal, ~0.08 = floaty (GRAVITASI MATI)
-  fall_direction = 1,        -- 1 = down, -1 = up (GRAVITASI NAIK)
-  enemy_gives_points = false,-- MUSUH JADI POIN
+  speed_mul = 1, -- global speed multiplier (SEMUA 2X CEPAT)
+  gravity = 1, -- 1 = normal, ~0.08 = floaty (GRAVITASI MATI)
+  fall_direction = 1, -- 1 = down, -1 = up (GRAVITASI NAIK)
+  enemy_gives_points = false, -- MUSUH JADI POIN
   enemy_points = 15,
   enemy_escape_penalty = 5,
   enemy_life_damage = 1,
-  swap_colors = false,       -- TUKAR WARNA
-  darkness = 0,              -- LAYAR GELAP strength, 0..1
+  swap_colors = false, -- TUKAR WARNA
+  darkness = 0, -- LAYAR GELAP strength, 0..1
 
-  elapsed = 0,               -- play time in seconds, drives difficulty
+  elapsed = 0, -- play time in seconds, drives difficulty
 }
 
 function world.reset()

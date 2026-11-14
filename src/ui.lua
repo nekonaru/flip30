@@ -4,7 +4,7 @@
 local ui = {}
 
 ui.banner = nil -- { text = string, t = number, duration = number }
-ui.popups = {}  -- { x, y, text, color, t }
+ui.popups = {} -- { x, y, text, color, t }
 
 local FONTS = {}
 local LOGO = nil
@@ -17,9 +17,13 @@ function ui.load()
   FONTS.huge = love.graphics.newFont(72)
 
   local ok_logo, logo = pcall(love.graphics.newImage, "assets/brand/logo-main.png")
-  if ok_logo then LOGO = logo end
+  if ok_logo then
+    LOGO = logo
+  end
   local ok_icon, icon = pcall(love.graphics.newImage, "assets/brand/icon-512.png")
-  if ok_icon then ICON = icon end
+  if ok_icon then
+    ICON = icon
+  end
 end
 
 -- ---------------------------------------------------------------- banner
@@ -73,7 +77,9 @@ function ui.drawPopups()
 end
 
 function ui.drawBanner()
-  if not ui.banner then return end
+  if not ui.banner then
+    return
+  end
   local b = ui.banner
   local p = math.min(1, b.t / b.duration)
   local in_p = math.min(1, p / 0.22)
@@ -105,7 +111,9 @@ end
 
 local heart_points = nil
 local function heartPolygon()
-  if heart_points then return heart_points end
+  if heart_points then
+    return heart_points
+  end
   local points = {}
   for i = 0, 40 do
     local t = (i / 40) * math.pi * 2

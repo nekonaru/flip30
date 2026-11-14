@@ -10,7 +10,7 @@ player.base_speed = 400 -- px/s
 function player.reset()
   player.x = (800 - player.w) / 2
   player.y = 600 - player.h - 24
-  player.dir = 1            -- control multiplier, KONTROL TERBALIK flips it
+  player.dir = 1 -- control multiplier, KONTROL TERBALIK flips it
   player.speed = player.base_speed
   player.always_move = false -- TIDAK BISA BERHENTI
   player.last_dir = 1
@@ -20,8 +20,12 @@ end
 -- SEMUA 2X CEPAT also accelerates the player.
 function player.update(dt, left, right, speed_mul)
   local move = 0
-  if left then move = move - 1 end
-  if right then move = move + 1 end
+  if left then
+    move = move - 1
+  end
+  if right then
+    move = move + 1
+  end
   move = move * player.dir
 
   if player.always_move then
@@ -32,8 +36,12 @@ function player.update(dt, left, right, speed_mul)
   end
 
   player.x = player.x + move * player.speed * (speed_mul or 1) * dt
-  if player.x < 0 then player.x = 0 end
-  if player.x > 800 - player.w then player.x = 800 - player.w end
+  if player.x < 0 then
+    player.x = 0
+  end
+  if player.x > 800 - player.w then
+    player.x = 800 - player.w
+  end
 end
 
 function player.draw()

@@ -224,8 +224,12 @@ function rulemanager.resetToDefaults(ctx)
   rulemanager.last_name = nil
   rulemanager.timer = rulemanager.rule_duration
   if ctx then
-    if ctx.world and ctx.world.reset then ctx.world.reset() end
-    if ctx.player and ctx.player.reset then ctx.player.reset() end
+    if ctx.world and ctx.world.reset then
+      ctx.world.reset()
+    end
+    if ctx.player and ctx.player.reset then
+      ctx.player.reset()
+    end
   end
 end
 

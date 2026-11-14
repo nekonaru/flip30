@@ -32,7 +32,9 @@ function particles.load()
 end
 
 function particles.burst(x, y, r, g, b, count)
-  if not system then return end
+  if not system then
+    return
+  end
   system:setPosition(x, y)
   system:setColors(r, g, b, 1, r, g, b, 0)
   system:emit(count or 14)

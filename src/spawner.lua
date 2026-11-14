@@ -12,7 +12,7 @@ spawner.ENEMY = "enemy"
 local OBJECT_SIZE = 22
 local FOOD_CHANCE = 0.6
 
-local COLOR_FOOD = { 0.24, 0.86, 0.54 }  -- green
+local COLOR_FOOD = { 0.24, 0.86, 0.54 } -- green
 local COLOR_ENEMY = { 1.00, 0.30, 0.36 } -- red
 
 function spawner.reset()
@@ -100,16 +100,22 @@ function spawner.draw()
       local r = obj.size * 0.62
       love.graphics.polygon(
         "fill",
-        obj.x, obj.y - r,
-        obj.x + r * 0.95, obj.y + r * 0.75,
-        obj.x - r * 0.95, obj.y + r * 0.75
+        obj.x,
+        obj.y - r,
+        obj.x + r * 0.95,
+        obj.y + r * 0.75,
+        obj.x - r * 0.95,
+        obj.y + r * 0.75
       )
       love.graphics.setColor(1, 1, 1, 0.25)
       love.graphics.polygon(
         "fill",
-        obj.x, obj.y - r * 0.55,
-        obj.x + r * 0.5, obj.y + r * 0.45,
-        obj.x - r * 0.5, obj.y + r * 0.45
+        obj.x,
+        obj.y - r * 0.55,
+        obj.x + r * 0.5,
+        obj.y + r * 0.45,
+        obj.x - r * 0.5,
+        obj.y + r * 0.45
       )
     end
   end
