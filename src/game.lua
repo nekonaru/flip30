@@ -28,6 +28,7 @@ local COLOR_ORANGE = { 1.000, 0.576, 0.169 }
 
 function game.load()
   ui.load()
+  ui.version = "1.0.0"
   game.highscore = storage.load()
   game.time = 0
   game.ctx = { player = player, world = world, spawner = spawner, ui = ui, sfx = sfx }

@@ -5,6 +5,7 @@ local ui = {}
 
 ui.banner = nil -- { text = string, t = number, duration = number }
 ui.popups = {} -- { x, y, text, color, t }
+ui.version = nil
 
 local FONTS = {}
 local LOGO = nil
@@ -171,6 +172,13 @@ function ui.drawMenu(highscore, time)
     love.graphics.setFont(FONTS.body)
     love.graphics.setColor(1.000, 0.824, 0.247, 1)
     love.graphics.printf("SKOR TERBAIK:  " .. highscore, 60, 500, 680, "center")
+  end
+
+  if ui.version then
+    love.graphics.setFont(FONTS.small)
+    love.graphics.setColor(0.38, 0.41, 0.50, 1)
+    love.graphics.print("FLIP30 v" .. ui.version, 10, 578)
+    love.graphics.printf("github.com/nekonaru/flip30", 560, 578, 230, "right")
   end
 end
 

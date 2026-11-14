@@ -1,0 +1,53 @@
+# Releasing Flip30
+
+Releases are cut from `main` with a tag and the artifacts attached to a
+[GitHub Release](https://github.com/nekonaru/flip30/releases).
+
+## Versioning
+
+Semantic Versioning. The current version lives in:
+
+- `CHANGELOG.md` (`## [x.y.z] - date`)
+- `src/game.lua` (`ui.version = "x.y.z"`) and `src/ui.lua` rendering
+
+## Checklist
+
+1. Make sure CI is green on `main`.
+2. Move the `CHANGELOG.md` `Unreleased` section into a new `[x.y.z] - YYYY-MM-DD`
+   section and update the link refs at the bottom.
+3. Update `ui.version` in `src/game.lua`.
+4. Commit: `git commit -m "chore(release): vX.Y.Z"` and push.
+5. Tag and push the tag:
+
+   ```sh
+   git tag -a vX.Y.Z -m "Flip30 vX.Y.Z"
+   git push origin vX.Y.Z
+   ```
+
+6. Build the artifacts:
+
+   ```powershell
+   .\scripts\build.ps1 -Version X.Y.Z
+   ```
+
+   This produces `dist/flip30-X.Y.Z.love` and (on Windows) `dist/flip30-X.Y.Z-win64.zip`.
+
+7. Create the GitHub release with the artifacts and the changelog notes:
+
+   ```sh
+   gh release create vX.Y.Z dist/flip30-X.Y.Z.love dist/flip30-X.Y.Z-win64.zip \
+     --title "Flip30 vX.Y.Z" --notes-file dist/RELEASE_NOTES.md
+   ```
+
+8. Smoke-test the downloaded artifacts on a clean machine (or at least a clean
+   save directory) before announcing.
+
+## The .love format
+
+A `.love` file is a ZIP archive of the game with files at the archive root
+(`main.lua` at the top level, not inside a folder). LÖVE runs it directly:
+`love flip30-X.Y.Z.love`.
+
+The Windows bundle fuses the `.love` onto `love.exe` (the classic renamed-binary
+trick) and ships the LÖVE runtime DLLs alongside, so players don't need to
+install anything.
