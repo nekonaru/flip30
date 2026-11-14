@@ -6,6 +6,7 @@ local player = require("src.player")
 local spawner = require("src.spawner")
 local storage = require("src.storage")
 local ui = require("src.ui")
+local rulemanager = require("src.rulemanager")
 
 local game = {
   state = "menu", -- "menu" | "playing" | "gameover"
@@ -27,14 +28,14 @@ function game.load()
   ui.load()
   game.highscore = storage.load()
   game.time = 0
-  world.reset()
-  player.reset()
+  game.ctx = { player = player, world = world, spawner = spawner, ui = ui, sfx = nil }
+  rulemanager.loadRules()
+  rulemanager.resetToDefaults(game.ctx)
   spawner.reset()
 end
 
 function game.startRun()
-  world.reset()
-  player.reset()
+  rulemanager.resetToDefaults(game.ctx)
   spawner.reset()
   game.score = 0
   game.lives = 3
@@ -59,6 +60,9 @@ function game.update(dt)
   local sim_dt = dt * slowmo
 
   if game.state == "playing" then
+    -- Rule timer runs on real time; the simulation runs in slow motion
+    -- while a rule banner is on screen.
+    rulemanager.update(game.ctx, dt)
     world.update(sim_dt)
 
     local left = love.keyboard.isDown("a", "left")
@@ -165,6 +169,7 @@ function game.draw()
   else
     spawner.draw()
     player.draw()
+    rulemanager.draw(game.ctx)
     ui.drawPopups()
 
     if game.flash > 0 then
@@ -173,7 +178,7 @@ function game.draw()
       love.graphics.setColor(1, 1, 1, 1)
     end
 
-    ui.drawHUD(game.score, game.lives, "NORMAL", 1, 1)
+    ui.drawHUD(game.score, game.lives, rulemanager.activeName(), rulemanager.timer, rulemanager.rule_duration)
 
     if game.state == "gameover" then
       ui.drawGameOver(game.score, game.highscore, game.new_record, game.time)
