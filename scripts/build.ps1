@@ -1,16 +1,16 @@
-# scripts/build.ps1 — build release artifacts into dist/
+﻿# scripts/build.ps1 â€” build release artifacts into dist/
 #
 #   .\scripts\build.ps1 -Version 1.0.0
 #
 # Produces:
-#   dist/flip30-<version>.love        LÖVE archive (all platforms)
+#   dist/flip30-<version>.love        LÃ–VE archive (all platforms)
 #   dist/flip30-<version>-win64.zip   Fused Windows build (no install needed)
 #   dist/RELEASE_NOTES.md             Notes extracted from CHANGELOG.md
 param(
   [Parameter(Mandatory = $true)]
   [string]$Version,
 
-  # Where LÖVE is installed (contains love.exe + DLLs). Auto-detected if omitted.
+  # Where LÃ–VE is installed (contains love.exe + DLLs). Auto-detected if omitted.
   [string]$LovePath
 )
 
@@ -20,8 +20,8 @@ $dist = Join-Path $root "dist"
 New-Item -ItemType Directory -Force -Path $dist | Out-Null
 
 # ---------------------------------------------------------------- .love file
-$lovePath = Join-Path $dist "flip30-$Version.love"
-if (Test-Path $lovePath) { Remove-Item $lovePath -Force }
+$loveArchive = Join-Path $dist "flip30-$Version.love"
+if (Test-Path $loveArchive) { Remove-Item $loveArchive -Force }
 
 $gameFiles = @(
   "conf.lua",
@@ -35,7 +35,7 @@ $gameFiles = @(
 
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
-$archive = [System.IO.Compression.ZipFile]::Open($lovePath, [System.IO.Compression.ZipArchiveMode]::Create)
+$archive = [System.IO.Compression.ZipFile]::Open($loveArchive, [System.IO.Compression.ZipArchiveMode]::Create)
 try {
   foreach ($entry in $gameFiles) {
     $full = Join-Path $root $entry
@@ -53,7 +53,7 @@ try {
 } finally {
   $archive.Dispose()
 }
-Write-Output "built $lovePath"
+Write-Output "built $loveArchive"
 
 # ------------------------------------------------------- Windows fused build
 if (-not $LovePath) {
@@ -75,9 +75,10 @@ if ($LovePath -and (Test-Path (Join-Path $LovePath "love.exe"))) {
   Remove-Item (Join-Path $bundleDir "changes.txt") -ErrorAction SilentlyContinue
   Remove-Item (Join-Path $bundleDir "game.ico") -ErrorAction SilentlyContinue
   Remove-Item (Join-Path $bundleDir "love.ico") -ErrorAction SilentlyContinue
+  Remove-Item (Join-Path $bundleDir "Uninstall.exe") -ErrorAction SilentlyContinue
 
   # Fuse: append the .love archive to the executable
-  $bytes = [System.IO.File]::ReadAllBytes($lovePath)
+  $bytes = [System.IO.File]::ReadAllBytes($loveArchive)
   $stream = [System.IO.File]::Open($fused, [System.IO.FileMode]::Append)
   try {
     $stream.Write($bytes, 0, $bytes.Length)
@@ -94,7 +95,7 @@ if ($LovePath -and (Test-Path (Join-Path $LovePath "love.exe"))) {
   Remove-Item $bundleDir -Recurse -Force
   Write-Output "built $zipPath"
 } else {
-  Write-Warning "LÖVE installation not found; skipping the Windows bundle (only the .love was built)."
+  Write-Warning "LÃ–VE installation not found; skipping the Windows bundle (only the .love was built)."
   Write-Warning "Pass -LovePath 'C:\Program Files\LOVE' to enable it."
 }
 
