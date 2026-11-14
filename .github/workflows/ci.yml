@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check Lua formatting
-        uses: JohnnyMorganz/StyLua@v4
+        uses: JohnnyMorganz/stylua-action@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           args: --check .
