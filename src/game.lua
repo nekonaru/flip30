@@ -7,6 +7,8 @@ local spawner = require("src.spawner")
 local storage = require("src.storage")
 local ui = require("src.ui")
 local rulemanager = require("src.rulemanager")
+local particles = require("src.particles")
+local sfx = require("src.sfx")
 
 local game = {
   state = "menu", -- "menu" | "playing" | "gameover"
@@ -28,7 +30,9 @@ function game.load()
   ui.load()
   game.highscore = storage.load()
   game.time = 0
-  game.ctx = { player = player, world = world, spawner = spawner, ui = ui, sfx = nil }
+  game.ctx = { player = player, world = world, spawner = spawner, ui = ui, sfx = sfx }
+  sfx.load()
+  particles.load()
   rulemanager.loadRules()
   rulemanager.resetToDefaults(game.ctx)
   spawner.reset()
@@ -51,7 +55,11 @@ function game.gameOver()
     game.highscore = game.score
     game.new_record = true
     storage.save(game.highscore)
+    sfx.play("record")
+  else
+    sfx.play("gameover")
   end
+  particles.burst(player.x + player.w / 2, player.y + player.h / 2, 1.000, 0.243, 0.541, 26)
 end
 
 function game.update(dt)
@@ -82,15 +90,21 @@ function game.update(dt)
       if hit.kind == spawner.FOOD then
         game.score = game.score + 10
         ui.addPopup(hit.x, hit.y, "+10", COLOR_GREEN)
+        particles.burst(hit.x, hit.y, COLOR_GREEN[1], COLOR_GREEN[2], COLOR_GREEN[3], 14)
+        sfx.play("catch")
       else
         if world.enemy_gives_points then
           game.score = game.score + world.enemy_points
           ui.addPopup(hit.x, hit.y, "+" .. world.enemy_points, COLOR_ORANGE)
+          particles.burst(hit.x, hit.y, COLOR_ORANGE[1], COLOR_ORANGE[2], COLOR_ORANGE[3], 14)
+          sfx.play("catch")
         else
           game.lives = math.max(0, game.lives - world.enemy_life_damage)
           game.shake = 0.6
           game.flash = 0.7
           ui.addPopup(hit.x, hit.y, "-1 NYAWA", COLOR_RED)
+          particles.burst(hit.x, hit.y, COLOR_RED[1], COLOR_RED[2], COLOR_RED[3], 20)
+          sfx.play("hit")
           if game.lives <= 0 then
             game.gameOver()
           end
@@ -103,11 +117,13 @@ function game.update(dt)
   end
 
   ui.update(dt)
+  particles.update(dt)
 end
 
 function game.keypressed(key)
   if game.state == "menu" then
     if key == "return" or key == "kpenter" or key == "space" then
+      sfx.play("select")
       game.startRun()
     elseif key == "escape" then
       love.event.quit()
@@ -118,6 +134,7 @@ function game.keypressed(key)
     end
   elseif game.state == "gameover" then
     if key == "return" or key == "kpenter" or key == "space" then
+      sfx.play("select")
       game.startRun()
     elseif key == "escape" then
       game.state = "menu"
@@ -169,6 +186,7 @@ function game.draw()
   else
     spawner.draw()
     player.draw()
+    particles.draw()
     rulemanager.draw(game.ctx)
     ui.drawPopups()
 
