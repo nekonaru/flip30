@@ -33,7 +33,13 @@ function game.load()
   game.ctx = { player = player, world = world, spawner = spawner, ui = ui, sfx = sfx }
   sfx.load()
   particles.load()
-  rulemanager.loadRules()
+  local modloader = require("src.modloader")
+  local ok_mods, mods = pcall(modloader.loadMods)
+  if ok_mods and #mods > 0 then
+    rulemanager.loadRules(mods)
+  else
+    rulemanager.loadRules()
+  end
   rulemanager.resetToDefaults(game.ctx)
   spawner.reset()
 end

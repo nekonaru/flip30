@@ -13,6 +13,7 @@ local game = require("src.game")
 
 local screenshot_path = nil
 local screenshot_frames = 0
+local force_rule = nil
 
 local function parse_args(arg)
   for i = 1, #(arg or {}) do
@@ -20,6 +21,8 @@ local function parse_args(arg)
       screenshot_path = arg[i + 1]
     elseif arg[i] == "--frames" then
       screenshot_frames = tonumber(arg[i + 1]) or 0
+    elseif arg[i] == "--force-rule" then
+      force_rule = arg[i + 1]
     end
   end
 end
@@ -36,6 +39,24 @@ function love.load(arg)
 
   if screenshot_path and screenshot_frames > 0 then
     game.startRun() -- autoplay so artwork shows real gameplay
+  end
+
+  if force_rule then
+    local rulemanager = require("src.rulemanager")
+    local ctx = game.ctx
+    for _, rule in ipairs(rulemanager.rules) do
+      if rule.name == force_rule then
+        rulemanager.revertAll(ctx)
+        local ok, err = pcall(rule.apply, ctx)
+        if ok then
+          rulemanager.active = { rule }
+          rulemanager.last_name = rule.name
+        else
+          print("[force-rule] apply failed for '" .. rule.name .. "': " .. tostring(err))
+        end
+        break
+      end
+    end
   end
 
   for _ = 1, screenshot_frames do
