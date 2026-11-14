@@ -102,13 +102,13 @@ if ($LovePath -and (Test-Path (Join-Path $LovePath "love.exe"))) {
 # ------------------------------------------------------------ release notes
 $changelog = Join-Path $root "CHANGELOG.md"
 $notes = Join-Path $dist "RELEASE_NOTES.md"
-$content = Get-Content $changelog -Raw
+$content = Get-Content $changelog -Raw -Encoding UTF8
 $escaped = [regex]::Escape($Version)
 $pattern = "(?s)## \[${escaped}\][^\n]*\r?\n(.*?)(?=\r?\n## \[|\z)"
 $match = [regex]::Match($content, $pattern)
 if ($match.Success) {
   $body = "# Flip30 v$Version`r`n`r`n" + $match.Groups[1].Value.Trim() + "`r`n"
-  Set-Content -Path $notes -Value $body -Encoding utf8 -NoNewline
+  Set-Content -Path $notes -Value $body -Encoding UTF8 -NoNewline
   Write-Output "wrote $notes"
 } else {
   Write-Warning "could not extract [$Version] from CHANGELOG.md; $notes not written"
