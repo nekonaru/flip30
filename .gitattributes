@@ -1,0 +1,17 @@
+# Normalize line endings: LF in the repo, native checkout on each OS.
+* text=auto eol=lf
+
+# Treat images and archives as binary
+*.png binary
+*.jpg binary
+*.ico binary
+*.love binary
+*.wav binary
+*.ogg binary
+*.mp3 binary
+
+# Lua sources
+*.lua text diff=lua
+
+# Docs
+*.md text

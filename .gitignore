@@ -1,0 +1,22 @@
+# Build output
+dist/
+*.love
+*.zip
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# LÖVE save directory artifacts (highscore etc. when developing locally)
+highscore.txt
+
+# Logs
+*.log
+
+# Temp
+*.tmp
