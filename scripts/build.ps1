@@ -1,16 +1,16 @@
-﻿# scripts/build.ps1 â€” build release artifacts into dist/
+﻿# scripts/build.ps1 - build release artifacts into dist/
 #
 #   .\scripts\build.ps1 -Version 1.0.0
 #
 # Produces:
-#   dist/flip30-<version>.love        LÃ–VE archive (all platforms)
+#   dist/flip30-<version>.love        LOVE archive (all platforms)
 #   dist/flip30-<version>-win64.zip   Fused Windows build (no install needed)
-#   dist/RELEASE_NOTES.md             Notes extracted from CHANGELOG.md
+#   dist/RELEASE_NOTES.md             Notes from CHANGELOG.md + SHA-256 sums
 param(
   [Parameter(Mandatory = $true)]
   [string]$Version,
 
-  # Where LÃ–VE is installed (contains love.exe + DLLs). Auto-detected if omitted.
+  # Where LOVE is installed (contains love.exe + DLLs). Auto-detected if omitted.
   [string]$LovePath
 )
 
@@ -62,6 +62,7 @@ if (-not $LovePath) {
   }
 }
 
+$zipPath = $null
 $bundleDir = Join-Path $dist "flip30-$Version-win64"
 if (Test-Path $bundleDir) { Remove-Item $bundleDir -Recurse -Force }
 New-Item -ItemType Directory -Force -Path $bundleDir | Out-Null
@@ -95,7 +96,7 @@ if ($LovePath -and (Test-Path (Join-Path $LovePath "love.exe"))) {
   Remove-Item $bundleDir -Recurse -Force
   Write-Output "built $zipPath"
 } else {
-  Write-Warning "LÃ–VE installation not found; skipping the Windows bundle (only the .love was built)."
+  Write-Warning "LOVE installation not found; skipping the Windows bundle (only the .love was built)."
   Write-Warning "Pass -LovePath 'C:\Program Files\LOVE' to enable it."
 }
 
@@ -107,7 +108,22 @@ $escaped = [regex]::Escape($Version)
 $pattern = "(?s)## \[${escaped}\][^\n]*\r?\n(.*?)(?=\r?\n## \[|\z)"
 $match = [regex]::Match($content, $pattern)
 if ($match.Success) {
-  $body = "# Flip30 v$Version`r`n`r`n" + $match.Groups[1].Value.Trim() + "`r`n"
+  $body = "# Flip30 v$Version`r`n`r`n" + $match.Groups[1].Value.Trim() + "`r`n`r`n"
+
+  # Append SHA-256 checksums of the freshly built artifacts so the release
+  # notes double as a verification manifest.
+  $artifacts = @($loveArchive)
+  if ($zipPath) { $artifacts += $zipPath }
+  $body += "### Verify your download`r`n`r`n"
+  $body += "SHA-256 of the artifacts attached to this release:`r`n`r`n"
+  $body += "| File | SHA-256 |`r`n| --- | --- |`r`n"
+  foreach ($file in $artifacts) {
+    $hash = (Get-FileHash $file -Algorithm SHA256).Hash
+    $body += "| ``$(Split-Path $file -Leaf)`` | ``$hash`` |`r`n"
+  }
+  $body += "`r`nVerify with ``Get-FileHash .\flip30-$Version.love -Algorithm SHA256`` (PowerShell)`r`n"
+  $body += "or ``shasum -a 256 flip30-$Version.love`` (macOS/Linux)`r`n"
+
   Set-Content -Path $notes -Value $body -Encoding UTF8 -NoNewline
   Write-Output "wrote $notes"
 } else {
