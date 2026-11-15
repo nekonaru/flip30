@@ -15,7 +15,9 @@ local function normalize(path)
 end
 
 -- Detect whether `rules/<file>` resolves into the save directory
--- (a mod) rather than the game source (bundled).
+-- (a mod) rather than the game source (bundled rules).
+-- getRealDirectory returns the search-root directory of the file,
+-- not the file path, so compare the normalized root for equality.
 local function is_mod_path(path)
   if not (love and love.filesystem and love.filesystem.getRealDirectory) then
     return false
@@ -24,8 +26,9 @@ local function is_mod_path(path)
   if not (ok and real) then
     return false
   end
-  local save = normalize(love.filesystem.getSaveDirectory())
-  return normalize(real):find(save .. "/", 1, true) == 1
+  local real_dir = normalize(real)
+  local save_dir = normalize(love.filesystem.getSaveDirectory())
+  return real_dir == save_dir or real_dir:find(save_dir .. "/", 1, true) == 1
 end
 
 local function sandbox_env()
@@ -120,6 +123,9 @@ local function load_mod_file(path)
   end
   return result
 end
+
+-- Exposed so rulemanager can skip mod files when registering bundled rules.
+modloader.isModPath = is_mod_path
 
 -- Returns an array of { rule = <table>, source = <path> } for every valid
 -- mod found in the save directory's rules/ folder.
