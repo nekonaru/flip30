@@ -24,6 +24,10 @@ local game = {
   shake_t = 0,
   hit_stop = 0, -- seconds of frozen simulation remaining
   flash = 0,
+  combo = 0, -- consecutive catches without touching an enemy
+  combo_best = 0, -- best combo of this run
+  best_combo_ever = 0, -- persisted best combo across runs
+  muted = false,
 }
 
 local COLOR_GREEN = { 0.239, 0.859, 0.541 }
@@ -32,8 +36,9 @@ local COLOR_ORANGE = { 1.000, 0.576, 0.169 }
 
 function game.load()
   ui.load()
-  ui.version = "1.1.0"
+  ui.version = "1.2.0"
   game.highscore = storage.load()
+  game.best_combo_ever = storage.loadBestCombo()
   game.time = 0
   game.ctx = { player = player, world = world, spawner = spawner, ui = ui, sfx = sfx }
   sfx.load()
@@ -57,6 +62,8 @@ function game.startRun()
   game.lives = 3
   game.new_record = false
   game.run_time = 0
+  game.combo = 0
+  game.combo_best = 0
   game.paused = false
   game.trauma = 0
   game.shake_t = 0
@@ -67,6 +74,10 @@ end
 
 function game.gameOver()
   game.state = "gameover"
+  if game.combo_best > game.best_combo_ever then
+    game.best_combo_ever = game.combo_best
+    storage.saveBestCombo(game.combo_best)
+  end
   if game.score > game.highscore then
     game.highscore = game.score
     game.new_record = true
@@ -119,16 +130,24 @@ function game.update(dt)
     local hits = spawner.collectHits(player)
     for _, hit in ipairs(hits) do
       if hit.kind == spawner.FOOD then
-        game.score = game.score + 10
+        game.combo = game.combo + 1
+        local mult = world.comboMultiplier(game.combo)
+        local points = 10 * mult * world.score_mul
+        game.score = game.score + points
+        if game.combo > game.combo_best then
+          game.combo_best = game.combo
+        end
         player.impact = 0.5
-        ui.addPopup(hit.x, hit.y, "+10", COLOR_GREEN)
+        ui.addPopup(hit.x, hit.y, "+" .. points, COLOR_GREEN)
         particles.burst(hit.x, hit.y, COLOR_GREEN[1], COLOR_GREEN[2], COLOR_GREEN[3], 14)
-        sfx.play("catch")
+        sfx.play("catch", 0.9 + 0.12 * mult)
       else
+        game.combo = 0
         if world.enemy_gives_points then
-          game.score = game.score + world.enemy_points
+          local points = world.enemy_points * world.score_mul
+          game.score = game.score + points
           player.impact = 0.8
-          ui.addPopup(hit.x, hit.y, "+" .. world.enemy_points, COLOR_ORANGE)
+          ui.addPopup(hit.x, hit.y, "+" .. points, COLOR_ORANGE)
           particles.burst(hit.x, hit.y, COLOR_ORANGE[1], COLOR_ORANGE[2], COLOR_ORANGE[3], 14)
           sfx.play("catch")
         else
@@ -167,6 +186,9 @@ function game.keypressed(key)
     if key == "return" or key == "kpenter" or key == "space" then
       sfx.play("select")
       game.startRun()
+    elseif key == "m" then
+      game.muted = not game.muted
+      sfx.muted = game.muted
     elseif key == "escape" then
       love.event.quit()
     end
@@ -174,6 +196,9 @@ function game.keypressed(key)
     if key == "p" then
       game.paused = not game.paused
       sfx.play("select")
+    elseif key == "m" then
+      game.muted = not game.muted
+      sfx.muted = game.muted
     elseif key == "escape" then
       game.state = "menu"
     end
@@ -181,6 +206,9 @@ function game.keypressed(key)
     if key == "return" or key == "kpenter" or key == "space" then
       sfx.play("select")
       game.startRun()
+    elseif key == "m" then
+      game.muted = not game.muted
+      sfx.muted = game.muted
     elseif key == "escape" then
       game.state = "menu"
     end
@@ -218,7 +246,7 @@ function game.draw()
   ui.drawArenaBackground()
 
   if game.state == "menu" then
-    ui.drawMenu(game.highscore, game.time)
+    ui.drawMenu(game.highscore, game.time, game.best_combo_ever)
   else
     spawner.draw()
     player.draw()
@@ -239,11 +267,20 @@ function game.draw()
       rulemanager.timer,
       rulemanager.rule_duration,
       game.run_time,
-      world.elapsed >= 120
+      world.elapsed >= 120,
+      world.comboMultiplier(game.combo),
+      game.muted
     )
 
     if game.state == "gameover" then
-      ui.drawGameOver(game.score, game.highscore, game.new_record, game.time, game.run_time)
+      ui.drawGameOver(
+        game.score,
+        game.highscore,
+        game.new_record,
+        game.time,
+        game.run_time,
+        math.max(game.combo_best, game.best_combo_ever)
+      )
     elseif game.paused then
       ui.drawPaused()
     end

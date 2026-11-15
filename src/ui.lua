@@ -5,7 +5,7 @@ local theme = require("src.theme")
 
 local ui = {}
 
-ui.banner = nil -- { text = string, t = number, duration = number }
+ui.banner = nil -- { text = string, t = number, duration = number, hint = string|nil }
 ui.popups = {} -- { x, y, text, color, t }
 ui.version = nil
 
@@ -13,6 +13,8 @@ local FONTS = {}
 local LOGO = nil
 local ICON = nil
 local BG_GRADIENT = nil
+local BG_CANVAS = nil
+local draw_arena_static -- forward declaration; assigned below
 
 local function round_rect(mode, x, y, w, h, r)
   love.graphics.rectangle(mode, x, y, w, h, r, r)
@@ -31,6 +33,20 @@ function ui.load()
   local ok_icon, icon = pcall(love.graphics.newImage, "assets/brand/icon-512.png")
   if ok_icon then
     ICON = icon
+  end
+
+  -- Pre-render the static arena background once; fallback keeps the game working
+  -- even if the GPU refuses the canvas
+  local success, err = pcall(function()
+    BG_CANVAS = love.graphics.newCanvas(800, 600)
+    love.graphics.setCanvas(BG_CANVAS)
+    draw_arena_static()
+    love.graphics.setCanvas()
+  end)
+  love.graphics.setCanvas() -- always restore the default framebuffer
+  if not success then
+    print("[ui] arena background prerender failed: " .. tostring(err))
+    BG_CANVAS = nil
   end
 end
 
@@ -54,7 +70,7 @@ local function draw_vignette()
   love.graphics.draw(BG_GRADIENT, -0.5, -0.5, 0, 800 / BG_GRADIENT:getWidth(), 600 / BG_GRADIENT:getHeight())
 end
 
-function ui.drawArenaBackground()
+draw_arena_static = function()
   -- Vertical gradient, deep navy to slate
   love.graphics.setColor(theme.bg_deep[1], theme.bg_deep[2], theme.bg_deep[3], 1)
   love.graphics.rectangle("fill", 0, 0, 800, 300)
@@ -73,10 +89,19 @@ function ui.drawArenaBackground()
   love.graphics.setColor(1, 1, 1, 1)
 end
 
+function ui.drawArenaBackground()
+  if BG_CANVAS then
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(BG_CANVAS, 0, 0)
+  else
+    draw_arena_static()
+  end
+end
+
 -- ---------------------------------------------------------------- banner
 
-function ui.showBanner(text)
-  ui.banner = { text = text, t = 0, duration = 2.0 }
+function ui.showBanner(text, hint)
+  ui.banner = { text = text, t = 0, duration = 2.0, hint = hint }
 end
 
 function ui.bannerActive()
@@ -148,9 +173,15 @@ function ui.drawBanner()
 
   love.graphics.setFont(FONTS.big)
   love.graphics.setColor(0, 0, 0, alpha)
-  love.graphics.printf(b.text .. "!", -344, -21 + 3, 696, "center")
+  love.graphics.printf(b.text .. "!", -344, -28 + 3, 696, "center")
   love.graphics.setColor(theme.yellow[1], theme.yellow[2], theme.yellow[3], alpha)
-  love.graphics.printf(b.text .. "!", -348, -21, 696, "center")
+  love.graphics.printf(b.text .. "!", -348, -28, 696, "center")
+
+  if b.hint then
+    love.graphics.setFont(FONTS.body)
+    love.graphics.setColor(theme.text_dim[1], theme.text_dim[2], theme.text_dim[3], alpha)
+    love.graphics.printf(b.hint, -340, 14, 680, "center")
+  end
   love.graphics.pop()
   love.graphics.setColor(1, 1, 1, 1)
 end
@@ -195,7 +226,7 @@ end
 
 -- --------------------------------------------------------------- menu
 
-function ui.drawMenu(highscore, time)
+function ui.drawMenu(highscore, time, best_combo)
   local t = time or 0
   local pulse = 0.5 + 0.5 * math.sin(t * 1.6)
 
@@ -242,23 +273,27 @@ function ui.drawMenu(highscore, time)
   -- Controls strip
   love.graphics.setFont(FONTS.small)
   love.graphics.setColor(theme.text_mute[1], theme.text_mute[2], theme.text_mute[3], 1)
-  love.graphics.printf(
-    "A / D atau PANAH untuk bergerak   ·   P untuk pause   ·   ESC untuk keluar",
-    40,
-    452,
-    720,
-    "center"
-  )
+  love.graphics.printf("A/D atau PANAH bergerak   ·   P pause   ·   M mute   ·   ESC keluar", 40, 450, 720, "center")
 
   -- High score chip
   if highscore > 0 then
     local text = "SKOR TERBAIK   " .. tostring(highscore)
     local font_w = FONTS.body:getWidth(text) + 44
     local chip_x = 400 - font_w / 2
-    draw_chip(chip_x, 488, font_w, 34)
+    draw_chip(chip_x, 484, font_w, 34)
     love.graphics.setFont(FONTS.body)
     love.graphics.setColor(theme.yellow[1], theme.yellow[2], theme.yellow[3], 1)
-    love.graphics.printf(text, chip_x, 494, font_w, "center")
+    love.graphics.printf(text, chip_x, 490, font_w, "center")
+  end
+
+  if (best_combo or 0) > 1 then
+    local text = "COMBO TERBAIK   x" .. tostring(best_combo)
+    local font_w = FONTS.small:getWidth(text) + 36
+    local chip_x = 400 - font_w / 2
+    draw_chip(chip_x, 518, font_w, 26)
+    love.graphics.setFont(FONTS.small)
+    love.graphics.setColor(theme.orange[1], theme.orange[2], theme.orange[3], 1)
+    love.graphics.printf(text, chip_x, 523, font_w, "center")
   end
 
   if ui.version then
@@ -277,7 +312,7 @@ local function mmss(seconds)
   return string.format("%02d:%02d", m, s)
 end
 
-function ui.drawHUD(score, lives, rule_name, timer, duration, elapsed, double_rules)
+function ui.drawHUD(score, lives, rule_name, timer, duration, elapsed, double_rules, combo_multi, muted)
   -- Top gradient rule timer strip
   local fraction = duration and duration > 0 and math.max(0, math.min(1, timer / duration)) or 1
   love.graphics.setColor(0.05, 0.06, 0.10, 1)
@@ -304,6 +339,14 @@ function ui.drawHUD(score, lives, rule_name, timer, duration, elapsed, double_ru
     end
   end
 
+  -- Combo chip, below the hearts, only when the streak pays off
+  if (combo_multi or 1) > 1 then
+    draw_chip(12, 146, 158, 32)
+    love.graphics.setFont(FONTS.small)
+    love.graphics.setColor(theme.orange[1], theme.orange[2], theme.orange[3], 1)
+    love.graphics.printf("COMBO x" .. combo_multi, 12, 156, 158, "center")
+  end
+
   -- Rule pill, top-center
   local rule_text = rule_name or "NORMAL"
   love.graphics.setFont(FONTS.small)
@@ -324,6 +367,11 @@ function ui.drawHUD(score, lives, rule_name, timer, duration, elapsed, double_ru
     love.graphics.setFont(FONTS.small)
     love.graphics.setColor(theme.yellow[1], theme.yellow[2], theme.yellow[3], 1)
     love.graphics.printf("2x ATURAN", 634, 46, 142, "right")
+  end
+  if muted then
+    love.graphics.setFont(FONTS.small)
+    love.graphics.setColor(theme.red[1], theme.red[2], theme.red[3], 1)
+    love.graphics.printf("MUTE", 634, 46, 142, "left")
   end
 
   love.graphics.setColor(1, 1, 1, 1)
@@ -356,12 +404,12 @@ end
 
 -- ---------------------------------------------------------- game over
 
-function ui.drawGameOver(score, highscore, new_record, time, survived)
+function ui.drawGameOver(score, highscore, new_record, time, survived, best_combo)
   love.graphics.setColor(0.01, 0.012, 0.02, 0.74)
   love.graphics.rectangle("fill", 0, 0, 800, 600)
 
-  local panel_w, panel_h = 430, 380
-  local px, py = 185, 105
+  local panel_w, panel_h = 440, 390
+  local px, py = 180, 105
   draw_chip(px, py, panel_w, panel_h)
   love.graphics.setColor(theme.pink[1], theme.pink[2], theme.pink[3], 0.8)
   love.graphics.setLineWidth(2.5)
@@ -370,36 +418,41 @@ function ui.drawGameOver(score, highscore, new_record, time, survived)
 
   love.graphics.setFont(FONTS.big)
   love.graphics.setColor(theme.pink[1], theme.pink[2], theme.pink[3], 1)
-  love.graphics.printf("GAME OVER", px, py + 24, panel_w, "center")
+  love.graphics.printf("GAME OVER", px, py + 22, panel_w, "center")
 
-  -- Two stat rows: score and survival time
   love.graphics.setFont(FONTS.small)
   love.graphics.setColor(theme.text_mute[1], theme.text_mute[2], theme.text_mute[3], 1)
-  love.graphics.printf("SKOR AKHIR", px, py + 88, panel_w / 2, "center")
-  love.graphics.printf("BERTAHAN", px + panel_w / 2, py + 88, panel_w / 2, "center")
+  love.graphics.printf("SKOR AKHIR", px, py + 84, panel_w / 2, "center")
+  love.graphics.printf("BERTAHAN", px + panel_w / 2, py + 84, panel_w / 2, "center")
 
   love.graphics.setFont(FONTS.big)
   love.graphics.setColor(theme.text[1], theme.text[2], theme.text[3], 1)
-  love.graphics.printf(tostring(score), px, py + 106, panel_w / 2, "center")
-  love.graphics.printf(mmss(survived or 0), px + panel_w / 2, py + 106, panel_w / 2, "center")
+  love.graphics.printf(tostring(score), px, py + 102, panel_w / 2, "center")
+  love.graphics.printf(mmss(survived or 0), px + panel_w / 2, py + 102, panel_w / 2, "center")
 
   if new_record then
     local pulse = 0.7 + 0.3 * math.sin((time or 0) * 6)
     love.graphics.setFont(FONTS.big)
     love.graphics.setColor(theme.yellow[1], theme.yellow[2], theme.yellow[3], pulse)
-    love.graphics.printf("REKOR BARU!", px, py + 178, panel_w, "center")
+    love.graphics.printf("REKOR BARU!", px, py + 172, panel_w, "center")
     love.graphics.setFont(FONTS.small)
     love.graphics.setColor(theme.text_dim[1], theme.text_dim[2], theme.text_dim[3], 1)
-    love.graphics.printf("Skor terbaik: " .. highscore, px, py + 236, panel_w, "center")
+    love.graphics.printf("Skor terbaik: " .. highscore, px, py + 226, panel_w, "center")
   else
     love.graphics.setFont(FONTS.body)
     love.graphics.setColor(theme.yellow[1], theme.yellow[2], theme.yellow[3], 1)
-    love.graphics.printf("TERBAIK: " .. highscore, px, py + 192, panel_w, "center")
+    love.graphics.printf("TERBAIK: " .. highscore, px, py + 190, panel_w, "center")
+  end
+
+  if (best_combo or 0) > 1 then
+    love.graphics.setFont(FONTS.body)
+    love.graphics.setColor(theme.orange[1], theme.orange[2], theme.orange[3], 1)
+    love.graphics.printf("COMBO TERBAIK x" .. best_combo, px, py + 258, panel_w, "center")
   end
 
   love.graphics.setFont(FONTS.body)
   love.graphics.setColor(theme.text_dim[1], theme.text_dim[2], theme.text_dim[3], 1)
-  love.graphics.printf("ENTER: main lagi      ESC: menu", px, py + 292, panel_w, "center")
+  love.graphics.printf("ENTER: main lagi      ESC: menu", px, py + 326, panel_w, "center")
   love.graphics.setColor(1, 1, 1, 1)
 end
 

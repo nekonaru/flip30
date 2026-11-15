@@ -30,6 +30,11 @@ end
 function love.load(arg)
   parse_args(arg)
   if screenshot_path then
+    -- Fail fast instead of hanging on the blue error screen
+    function love.errorhandler(msg)
+      print("ERROR: " .. tostring(msg) .. "\n" .. debug.traceback("", 2))
+      os.exit(1)
+    end
     math.randomseed(20261115) -- deterministic artwork
   else
     math.randomseed(os.time() + love.timer.getTime() * 1000)

@@ -3,6 +3,7 @@
 return {
   name = "TUKAR WARNA",
   tags = { "colors" },
+  hint = "Hijau dan merah tertukar",
   apply = function(ctx)
     ctx.world.swap_colors = true
   end,
