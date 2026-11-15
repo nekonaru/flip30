@@ -10,9 +10,11 @@
   every 30 seconds the rules of reality are swapped for a new, random one.
 
   [![CI](https://github.com/nekonaru/flip30/actions/workflows/ci.yml/badge.svg)](https://github.com/nekonaru/flip30/actions/workflows/ci.yml)
+  [![Latest release](https://img.shields.io/github/v/release/nekonaru/flip30)](https://github.com/nekonaru/flip30/releases/latest)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
   [![LÖVE 11.5](https://img.shields.io/badge/L%C3%96VE-11.5-00a2ff)](https://love2d.org)
-  [![Lua](https://img.shields.io/badge/Lua-LuaJIT-000080)](https://www.lua.org)
+  [![Lua](https://img.shields.io/badge/Lua-LuaJIT%202.1-000080)](https://www.lua.org)
+  [![Style: StyLua](https://img.shields.io/badge/code%20style-StyLua-000000)](https://github.com/JohnnyMorganz/StyLua)
 </div>
 
 ---
@@ -95,15 +97,33 @@ Requires LÖVE 11.x (developed against 11.5). No other dependencies.
 
 ## Development
 
-**Requirements:** LÖVE 11.5, LuaJIT (for headless tests), StyLua (formatting).
+### The dev tools
+
+Everything in this repo was built and is checked with the following toolchain.
+
+| Tool | Version | Used for | Install (Windows) |
+| --- | --- | --- | --- |
+| [LÖVE](https://love2d.org) | 11.5 | Running the game, `--screenshot` artwork mode | `winget install Love2d.Love2d` |
+| [LuaJIT](https://luajit.org) | 2.1 | Headless test suite — the same Lua VM LÖVE ships | `winget install DEVCOM.LuaJIT` |
+| [StyLua](https://github.com/JohnnyMorganz/StyLua) | 2.5.2 | Lua formatting (`stylua.toml`) | `winget install JohnnyMorganz.StyLua` |
+| [GitHub Actions](https://github.com/nekonaru/flip30/actions/workflows/ci.yml) | — | CI: `luajit tests/headless_tests.lua` + `stylua --check .` on every push and PR | — |
+| [GitHub CLI](https://cli.github.com) | 2.x | Releases (`gh release create` / `gh release download`) | `winget install GitHub.cli` |
+| Git + Conventional Commits | — | History; see [CONTRIBUTING.md](CONTRIBUTING.md) | — |
+
+On Linux/macOS, install the equivalents from your package manager or the
+respective project pages.
 
 ```sh
 love .                                # run the game
-luajit tests/headless_tests.lua       # 190+ headless assertions
+luajit tests/headless_tests.lua       # 193 headless assertions
 stylua .                              # format all Lua sources
+stylua --check .                      # what CI runs
 love . --screenshot shot.png --frames 480   # regenerate artwork deterministically
 love . --screenshot shot.png --frames 60 --force-rule "LAYAR GELAP"
 ```
+
+Local commands and CI are the same three: run the game, run the tests, check
+formatting. If CI is green locally, it is green on GitHub.
 
 ### Project layout
 
@@ -124,9 +144,12 @@ flip30/
     sfx.lua           -- synthesized SFX (no audio files)
   rules/              -- one file per rule, hot-swapped every 30 seconds
   assets/brand/       -- logo, icon, monochrome artwork
+  assets/screenshots/ -- in-game captures (deterministic --screenshot mode)
   examples/rules/     -- example mod to copy into your save directory
   tests/              -- headless LuaJIT test suite
+  scripts/            -- build.ps1 / build.sh release artifact builders
   docs/               -- modding guide, release process, PRD
+  stylua.toml         -- formatter config (used locally and in CI)
 ```
 
 ### Design decisions (PRD open questions, resolved simply)

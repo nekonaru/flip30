@@ -5,17 +5,29 @@ your environment, our code style, and what we look for in pull requests.
 
 ## Development setup
 
-1. Install [LÖVE 11.5](https://love2d.org).
-2. Install [LuaJIT](https://luajit.org) (the same Lua VM LÖVE uses) for the
-   headless test suite.
-3. Install [StyLua](https://github.com/JohnnyMorganz/StyLua) for formatting.
-4. Clone and run:
+1. Install [LÖVE](https://love2d.org) 11.5.
+2. Install [LuaJIT](https://luajit.org) 2.1 — the same Lua VM LÖVE ships — for
+   the headless test suite.
+3. Install [StyLua](https://github.com/JohnnyMorganz/StyLua) 2.x for formatting
+   (config: `stylua.toml`).
+4. On Windows, steps 1–3 are three commands:
+
+   ```powershell
+   winget install --id Love2d.Love2d -e
+   winget install --id DEVCOM.LuaJIT -e
+   winget install --id JohnnyMorganz.StyLua -e
+   ```
+
+5. Clone and run:
 
    ```sh
    git clone https://github.com/nekonaru/flip30.git
    cd flip30
    love .
    ```
+
+CI (`.github/workflows/ci.yml`) runs exactly the local commands — the test
+suite and `stylua --check` — so green locally means green on GitHub.
 
 ## Before you commit
 

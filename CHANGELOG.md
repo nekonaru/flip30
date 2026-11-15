@@ -4,6 +4,24 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Docs aligned with the actual dev toolchain: README now documents the exact
+  tools and versions used to build the game (LÖVE 11.5, LuaJIT 2.1, StyLua
+  2.5.2, GitHub Actions CI, GitHub CLI, winget install commands) and notes
+  that local commands and CI run the same tests and format check.
+- CONTRIBUTING shows the exact `winget` commands used on Windows; RELEASING
+  documents the checksum-verified release flow.
+
+### Build
+
+- `scripts/build.ps1` now appends a SHA-256 checksum table of the freshly
+  built artifacts to `dist/RELEASE_NOTES.md`, so generated release notes
+  double as a verification manifest. Release notes are written as UTF-8
+  without a BOM.
+
 ## [1.0.0] - 2026-11-15
 
 The first public release of Flip30.
