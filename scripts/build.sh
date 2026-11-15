@@ -1,5 +1,5 @@
 #!/bin/sh
-# scripts/build.sh — build dist/flip30-<version>.love on Linux/macOS
+# scripts/build.sh - build dist/flip30-<version>.love on Linux/macOS
 #
 #   ./scripts/build.sh 1.0.0
 set -eu

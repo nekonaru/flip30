@@ -1,7 +1,7 @@
 -- src/modloader.lua
 -- Optional mod support: additional rules placed in `rules/` inside the LÖVE
 -- save directory are loaded next to the bundled ones. Mod files run inside a
--- strict sandbox — no `os`, no `io`, no direct `love` access. Everything is
+-- strict sandbox: no `os`, no `io`, no direct `love` access. Everything is
 -- wrapped in pcall so a broken mod can never crash the game; it is logged
 -- and skipped instead.
 --

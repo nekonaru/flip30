@@ -1,4 +1,4 @@
--- Flip30 — LÖVE 11.x configuration
+-- Flip30: LÖVE 11.x configuration
 -- See README.md for development and release notes.
 
 function love.conf(t)

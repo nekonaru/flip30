@@ -26,7 +26,7 @@ return {
 | --- | --- | --- |
 | `name` | yes | Uppercase display name, e.g. `"GRAVITASI MATI"`. |
 | `tags` | recommended | Any non-empty table of strings. Two rules sharing a tag are never active at the same time. Conventional tags: `control`, `gravity`, `speed`, `scoring`, `colors`, `vision`. |
-| `apply(ctx)` | yes | Apply the effect. Called inside `pcall` — errors are logged and the rule is skipped (and reverted). |
+| `apply(ctx)` | yes | Apply the effect. Called inside `pcall`, errors are logged and the rule is skipped (and reverted). |
 | `revert(ctx)` | yes | **Undo everything `apply` did.** Must be the exact inverse, or later game states leak. |
 | `update(ctx, dt)` | no | Per-frame logic while active. Errors are logged and skipped. |
 | `draw(ctx)` | no | Draw above the arena, below the HUD/banner. Errors are logged and skipped. |
@@ -36,7 +36,7 @@ return {
 | Field | Type | Notes |
 | --- | --- | --- |
 | `ctx.player` | table | `x`, `y`, `w`, `h`, `speed`, `dir`, `always_move`, `last_dir`. Mutate behavior fields (`dir`, `always_move`), not geometry. |
-| `ctx.world` | table | `fall_speed`, `fall_speed_growth`, `spawn_interval`, `speed_mul`, `gravity`, `fall_direction`, `enemy_gives_points`, `enemy_points`, `enemy_escape_penalty`, `enemy_life_damage`, `swap_colors`, `darkness`, `elapsed`. All numbers/booleans — snapshot and restore whatever you touch. |
+| `ctx.world` | table | `fall_speed`, `fall_speed_growth`, `spawn_interval`, `speed_mul`, `gravity`, `fall_direction`, `enemy_gives_points`, `enemy_points`, `enemy_escape_penalty`, `enemy_life_damage`, `swap_colors`, `darkness`, `elapsed`. All numbers/booleans, so snapshot and restore whatever you touch. |
 | `ctx.spawner` | table | Spawn table: `objects` (array), `timer`, `FOOD`, `ENEMY`. |
 | `ctx.ui` | table | `ui.showBanner(text)`, `ui.addPopup(x, y, text, color)`. |
 | `ctx.sfx` | table or nil | `sfx.play("catch" \| "hit" \| "swap" \| "gameover" \| "record" \| "select")`. |
@@ -59,7 +59,7 @@ revert = function(ctx) ctx.world.gravity = 1 end,
 ## Where mods live
 
 Mods are plain `.lua` files placed in a `rules/` folder **inside the LÖVE
-save directory** — not in the game's source folder:
+save directory**, not in the game's source folder:
 
 | Platform | Save directory (identity is `flip30`) |
 | --- | --- |
@@ -84,7 +84,7 @@ Mods run inside a restricted environment:
   `debug`, `package`, `load`/`loadstring`/`dofile`/`loadfile`.
 
 A mod that tries to escape simply fails validation or throws inside `pcall` and
-is skipped — it cannot crash the game or read your files.
+is skipped. It cannot crash the game or read your files.
 
 ## Example: GERAK PELAN
 
@@ -119,4 +119,4 @@ luajit tests/headless_tests.lua
 ```
 
 The suite asserts that every listed rule's `apply` → `revert` restores the
-exact pre-rule state — the single most important property of a rule.
+exact pre-rule state, the single most important property of a rule.
