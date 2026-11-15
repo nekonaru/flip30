@@ -1,4 +1,4 @@
-<div align="center">
+﻿<div align="center">
   <img src="assets/brand/icon-512.png" alt="Flip30 logo" width="120" />
   <h1>Flip30: Aturan Berganti Setiap 30 Detik</h1>
   <p><b>Tangkap makanan, hindari musuh, dan beradaptasi setiap 30 detik<br/>saat aturan berubah di depan matamu.</b></p>
@@ -137,11 +137,11 @@
 ### Opsi A: Unduh build siap pakai (paling mudah)
 
 1. Buka halaman [Releases](https://github.com/nekonaru/flip30/releases)
-2. Unduh `flip30-1.0.0-win64.zip` di Windows, atau `flip30-1.0.0.love` di platform lain
-3. Windows: extract zip ke mana saja lalu jalankan `Flip30.exe`. Platform lain: instal LÖVE 11.5, lalu jalankan `love flip30-1.0.0.love`
+2. Unduh `flip30-1.1.0-win64.zip` di Windows, atau `flip30-1.1.0.love` di platform lain
+3. Windows: extract zip ke mana saja lalu jalankan `Flip30.exe`. Platform lain: instal LÖVE 11.5, lalu jalankan `love flip30-1.1.0.love`
 
 > [!IMPORTANT]
-> Gunakan `flip30-1.0.0-win64.zip` di Windows. Gunakan `flip30-1.0.0.love` hanya dengan instalasi LÖVE 11.5 terpisah.
+> Gunakan `flip30-1.1.0-win64.zip` di Windows. Gunakan `flip30-1.1.0.love` hanya dengan instalasi LÖVE 11.5 terpisah.
 
 ### Opsi B: Build dari source (untuk development / untuk membaca atau mengubah kode)
 
@@ -190,7 +190,7 @@ Di Windows, cara tercepat adalah `winget install --id Love2d.Love2d -e`.
 love .
 ```
 
-Menu terbuka dan game langsung bisa dimainkan. Untuk menghasilkan artifact rilis (`.love` archive dan build Windows), jalankan `scripts/build.ps1 -Version 1.0.0` di Windows.
+Menu terbuka dan game langsung bisa dimainkan. Untuk menghasilkan artifact rilis (`.love` archive dan build Windows), jalankan `scripts/build.ps1 -Version 1.1.0` di Windows.
 
 ---
 

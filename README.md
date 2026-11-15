@@ -1,4 +1,4 @@
-<div align="center">
+﻿<div align="center">
   <img src="assets/brand/icon-512.png" alt="Flip30 logo" width="120" />
   <h1>Flip30: The Rules Change Every 30 Seconds</h1>
   <p><b>Catch the food, dodge the enemies, and adapt every 30 seconds<br/>as the rules flip out from under you.</b></p>
@@ -137,11 +137,11 @@
 ### Option A: Download the prebuilt build (easiest)
 
 1. Open the [Releases](https://github.com/nekonaru/flip30/releases) page
-2. Download `flip30-1.0.0-win64.zip` on Windows, or `flip30-1.0.0.love` on other platforms
-3. Windows: extract the zip anywhere and run `Flip30.exe`. Other platforms: install LÖVE 11.5, then run `love flip30-1.0.0.love`
+2. Download `flip30-1.1.0-win64.zip` on Windows, or `flip30-1.1.0.love` on other platforms
+3. Windows: extract the zip anywhere and run `Flip30.exe`. Other platforms: install LÖVE 11.5, then run `love flip30-1.1.0.love`
 
 > [!IMPORTANT]
-> Use `flip30-1.0.0-win64.zip` on Windows. Use `flip30-1.0.0.love` only with a separate LÖVE 11.5 install.
+> Use `flip30-1.1.0-win64.zip` on Windows. Use `flip30-1.1.0.love` only with a separate LÖVE 11.5 install.
 
 ### Option B: Build from source (for development / to read or change the code)
 
@@ -190,7 +190,7 @@ On Windows, the fastest install is `winget install --id Love2d.Love2d -e`.
 love .
 ```
 
-The menu opens and the game is fully playable. To produce the release artifacts (`.love` archive and Windows build), run `scripts/build.ps1 -Version 1.0.0` on Windows.
+The menu opens and the game is fully playable. To produce the release artifacts (`.love` archive and Windows build), run `scripts/build.ps1 -Version 1.1.0` on Windows.
 
 ---
 
