@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
   <img src="assets/brand/icon-512.png" alt="Flip30 logo" width="120" />
   <h1>Flip30: The Rules Change Every 30 Seconds</h1>
   <p><b>Catch the food, dodge the enemies, and adapt every 30 seconds<br/>as the rules flip out from under you.</b></p>
@@ -61,22 +61,24 @@
 
 | Feature | Description |
 | --- | --- |
-| **Player** | Slide the 40x40 sticky note with A/D or the arrow keys, clamped to the arena |
+| **Player** | Slide the 40x40 sticky note with A/D or the arrow keys, clamped to the arena. Eyes track where it is heading |
 | **Objects** | Green food is +10 points, red enemies cost 1 life, played on an 800x600 canvas |
 | **Difficulty** | Fall speed and spawn rate ramp up over time; you get three lives per run |
 | **High score** | Best score saved locally to `highscore.txt`, celebrated on a new record |
 | **Survival timer** | The HUD shows how long you have lasted, mm:ss |
+| **Combo** | Every 4 catches in a row raises the multiplier, up to x5; an enemy hit resets it |
 | **Two rules at two minutes** | Past 2:00, two rules run at once; they never share a tag |
 | **Pause** | Press P to freeze the action and P again to resume |
+| **Mute** | Press M to silence SFX, anywhere |
 
 ### Rules on a timer
 
 | Feature | Description |
 | --- | --- |
 | **Thirty second flips** | Every 30 seconds the active rule is reverted and a random one is applied |
-| **Eight rules** | KONTROL TERBALIK, GRAVITASI MATI, GRAVITASI NAIK, MUSUH JADI POIN, TUKAR WARNA, LAYAR GELAP, SEMUA 2X CEPAT, TIDAK BISA BERHENTI |
+| **Ten rules** | KONTROL TERBALIK, GRAVITASI MATI, GRAVITASI NAIK, MUSUH JADI POIN, TUKAR WARNA, LAYAR GELAP, SEMUA 2X CEPAT, TIDAK BISA BERHENTI, HUJAN, SKOR GANDA |
 | **Fair picks** | Never the same rule twice in a row; rules sharing a tag are never active together |
-| **Announcement banner** | Big two second banner while the action slows to 0.3x |
+| **Announcement banner** | Big two second banner with a description line while the action slows to 0.3x |
 | **Countdown bar** | Thin timer bar across the top of the screen |
 
 ### Look and feel
@@ -98,7 +100,7 @@
 
 | Feature | Description |
 | --- | --- |
-| **Headless tests** | 197 assertions run under LuaJIT in CI |
+| **Headless tests** | 227 assertions run under LuaJIT in CI |
 | **Formatted code** | StyLua enforced locally and in CI |
 | **Artwork mode** | Deterministic `--screenshot` captures used for this README |
 | **Responsive canvas** | 800x600 virtual canvas letterboxed to any window size |
@@ -137,11 +139,11 @@
 ### Option A: Download the prebuilt build (easiest)
 
 1. Open the [Releases](https://github.com/nekonaru/flip30/releases) page
-2. Download `flip30-1.1.0-win64.zip` on Windows, or `flip30-1.1.0.love` on other platforms
-3. Windows: extract the zip anywhere and run `Flip30.exe`. Other platforms: install LÖVE 11.5, then run `love flip30-1.1.0.love`
+2. Download `flip30-1.2.0-win64.zip` on Windows, or `flip30-1.2.0.love` on other platforms
+3. Windows: extract the zip anywhere and run `Flip30.exe`. Other platforms: install LÖVE 11.5, then run `love flip30-1.2.0.love`
 
 > [!IMPORTANT]
-> Use `flip30-1.1.0-win64.zip` on Windows. Use `flip30-1.1.0.love` only with a separate LÖVE 11.5 install.
+> Use `flip30-1.2.0-win64.zip` on Windows. Use `flip30-1.2.0.love` only with a separate LÖVE 11.5 install.
 
 ### Option B: Build from source (for development / to read or change the code)
 
@@ -190,7 +192,7 @@ On Windows, the fastest install is `winget install --id Love2d.Love2d -e`.
 love .
 ```
 
-The menu opens and the game is fully playable. To produce the release artifacts (`.love` archive and Windows build), run `scripts/build.ps1 -Version 1.1.0` on Windows.
+The menu opens and the game is fully playable. To produce the release artifacts (`.love` archive and Windows build), run `scripts/build.ps1 -Version 1.2.0` on Windows.
 
 ---
 
@@ -209,7 +211,8 @@ The menu opens and the game is fully playable. To produce the release artifacts 
 
 - **Move**: A/D or the arrow keys
 - **Pause**: P to pause, P to resume; ESC to menu
-- **Catch food**: green note, +10 points
+- **Mute**: M, anywhere
+- **Catch food**: green note, +10 points, and a combo streak builds up to x5
 - **Avoid enemies**: red triangle, -1 life, you start with 3
 - **Survive**: the longer you last, the faster the game gets; past 2:00 two rules can run at once
 - **Restart**: Enter or Space on the game over screen; Esc returns to the menu or quits

@@ -2,6 +2,23 @@
 
 Changes to Flip30 are documented here. English is the source; Indonesian ([CHANGELOG.id.md](CHANGELOG.id.md)) is a faithful translation kept in sync.
 
+## v1.2.0
+
+The biggest upgrade yet: combo scoring, two new rules, and the richest presentation so far.
+
+### New features
+
+- **Combo streak.** Every 4 catches in a row raises the score multiplier by one, up to x5. An enemy hit resets it. The best combo ever is saved locally and shown at game over.
+- **Mute.** Press M to silence all SFX, anywhere.
+- **Ten rules.** Two new rules: `HUJAN` (double object spawn rate, tag `spawn`) and `SKOR GANDA` (double score gains, tag `scoring`). Every rule now carries an in-game Indonesian description shown under the banner text.
+- **Sticky note eyes.** The player's eyes track its direction of travel, with an idle bob, and squash and stretch on impacts.
+- **Richer look.** Pre-rendered gradient arena with dot grid and vignette, additive glow halos, spinning or wobbling falling objects, chip-based HUD (score, lives, rule pill, survival timer, combo chip, mute chip, 2x chip in the two-rule phase), drifting silhouettes behind the menu, banner with description line and glowing border, and a pitch that varies per tag for the rule-swap jingle.
+
+### Improvements
+
+- **Release tooling.** `scripts/build.ps1` parses the current changelog shape, emits bilingual English and Indonesian release notes with Install / Update and SHA-256 tables, and bundles the Indonesian docs into the Windows build.
+- **Headless tests.** 227 assertions including dual-rule escalation and combo-multiplier coverage.
+
 ## v1.1.0
 
 The second release of Flip30, focused on feel, the interface, and the late game.

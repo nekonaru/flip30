@@ -2,6 +2,23 @@
 
 Perubahan Flip30 didokumentasikan di sini. Bahasa Inggris adalah sumbernya; Bahasa Indonesia (file ini) adalah terjemahan yang selalu selaras.
 
+## v1.2.0
+
+Upgrade terbesar sejauh ini: combo scoring, dua aturan baru, dan presentasi paling kaya.
+
+### Fitur baru
+
+- **Streak combo.** Setiap 4 tangkapan berturut-turut menaikkan multiplier skor sebesar satu level, maksimal x5. Kena musuh meresetnya. Combo terbaik sepanjang masa disimpan secara lokal dan ditampilkan di layar game over.
+- **Mute.** Tekan M untuk membisukan semua SFX, di mana pun.
+- **Sepuluh aturan.** Dua aturan baru: `HUJAN` (laju spawn dua kali lipat, tag `spawn`) dan `SKOR GANDA` (semua poin dikali dua, tag `scoring`). Setiap aturan sekarang membawa deskripsi Indonesia yang tampil di bawah teks banner.
+- **Mata sticky note.** Mata player mengikuti arah gerak, dengan bob idle dan squash and stretch saat kena hit.
+- **Tampilan lebih kaya.** Arena gradasi yang di-prerender dengan dot grid dan vignette, glow halo additive, objek jatuh berputar atau bergoyang, HUD chip (skor, nyawa, pill aturan, timer bertahan, chip combo, chip mute, chip 2x di fase dua aturan), siluet jatuh di belakang menu, banner dengan garis deskripsi dan border neon, dan pitch SFX swap berbeda per tag.
+
+### Peningkatan
+
+- **Peralatan rilis.** `scripts/build.ps1` membaca format changelog terkini, menghasilkan release notes dwi-bahasa Inggris dan Indonesia dengan Install / Update dan tabel SHA-256, dan menyertakan dokumen Indonesia ke dalam build Windows.
+- **Test headless.** 227 assertion termasuk cakupan eskalasi dua aturan dan combo multiplier.
+
 ## v1.1.0
 
 Rilis kedua Flip30, fokus pada feel, antarmuka, dan fase late game.
