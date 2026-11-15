@@ -1,8 +1,9 @@
 -- src/spawner.lua
--- Spawns and moves falling objects: FOOD (green, +10) and ENEMY (red, -1 life).
+-- Spawns and moves falling objects: FOOD (green note, +10) and ENEMY (red spike, -1 life).
 -- TUKAR WARNA only repaints them; shape and behaviour follow `kind`, never color.
 
 local world = require("src.world")
+local theme = require("src.theme")
 
 local spawner = {}
 
@@ -12,12 +13,12 @@ spawner.ENEMY = "enemy"
 local OBJECT_SIZE = 22
 local FOOD_CHANCE = 0.6
 
-local COLOR_FOOD = { 0.24, 0.86, 0.54 } -- green
-local COLOR_ENEMY = { 1.00, 0.30, 0.36 } -- red
+local TIME = 0 -- animation clock, advanced in update()
 
 function spawner.reset()
   spawner.objects = {}
   spawner.timer = 0.4 -- first object arrives quickly
+  TIME = 0
 end
 
 local function spawn_one()
@@ -29,12 +30,15 @@ local function spawn_one()
     x = x,
     y = y,
     size = OBJECT_SIZE,
+    seed = math.random() * math.pi * 2, -- per-object pulse phase
+    spin = (math.random() < 0.5 and -1 or 1) * (0.8 + math.random() * 0.6),
   })
 end
 
 -- Advances timers and object motion. Returns a list of events
 -- ({ type = "enemy_escaped" | "food_escaped", x = ... }) for the game module.
 function spawner.update(dt)
+  TIME = TIME + dt
   local events = {}
   spawner.timer = spawner.timer - dt
   if spawner.timer <= 0 then
@@ -46,6 +50,7 @@ function spawner.update(dt)
   for i = #spawner.objects, 1, -1 do
     local obj = spawner.objects[i]
     obj.y = obj.y + vy * dt
+    obj.rot = (obj.rot or 0) + (obj.spin or 0) * dt
     local off_screen = (world.fall_direction == 1 and obj.y > 600 + OBJECT_SIZE)
       or (world.fall_direction == -1 and obj.y < -OBJECT_SIZE)
     if off_screen then
@@ -78,6 +83,9 @@ function spawner.collectHits(player)
   return hits
 end
 
+local COLOR_FOOD = theme.green
+local COLOR_ENEMY = theme.red
+
 local function paint_for(kind)
   -- TUKAR WARNA swaps the palette; behaviour keeps following `kind`.
   local show_food = kind == spawner.FOOD
@@ -87,36 +95,50 @@ local function paint_for(kind)
   return show_food and COLOR_FOOD or COLOR_ENEMY
 end
 
+-- Additive glow halo behind each object; cheap enough for a handful of objects.
+local function draw_glow(obj, color)
+  local pulse = 0.65 + 0.35 * math.sin(TIME * 4 + (obj.seed or 0))
+  local radius = obj.size * (0.9 + 0.35 * pulse)
+  love.graphics.setBlendMode("add")
+  love.graphics.setColor(color[1], color[2], color[3], 0.28 * pulse)
+  love.graphics.circle("fill", obj.x, obj.y, radius)
+  love.graphics.setBlendMode("alpha")
+end
+
 function spawner.draw()
   for _, obj in ipairs(spawner.objects) do
     local color = paint_for(obj.kind)
+    draw_glow(obj, color)
     love.graphics.setColor(color[1], color[2], color[3], 1)
 
     if obj.kind == spawner.FOOD then
-      love.graphics.circle("fill", obj.x, obj.y, obj.size * 0.5)
-      love.graphics.setColor(1, 1, 1, 0.35)
-      love.graphics.circle("fill", obj.x - obj.size * 0.15, obj.y - obj.size * 0.15, obj.size * 0.18)
+      -- Yellow-green note, slight tumble so it reads as catching something physical
+      love.graphics.push()
+      love.graphics.translate(obj.x, obj.y)
+      love.graphics.rotate(obj.rot or 0)
+      local s = obj.size
+      love.graphics.rectangle("fill", -s * 0.5, -s * 0.5, s, s, 5, 5)
+      love.graphics.setColor(1, 1, 1, 0.4)
+      love.graphics.rectangle("fill", -s * 0.32, -s * 0.32, s * 0.64, s * 0.3, 3, 3)
+      love.graphics.setColor(0, 0, 0, 0.25)
+      love.graphics.setLineWidth(2)
+      love.graphics.rectangle("line", -s * 0.5, -s * 0.5, s, s, 5, 5)
+      love.graphics.setLineWidth(1)
+      love.graphics.pop()
     else
-      local r = obj.size * 0.62
-      love.graphics.polygon(
-        "fill",
-        obj.x,
-        obj.y - r,
-        obj.x + r * 0.95,
-        obj.y + r * 0.75,
-        obj.x - r * 0.95,
-        obj.y + r * 0.75
-      )
-      love.graphics.setColor(1, 1, 1, 0.25)
-      love.graphics.polygon(
-        "fill",
-        obj.x,
-        obj.y - r * 0.55,
-        obj.x + r * 0.5,
-        obj.y + r * 0.45,
-        obj.x - r * 0.5,
-        obj.y + r * 0.45
-      )
+      -- Red spike with a slow wobble spin
+      local r = obj.size * 0.68
+      local wobble = (obj.rot or 0) * 0.35 + math.sin(TIME * 2.2 + obj.seed) * 0.18
+      love.graphics.push()
+      love.graphics.translate(obj.x, obj.y)
+      love.graphics.rotate(wobble)
+      love.graphics.setColor(color[1], color[2], color[3], 1)
+      love.graphics.polygon("fill", 0, -r, r * 0.95, r * 0.72, -r * 0.95, r * 0.72)
+      love.graphics.setColor(1, 1, 1, 0.3)
+      love.graphics.polygon("fill", 0, -r * 0.55, r * 0.48, r * 0.42, -r * 0.48, r * 0.42)
+      love.graphics.setColor(0, 0, 0, 0.3)
+      love.graphics.polygon("line", 0, -r, r * 0.95, r * 0.72, -r * 0.95, r * 0.72)
+      love.graphics.pop()
     end
   end
   love.graphics.setColor(1, 1, 1, 1)

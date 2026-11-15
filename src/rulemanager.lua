@@ -34,6 +34,21 @@ local function tags_conflict(a, b)
   return false
 end
 
+-- Sound flavour per tag family, passed to the swap jingle
+local TAG_PITCH = {
+  control = 0.8,
+  gravity = 1.0,
+  speed = 1.25,
+  scoring = 0.9,
+  colors = 1.1,
+  vision = 0.7,
+}
+
+local function tag_pitch(rule)
+  local tags = tags_of(rule)
+  return TAG_PITCH[tags[1]] or 1.0
+end
+
 -- Validates and registers a rule table. Returns true when accepted.
 function rulemanager.registerRule(rule, source)
   source = source or "unknown"
@@ -183,7 +198,7 @@ function rulemanager.swap(ctx)
       ctx.ui.showBanner(label)
     end
     if ctx and ctx.sfx and ctx.sfx.play then
-      pcall(ctx.sfx.play, "swap")
+      pcall(ctx.sfx.play, "swap", tag_pitch(picked[1]))
     end
   else
     if ctx and ctx.ui and ctx.ui.showBanner then
