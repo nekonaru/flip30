@@ -1,4 +1,4 @@
--- SEMUA 2X CEPAT: everything moves twice as fast — fall speed, spawn
+-- SEMUA 2X CEPAT: everything moves twice as fast: fall speed, spawn
 -- rate, player speed. Hold onto your hat.
 return {
   name = "SEMUA 2X CEPAT",

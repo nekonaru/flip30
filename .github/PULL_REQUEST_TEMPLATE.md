@@ -4,10 +4,10 @@
 
 ## Type of change
 
-- [ ] `feat` — new gameplay, rule, or UI
-- [ ] `fix` — bug fix
-- [ ] `docs` — documentation only
-- [ ] `test` — test suite only
+- [ ] `feat`: new gameplay, rule, or UI
+- [ ] `fix`: bug fix
+- [ ] `docs`: documentation only
+- [ ] `test`: test suite only
 - [ ] `refactor` / `chore` / `ci`
 
 ## Checklist

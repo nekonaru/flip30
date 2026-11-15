@@ -6,11 +6,11 @@ your environment, our code style, and what we look for in pull requests.
 ## Development setup
 
 1. Install [LÖVE](https://love2d.org) 11.5.
-2. Install [LuaJIT](https://luajit.org) 2.1 — the same Lua VM LÖVE ships — for
+2. Install [LuaJIT](https://luajit.org) 2.1, the same Lua VM LÖVE ships, for the
    the headless test suite.
 3. Install [StyLua](https://github.com/JohnnyMorganz/StyLua) 2.x for formatting
    (config: `stylua.toml`).
-4. On Windows, steps 1–3 are three commands:
+4. On Windows, steps 1-3 are three commands:
 
    ```powershell
    winget install --id Love2d.Love2d -e
@@ -26,8 +26,8 @@ your environment, our code style, and what we look for in pull requests.
    love .
    ```
 
-CI (`.github/workflows/ci.yml`) runs exactly the local commands — the test
-suite and `stylua --check` — so green locally means green on GitHub.
+CI (`.github/workflows/ci.yml`) runs exactly the local commands, the test
+suite and `stylua --check`, so green locally means green on GitHub.
 
 ## Before you commit
 
@@ -54,7 +54,7 @@ Rules are self-contained files in `rules/`. Read the
 1. Create `rules/my_rule.lua` returning a table with `name`, `tags`, `apply`,
    `revert` (and optionally `update` / `draw`).
 2. `apply` and `revert` **must** be inverse operations. Restoring state is not
-   optional — leaked state breaks every later rule.
+   optional: leaked state breaks every later rule.
 3. Add the file to the `bundled_rule_files` list in `tests/headless_tests.lua`.
 4. Run the test suite. If your rule flips something, add a case that verifies
    `apply` → `revert` returns to the defaults.

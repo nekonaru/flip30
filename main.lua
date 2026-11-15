@@ -1,4 +1,4 @@
--- Flip30 — entry point.
+-- Flip30: entry point.
 -- All game logic lives in src/. This file only wires LÖVE callbacks to the
 -- game module and handles the developer-only `--screenshot` mode used to
 -- regenerate README artwork deterministically:
