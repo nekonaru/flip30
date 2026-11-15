@@ -4,9 +4,18 @@ Perubahan Flip30 didokumentasikan di sini. Bahasa Inggris adalah sumbernya; Baha
 
 ## Belum rilis
 
+### Fitur baru
+
+- **Dua aturan di menit kedua.** Setelah menit ke-2, dua aturan aktif bersamaan; keduanya tidak boleh punya tag yang sama, dan HUD menampilkan chip "2x ATURAN".
+- **Pause.** Tekan P untuk menjeda aksi dan P lagi untuk lanjut; dunia, timer aturan, dan banner semuanya membeku.
+- **Mata sticky note.** Mata player mengikuti arah gerak, dengan bob idle dan squash and stretch saat kena hit.
+- **Trauma shake dan hit-stop.** Hit musuh memicu screen shake berbasis trauma dan freeze hit-stop 60 ms.
+- **Tampilan lebih kaya.** Palet warna brand, arena gradasi, dot grid, vignette, glow halo untuk objek, HUD chip (skor, nyawa, BERTAHAN), siluet jatuh di belakang menu, dan pitch SFX swap berbeda per tag.
+
 ### Peningkatan
 
-- **Dokumen mengikuti satu standar penulisan.** README dan CHANGELOG sekarang tersedia dalam Bahasa Inggris dan Bahasa Indonesia secara selaras, release notes memuat checksum SHA-256 dan daftar toolchain, dan wording di seluruh repository dirapikan menjadi kalimat pendek dan lugas.
+- **Peralatan rilis.** `scripts/build.ps1` membaca format changelog terkini, menghasilkan release notes dwi-bahasa Inggris dan Indonesia dengan Install / Update dan tabel SHA-256, dan menyertakan dokumen Indonesia ke dalam build Windows.
+- **Test headless.** 197 assertion termasuk cakupan eskalasi dua aturan.
 
 ## v1.0.0
 

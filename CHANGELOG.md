@@ -4,9 +4,18 @@ Changes to Flip30 are documented here. English is the source; Indonesian ([CHANG
 
 ## Unreleased
 
+### New features
+
+- **Two rules at two minutes.** Past the two minute mark, two rules are active at once; they never share a tag, and the HUD shows a "2x ATURAN" chip.
+- **Pause.** Press P to pause the action and P again to resume; the world, rule timer and banner all freeze.
+- **Sticky-note eyes.** The player's eyes track the direction of motion, with an idle bob and squash and stretch on impact.
+- **Trauma shake and hit-stop.** Enemy hits fire trauma-based screen shake and a 60 ms hit-stop freeze.
+- **Richer look.** Brand-derived palette, gradient arena, dot grid, vignette, glow halos for objects, chip-based HUD showing score, lives, and survival time, drifting silhouettes behind the menu, and a per-tag pitch for the rule-swap jingle.
+
 ### Improvements
 
-- **Docs follow one house style.** README and CHANGELOG now exist in English and Indonesian in sync, the release notes carry SHA-256 checksums and a toolchain list, and wording across the repository was trimmed to short, plain sentences.
+- **Release tooling.** `scripts/build.ps1` parses the current changelog shape, emits bilingual English and Indonesian release notes with Install / Update and SHA-256 tables, and bundles the Indonesian docs into the Windows build.
+- **Headless tests.** 197 assertions including dual-rule escalation coverage.
 
 ## v1.0.0
 
