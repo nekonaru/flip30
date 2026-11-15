@@ -65,6 +65,9 @@
 | **Objek** | Makanan hijau bernilai +10 poin, musuh merah mengurangi 1 nyawa, dimainkan di kanvas 800x600 |
 | **Kesulitan** | Kecepatan jatuh dan laju spawn naik seiring waktu; kamu punya tiga nyawa per sesi |
 | **Skor terbaik** | Skor tertinggi disimpan secara lokal di `highscore.txt`, dirayakan saat rekor baru |
+| **Timer bertahan** | HUD menampilkan berapa lama kamu bertahan, mm:ss |
+| **Dua aturan di menit kedua** | Setelah menit ke-2, dua aturan aktif bersamaan; keduanya tidak boleh punya tag yang sama |
+| **Pause** | Tekan P untuk menjeda aksi, tekan P lagi untuk lanjut |
 
 ### Aturan yang berganti timer
 
@@ -95,7 +98,7 @@
 
 | Fitur | Deskripsi |
 | --- | --- |
-| **Test headless** | 193 assertion berjalan di bawah LuaJIT di CI |
+| **Test headless** | 197 assertion berjalan di bawah LuaJIT di CI |
 | **Kode terformat** | StyLua diwajibkan secara lokal dan di CI |
 | **Mode artwork** | Capture `--screenshot` deterministik yang dipakai di README ini |
 | **Kanvas responsif** | Virtual canvas 800x600 di-letterbox ke ukuran jendela apa pun |
@@ -205,9 +208,10 @@ Menu terbuka dan game langsung bisa dimainkan. Untuk menghasilkan artifact rilis
 ### Pemakaian sehari-hari
 
 - **Bergerak**: A/D atau tombol panah
-- **Tangkap makanan**: lingkaran hijau, +10 poin
+- **Pause**: P untuk menjeda, P untuk lanjut; ESC ke menu
+- **Tangkap makanan**: catatan hijau, +10 poin
 - **Hindari musuh**: segitiga merah, -1 nyawa, kamu mulai dengan 3
-- **Bertahan**: makin lama kamu bertahan, makin cepat gamenya
+- **Bertahan**: makin lama kamu bertahan, makin cepat gamenya; setelah menit ke-2 dua aturan bisa aktif bersamaan
 - **Main lagi**: Enter atau Space di layar game over; Esc kembali ke menu atau keluar
 - **Skor terbaik**: tampil di menu dan layar game over; tersimpan otomatis
 
@@ -278,7 +282,7 @@ stylua --check .
 
 | Check | Requirement |
 | --- | --- |
-| `luajit tests/headless_tests.lua` | Semua 193 assertion lolos |
+| `luajit tests/headless_tests.lua` | Semua 197 assertion lolos |
 | `stylua --check .` | Tidak ada output (tidak ada diff) |
 
 Formatting dikonfigurasi di `stylua.toml`.

@@ -2,17 +2,26 @@
 
 Perubahan Flip30 didokumentasikan di sini. Bahasa Inggris adalah sumbernya; Bahasa Indonesia (file ini) adalah terjemahan yang selalu selaras.
 
-## Unreleased
+## Belum rilis
 
-### Improvements
+### Fitur baru
 
-- **Dokumen mengikuti satu standar penulisan.** README dan CHANGELOG sekarang tersedia dalam Bahasa Inggris dan Bahasa Indonesia secara selaras, release notes memuat checksum SHA-256 dan daftar toolchain, dan wording di seluruh repository dirapikan menjadi kalimat pendek dan lugas.
+- **Dua aturan di menit kedua.** Setelah menit ke-2, dua aturan aktif bersamaan; keduanya tidak boleh punya tag yang sama, dan HUD menampilkan chip "2x ATURAN".
+- **Pause.** Tekan P untuk menjeda aksi dan P lagi untuk lanjut; dunia, timer aturan, dan banner semuanya membeku.
+- **Mata sticky note.** Mata player mengikuti arah gerak, dengan bob idle dan squash and stretch saat kena hit.
+- **Trauma shake dan hit-stop.** Hit musuh memicu screen shake berbasis trauma dan freeze hit-stop 60 ms.
+- **Tampilan lebih kaya.** Palet warna brand, arena gradasi, dot grid, vignette, glow halo untuk objek, HUD chip (skor, nyawa, BERTAHAN), siluet jatuh di belakang menu, dan pitch SFX swap berbeda per tag.
+
+### Peningkatan
+
+- **Peralatan rilis.** `scripts/build.ps1` membaca format changelog terkini, menghasilkan release notes dwi-bahasa Inggris dan Indonesia dengan Install / Update dan tabel SHA-256, dan menyertakan dokumen Indonesia ke dalam build Windows.
+- **Test headless.** 197 assertion termasuk cakupan eskalasi dua aturan.
 
 ## v1.0.0
 
 Rilis publik pertama Flip30.
 
-### New features
+### Fitur baru
 
 - **Gameplay inti.** Arena 800x600 dengan player sticky note 40x40 lewat A/D atau tombol panah, makanan bernilai +10 dan musuh mengurangi 1 nyawa, dan kurva kesulitan yang menaikkan kecepatan jatuh dan laju spawn seiring waktu.
 - **Sistem aturan.** Aturan adalah satu file Lua di `rules/`, berganti otomatis setiap 30 detik dengan banner dua detik dan slow motion 0.3x. Aturan yang sama tidak pernah aktif dua kali berturut-turut, dan aturan dengan tag yang sama tidak pernah aktif bersamaan.
@@ -24,7 +33,7 @@ Rilis publik pertama Flip30.
 - **Mode artwork deterministik.** `love . --screenshot out.png --frames N [--force-rule "NAME"]` menghasilkan capture yang dipakai di repository ini.
 - **Open source.** Lisensi MIT.
 
-### Improvements
+### Peningkatan
 
 - **Kanvas letterbox.** Virtual canvas 800x600 di-letterbox dan di-scale ke ukuran jendela apa pun.
 - **Test suite headless.** 193 assertion di bawah LuaJIT, dijalankan di CI bersama pengecekan format StyLua.

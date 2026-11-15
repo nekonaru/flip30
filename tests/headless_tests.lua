@@ -206,6 +206,51 @@ rulemanager.max_active = 2
 rulemanager.swap(ctx)
 check(#rulemanager.active == 1, "tag conflict prevents two gravity rules active at once")
 
+-- two-minute escalation: two tag-disjoint rules activate together
+rulemanager.rules = {}
+for _, rule in ipairs(bundled_rules) do
+  rulemanager.registerRule(rule, "bundled")
+end
+rulemanager.active = {}
+rulemanager.last_name = nil
+rulemanager.max_active = 2
+rulemanager.swap(ctx)
+check(#rulemanager.active == 2, "two-minute escalation picks two rules")
+if #rulemanager.active == 2 then
+  local a, b = rulemanager.active[1], rulemanager.active[2]
+  local clash = false
+  for _, t in ipairs(a.tags or {}) do
+    for _, u in ipairs(b.tags or {}) do
+      if t == u then
+        clash = true
+      end
+    end
+  end
+  check(not clash, "two-minute escalation never picks two same-tag rules")
+end
+-- a gravity pair can never be chosen even at max_active = 2
+rulemanager.rules = {}
+for _, rule in ipairs(bundled_rules) do
+  if rule.name == "GRAVITASI MATI" or rule.name == "GRAVITASI NAIK" then
+    rulemanager.registerRule(rule, "bundled")
+  end
+end
+rulemanager.active = {}
+rulemanager.last_name = nil
+rulemanager.max_active = 2
+rulemanager.swap(ctx)
+check(#rulemanager.active == 1, "max_active=2 still blocks the gravity pair")
+-- restore full state for the next scenario
+rulemanager.rules = {}
+for _, rule in ipairs(bundled_rules) do
+  rulemanager.registerRule(rule, "bundled")
+end
+rulemanager.active = {}
+rulemanager.last_name = nil
+rulemanager.max_active = 1
+rulemanager.swap(ctx)
+check(#rulemanager.active == 1, "max_active=1 restores single rule")
+
 -- resetToDefaults restores player and world after rules were applied
 rulemanager.max_active = 1
 rulemanager.swap(ctx) -- applies GRAVITASI MATI or NAIK

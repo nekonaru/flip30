@@ -65,6 +65,9 @@
 | **Objects** | Green food is +10 points, red enemies cost 1 life, played on an 800x600 canvas |
 | **Difficulty** | Fall speed and spawn rate ramp up over time; you get three lives per run |
 | **High score** | Best score saved locally to `highscore.txt`, celebrated on a new record |
+| **Survival timer** | The HUD shows how long you have lasted, mm:ss |
+| **Two rules at two minutes** | Past 2:00, two rules run at once; they never share a tag |
+| **Pause** | Press P to freeze the action and P again to resume |
 
 ### Rules on a timer
 
@@ -95,7 +98,7 @@
 
 | Feature | Description |
 | --- | --- |
-| **Headless tests** | 193 assertions run under LuaJIT in CI |
+| **Headless tests** | 197 assertions run under LuaJIT in CI |
 | **Formatted code** | StyLua enforced locally and in CI |
 | **Artwork mode** | Deterministic `--screenshot` captures used for this README |
 | **Responsive canvas** | 800x600 virtual canvas letterboxed to any window size |
@@ -205,9 +208,10 @@ The menu opens and the game is fully playable. To produce the release artifacts 
 ### Everyday use
 
 - **Move**: A/D or the arrow keys
-- **Catch food**: green circle, +10 points
+- **Pause**: P to pause, P to resume; ESC to menu
+- **Catch food**: green note, +10 points
 - **Avoid enemies**: red triangle, -1 life, you start with 3
-- **Survive**: the longer you last, the faster the game gets
+- **Survive**: the longer you last, the faster the game gets; past 2:00 two rules can run at once
 - **Restart**: Enter or Space on the game over screen; Esc returns to the menu or quits
 - **High score**: shown on the menu and the game over screen; saved automatically
 
@@ -278,7 +282,7 @@ stylua --check .
 
 | Check | Requirement |
 | --- | --- |
-| `luajit tests/headless_tests.lua` | All 193 assertions pass |
+| `luajit tests/headless_tests.lua` | All 197 assertions pass |
 | `stylua --check .` | No output (no diffs) |
 
 Formatting is configured in `stylua.toml`.
