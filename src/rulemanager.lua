@@ -84,6 +84,10 @@ local function load_bundled_rules()
   if not (love and love.filesystem) then
     return
   end
+  -- Mod files in the save directory share the merged rules/ listing.
+  -- Skip them here so only genuine bundled (trusted) rules get the full environment.
+  local ok_mod, modloader = pcall(require, "src.modloader")
+  local modloader_ok = ok_mod and modloader and modloader.isModPath and modloader.loadMods
   local ok, items = pcall(love.filesystem.getDirectoryItems, "rules")
   if not (ok and items) then
     print("[rulemanager] could not list rules/: " .. tostring(items))
@@ -93,15 +97,18 @@ local function load_bundled_rules()
   for _, file in ipairs(items) do
     if file:match("%.lua$") then
       local path = "rules/" .. file
-      local chunk, load_err = love.filesystem.load(path)
-      if not chunk then
-        print("[rulemanager] cannot load " .. path .. ": " .. tostring(load_err))
-      else
-        local ok_call, result = pcall(chunk)
-        if ok_call then
-          rulemanager.registerRule(result, path)
+      local skip = modloader_ok and modloader.isModPath(path) or false
+      if not skip then
+        local chunk, load_err = love.filesystem.load(path)
+        if not chunk then
+          print("[rulemanager] cannot load " .. path .. ": " .. tostring(load_err))
         else
-          print("[rulemanager] error loading " .. path .. ": " .. tostring(result))
+          local ok_call, result = pcall(chunk)
+          if ok_call then
+            rulemanager.registerRule(result, path)
+          else
+            print("[rulemanager] error loading " .. path .. ": " .. tostring(result))
+          end
         end
       end
     end
