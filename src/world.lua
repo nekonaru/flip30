@@ -23,6 +23,8 @@ local DEFAULTS = {
   enemy_life_damage = 1,
   swap_colors = false, -- TUKAR WARNA
   darkness = 0, -- LAYAR GELAP strength, 0..1
+  spawn_rate_mul = 1, -- HUJAN: multiplier on the spawn rate
+  score_mul = 1, -- SKOR GANDA: multiplier on score gains
 
   elapsed = 0, -- play time in seconds, drives difficulty
 }
@@ -49,7 +51,20 @@ function world.currentSpawnInterval()
   if interval < world.spawn_interval_min then
     interval = world.spawn_interval_min
   end
-  return interval / world.speed_mul
+  return interval / (world.speed_mul * world.spawn_rate_mul)
+end
+
+-- Combo multiplier from a streak of consecutive catches.
+-- Every 4 catches in a row raises the multiplier, capped at x5.
+function world.comboMultiplier(streak)
+  if type(streak) ~= "number" or streak < 0 then
+    return 1
+  end
+  local level = math.floor(streak / 4) + 1
+  if level > 5 then
+    level = 5
+  end
+  return level
 end
 
 world.reset()

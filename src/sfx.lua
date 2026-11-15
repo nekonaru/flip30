@@ -6,6 +6,7 @@ local sfx = {}
 
 local sample_rate = 22050
 local sources = {}
+sfx.muted = false
 
 local function make_tone(freq_from, freq_to, duration, wave, volume)
   local samples = math.floor(sample_rate * duration)
@@ -49,6 +50,9 @@ function sfx.load()
 end
 
 function sfx.play(name, pitch)
+  if sfx.muted then
+    return
+  end
   local source = sources[name]
   if source then
     source:stop()

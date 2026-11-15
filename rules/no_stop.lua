@@ -3,6 +3,7 @@
 return {
   name = "TIDAK BISA BERHENTI",
   tags = { "control" },
+  hint = "Kamu terus bergerak",
   apply = function(ctx)
     ctx.player.always_move = true
     ctx.player.last_dir = ctx.player.last_dir or 1

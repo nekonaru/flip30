@@ -25,6 +25,7 @@ end
 return {
   name = "LAYAR GELAP",
   tags = { "vision" },
+  hint = "Hanya cahaya di sekitar kamu",
   apply = function(ctx)
     ctx.world.darkness = 1
   end,

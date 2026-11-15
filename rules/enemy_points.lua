@@ -3,6 +3,7 @@
 return {
   name = "MUSUH JADI POIN",
   tags = { "scoring" },
+  hint = "Musuh = +15, lari = -5",
   apply = function(ctx)
     ctx.world.enemy_gives_points = true
   end,

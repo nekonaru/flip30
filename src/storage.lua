@@ -5,6 +5,7 @@
 local storage = {}
 
 local FILE_NAME = "highscore.txt"
+local BEST_COMBO_FILE = "bestcombo.txt"
 
 -- Parses a raw file body into a non-negative integer score.
 -- Corrupt or missing data yields 0.
@@ -39,6 +40,29 @@ function storage.save(score)
     return false
   end
   local ok, written = pcall(love.filesystem.write, FILE_NAME, tostring(math.floor(score)))
+  return ok and written and true or false
+end
+
+function storage.loadBestCombo()
+  if not (love and love.filesystem and love.filesystem.getInfo) then
+    return 0
+  end
+  local ok, exists = pcall(love.filesystem.getInfo, BEST_COMBO_FILE)
+  if not ok or not exists then
+    return 0
+  end
+  local ok_read, data = pcall(love.filesystem.read, BEST_COMBO_FILE)
+  if not ok_read then
+    return 0
+  end
+  return storage.parse(data)
+end
+
+function storage.saveBestCombo(combo)
+  if not (love and love.filesystem) then
+    return false
+  end
+  local ok, written = pcall(love.filesystem.write, BEST_COMBO_FILE, tostring(math.floor(combo)))
   return ok and written and true or false
 end
 

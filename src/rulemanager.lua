@@ -199,10 +199,10 @@ function rulemanager.swap(ctx)
     rulemanager.last_name = picked[#picked].name
     local label = picked[1].name
     if #picked > 1 then
-      label = label .. " +" .. (#picked - 1)
+      label = label .. " + " .. picked[2].name
     end
     if ctx and ctx.ui and ctx.ui.showBanner then
-      ctx.ui.showBanner(label)
+      ctx.ui.showBanner(label, picked[1].hint)
     end
     if ctx and ctx.sfx and ctx.sfx.play then
       pcall(ctx.sfx.play, "swap", tag_pitch(picked[1]))

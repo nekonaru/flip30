@@ -41,6 +41,27 @@ check(world.currentSpawnInterval() >= world.spawn_interval_min / world.speed_mul
 world.reset()
 check(world.elapsed == 0 and world.currentFallSpeed() == 200, "world.reset restores defaults")
 
+-- combo multiplier
+check(world.comboMultiplier(0) == 1, "combo 0 is level 1")
+check(world.comboMultiplier(3) == 1, "combo 3 is level 1")
+check(world.comboMultiplier(4) == 2, "combo 4 is level 2")
+check(world.comboMultiplier(8) == 3, "combo 8 is level 3")
+check(world.comboMultiplier(16) == 5, "combo 16 is level 5")
+check(world.comboMultiplier(100) == 5, "combo 100 caps at level 5")
+check(world.comboMultiplier(-1) == 1, "combo negative is level 1")
+check(world.comboMultiplier(nil) == 1, "combo nil is level 1")
+
+-- spawn_rate_mul scales the interval
+world.reset()
+world.spawn_rate_mul = 2
+check(world.currentSpawnInterval() <= 0.4, "HUJAN halves spawn interval")
+world.reset()
+
+-- score_mul does not break defaults
+world.reset()
+check(world.score_mul == 1, "score_mul defaults to 1")
+world.reset()
+
 -- ---------------------------------------------------------------- storage
 check(storage.parse("123") == 123, "storage.parse integer")
 check(storage.parse("  42\n") == 42, "storage.parse trims whitespace")
@@ -114,6 +135,8 @@ local function snapshot()
     enemy_life_damage = world.enemy_life_damage,
     swap_colors = world.swap_colors,
     darkness = world.darkness,
+    spawn_rate_mul = world.spawn_rate_mul,
+    score_mul = world.score_mul,
     dir = player.dir,
     always_move = player.always_move,
     last_dir = player.last_dir,
@@ -138,6 +161,8 @@ local bundled_rule_files = {
   "rules/dark_room.lua",
   "rules/all_fast.lua",
   "rules/no_stop.lua",
+  "rules/double_spawn.lua",
+  "rules/double_score.lua",
 }
 
 local ctx = { world = world, player = player, spawner = spawner, ui = nil, sfx = nil }
@@ -159,6 +184,8 @@ check(#bundled_rules == #bundled_rule_files, "all bundled rules load")
 for _, rule in ipairs(bundled_rules) do
   world.reset()
   player.reset()
+  -- every bundled rule must carry a non-empty hint
+  check(type(rule.hint) == "string" and #rule.hint > 0, "hint present: " .. tostring(rule.name))
   local before = snapshot()
   local ok_apply, err_apply = pcall(rule.apply, ctx)
   check(ok_apply, "apply does not error: " .. tostring(rule.name) .. " (" .. tostring(err_apply) .. ")")
