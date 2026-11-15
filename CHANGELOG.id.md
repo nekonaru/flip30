@@ -2,7 +2,9 @@
 
 Perubahan Flip30 didokumentasikan di sini. Bahasa Inggris adalah sumbernya; Bahasa Indonesia (file ini) adalah terjemahan yang selalu selaras.
 
-## Belum rilis
+## v1.1.0
+
+Rilis kedua Flip30, fokus pada feel, antarmuka, dan fase late game.
 
 ### Fitur baru
 

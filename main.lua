@@ -74,6 +74,9 @@ function love.draw()
   if screenshot_path then
     local path = screenshot_path
     screenshot_path = nil -- capture once
+    if not path:lower():match("%.png$") then
+      path = path .. ".png"
+    end
     love.graphics.captureScreenshot(function(imagedata)
       local ok, png = pcall(imagedata.encode, imagedata, "png")
       if ok and png then

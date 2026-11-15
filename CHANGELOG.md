@@ -2,7 +2,9 @@
 
 Changes to Flip30 are documented here. English is the source; Indonesian ([CHANGELOG.id.md](CHANGELOG.id.md)) is a faithful translation kept in sync.
 
-## Unreleased
+## v1.1.0
+
+The second release of Flip30, focused on feel, the interface, and the late game.
 
 ### New features
 
