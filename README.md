@@ -1,187 +1,352 @@
 <div align="center">
-  <img src="assets/brand/logo-main.png" alt="Flip30 logo — a yellow sticky note orbited by a cyan reload arrow, above the Flip30 wordmark" width="640">
+  <img src="assets/brand/icon-512.png" alt="Flip30 logo" width="120" />
+  <h1>Flip30: The Rules Change Every 30 Seconds</h1>
+  <p><b>Catch the food, dodge the enemies, and adapt every 30 seconds<br/>as the rules flip out from under you.</b></p>
 
-  # Flip30
-
-  **Aturan berubah tiap 30 detik.** *(The rules change every 30 seconds.)*
-
-  A fast arcade game for [LÖVE](https://love2d.org) 11.x: you slide a sticky
-  note along the bottom of the screen, catching food and dodging enemies — but
-  every 30 seconds the rules of reality are swapped for a new, random one.
-
-  [![CI](https://github.com/nekonaru/flip30/actions/workflows/ci.yml/badge.svg)](https://github.com/nekonaru/flip30/actions/workflows/ci.yml)
-  [![Latest release](https://img.shields.io/github/v/release/nekonaru/flip30)](https://github.com/nekonaru/flip30/releases/latest)
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-  [![LÖVE 11.5](https://img.shields.io/badge/L%C3%96VE-11.5-00a2ff)](https://love2d.org)
-  [![Lua](https://img.shields.io/badge/Lua-LuaJIT%202.1-000080)](https://www.lua.org)
-  [![Style: StyLua](https://img.shields.io/badge/code%20style-StyLua-000000)](https://github.com/JohnnyMorganz/StyLua)
+  <a href="https://github.com/nekonaru/flip30/releases"><img src="https://img.shields.io/github/v/release/nekonaru/flip30?style=flat-square&color=blue" alt="Release" /></a>
+  <a href="https://github.com/nekonaru/flip30/actions/workflows/ci.yml"><img src="https://github.com/nekonaru/flip30/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <img src="https://img.shields.io/badge/L%C3%96VE-11.5-00a2ff?style=flat-square" alt="LÖVE 11.5" />
+  <img src="https://img.shields.io/badge/Lua-LuaJIT-000080?style=flat-square" alt="LuaJIT" />
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-3DDC84?style=flat-square" alt="Platform" />
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License" />
+  <img src="https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square" alt="Status" />
 </div>
+
+<br />
+
+**English** | [Bahasa Indonesia](README.id.md)
+
+> [!NOTE]
+> Flip30 runs on LÖVE 11.5, a free, open-source 2D engine. To play, you need the prebuilt Windows download (includes everything) or a one-time LÖVE 11.5 install.
+
+---
+
+## Table of Contents
+
+- [About](#about)
+- [Screenshots](#screenshots)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [Development](#development)
+- [Testing](#testing)
+- [Continuous Integration](#continuous-integration)
+- [FAQ](#faq)
+- [Author](#author)
+- [License](#license)
 
 ---
 
 ## About
 
-Flip30 is a tiny, complete arcade game about adapting faster than your opponent.
-It starts off innocent enough: catch the green food, dodge the red enemies, beat
-your high score. Then the **Rule Manager** flips the entire rule set on a 30
-second timer, and suddenly control is reversed, gravity is dead, or touching
-enemies is worth points.
+**Flip30** is a small arcade survival game about adapting faster than the game can change. You slide a sticky note along the bottom of the screen, catching food and dodging enemies, and every 30 seconds the entire ruleset is swapped for a random new one. Everything runs locally with no account and no internet connection.
 
-Every rule is a single, self-contained Lua file in [`rules/`](rules) — adding a
-new rule never touches the core engine. See [docs/modding.md](docs/modding.md)
-to write your own.
+> _"The rules change every 30 seconds."_
+
+---
 
 ## Screenshots
 
-<div align="center">
-  <img src="assets/screenshots/menu.png" alt="Flip30 main menu" width="49%">
-  <img src="assets/screenshots/gameplay.png" alt="Flip30 gameplay — HUD with timer, hearts, score" width="49%">
-</div>
-
-## How to play
-
-| Input | Action |
+| Menu | Gameplay |
 | --- | --- |
-| `A` / `←` | Move left |
-| `D` / `→` | Move right |
-| `Enter` / `Space` | Start / restart |
-| `Esc` | Back to menu / quit |
+| ![Flip30 main menu](assets/screenshots/menu.png) | ![Flip30 gameplay with HUD, hearts, and the rule timer](assets/screenshots/gameplay.png) |
 
-- **Food (green)** → `+10` score
-- **Enemy (red)** → `-1` life (you start with **3**)
-- Every **30 seconds** the current rule is reverted and a random new one is
-  applied. The banner announces it; the action briefly slows to 0.3x.
-- Survive as long as you can. Your best score is saved locally.
+---
 
-## The rules
+## Features
 
-| Rule | Effect |
+### Core gameplay
+
+| Feature | Description |
 | --- | --- |
-| `KONTROL TERBALIK` | Controls are reversed — left is right and right is left. |
-| `GRAVITASI MATI` | Objects float down extremely slowly. |
-| `GRAVITASI NAIK` | Objects fall from the bottom upwards. |
-| `MUSUH JADI POIN` | Touching enemies scores `+15`. Enemies that leave the screen cost `-5`. |
-| `TUKAR WARNA` | Food and enemy colors are swapped. Behaviour is unchanged — your eyes lie. |
-| `LAYAR GELAP` | Only a small circle of light around the player is visible. |
-| `SEMUA 2X CEPAT` | Everything moves twice as fast: fall speed, spawn rate, the player. |
-| `TIDAK BISA BERHENTI` | The player can never stop moving. |
+| **Player** | Slide the 40x40 sticky note with A/D or the arrow keys, clamped to the arena |
+| **Objects** | Green food is +10 points, red enemies cost 1 life, played on an 800x600 canvas |
+| **Difficulty** | Fall speed and spawn rate ramp up over time; you get three lives per run |
+| **High score** | Best score saved locally to `highscore.txt`, celebrated on a new record |
 
-The first rule of the run is applied after 30 seconds; before that you play a
-normal game. Rules never repeat back-to-back, and rules that share a `tag`
-(e.g. two `gravity` rules) are never active simultaneously.
+### Rules on a timer
 
-## Download & run
+| Feature | Description |
+| --- | --- |
+| **Thirty second flips** | Every 30 seconds the active rule is reverted and a random one is applied |
+| **Eight rules** | KONTROL TERBALIK, GRAVITASI MATI, GRAVITASI NAIK, MUSUH JADI POIN, TUKAR WARNA, LAYAR GELAP, SEMUA 2X CEPAT, TIDAK BISA BERHENTI |
+| **Fair picks** | Never the same rule twice in a row; rules sharing a tag are never active together |
+| **Announcement banner** | Big two second banner while the action slows to 0.3x |
+| **Countdown bar** | Thin timer bar across the top of the screen |
 
-### Play the release build
+### Look and feel
 
-Grab the latest **`flip30-x.y.z.love`** from
-[GitHub Releases](https://github.com/nekonaru/flip30/releases) and run it with
-[LÖVE 11.5](https://love2d.org):
+| Feature | Description |
+| --- | --- |
+| **Juice** | Sparkles, screen shake, floating score popups, and a red flash when you are hit |
+| **Sound** | Synthesized SFX generated at load time, no audio files needed |
 
-```sh
-love flip30-1.0.0.love
-```
+### Modding
 
-A Windows build (`flip30-1.0.0-win64.zip`, no install required) is attached to
-every release as well.
+| Feature | Description |
+| --- | --- |
+| **Rules as data** | Each rule is one Lua file in `rules/`, no engine changes needed |
+| **Sandboxed mods** | Extra rules in the save directory `rules/` folder run without `os`, `io`, or `love` access |
+| **Example mod** | `examples/rules/gerak_pelan.lua`, a half-speed rule to copy as a starting point |
 
-### Run from source
+### Development
 
-```sh
+| Feature | Description |
+| --- | --- |
+| **Headless tests** | 193 assertions run under LuaJIT in CI |
+| **Formatted code** | StyLua enforced locally and in CI |
+| **Artwork mode** | Deterministic `--screenshot` captures used for this README |
+| **Responsive canvas** | 800x600 virtual canvas letterboxed to any window size |
+| **Open source** | MIT license |
+
+---
+
+## Requirements
+
+| Dependency | Minimum Version | Notes |
+| --- | --- | --- |
+| **LÖVE** | 11.x (11.5 tested) | Required to run from source and to open the `.love` build |
+| **Windows** | 7 or later, 64-bit | Prebuilt download includes everything, no LÖVE install needed |
+| **Linux / macOS** | any supported version | Requires installing LÖVE once |
+| **Keyboard** | A/D or arrow keys, Enter, Esc | Mouse not required |
+| **Account** | None | High score stays on your machine |
+
+> [!TIP]
+> If you only want to play, download the prebuilt build from the [Releases](https://github.com/nekonaru/flip30/releases) page. You need nothing else.
+
+### Never used a terminal? Start here
+
+<details>
+<summary><b>How to open a terminal on Windows</b></summary>
+
+1. Press the **Windows** key, type `PowerShell`, then press **Enter**
+2. A window opens. That is where you type commands
+3. Every command in this guide is typed in that window, followed by **Enter**
+
+</details>
+
+---
+
+## Installation
+
+### Option A: Download the prebuilt build (easiest)
+
+1. Open the [Releases](https://github.com/nekonaru/flip30/releases) page
+2. Download `flip30-1.0.0-win64.zip` on Windows, or `flip30-1.0.0.love` on other platforms
+3. Windows: extract the zip anywhere and run `Flip30.exe`. Other platforms: install LÖVE 11.5, then run `love flip30-1.0.0.love`
+
+> [!IMPORTANT]
+> Use `flip30-1.0.0-win64.zip` on Windows. Use `flip30-1.0.0.love` only with a separate LÖVE 11.5 install.
+
+### Option B: Build from source (for development / to read or change the code)
+
+#### 1. Get the project code
+
+<details>
+<summary><b>I have Git installed</b></summary>
+
+```bash
 git clone https://github.com/nekonaru/flip30.git
 cd flip30
+```
+
+</details>
+
+<details>
+<summary><b>I don't have Git</b></summary>
+
+1. Open the repository page on GitHub
+2. Click the green **`Code`** button, then choose **`Download ZIP`**
+3. Extract the ZIP to a folder of your choice
+4. In the terminal, go into the extracted folder, for example:
+
+```bash
+cd flip30-main
+```
+
+</details>
+
+#### 2. Install the dependencies and verify
+
+Install LÖVE 11.5, then check that the version prints correctly:
+
+```powershell
+love --version
+```
+
+On Windows, the fastest install is `winget install --id Love2d.Love2d -e`.
+
+> [!IMPORTANT]
+> `love --version` must print `LOVE 11.x` (11.5 recommended) before you continue.
+
+#### 3. Run it
+
+```sh
 love .
 ```
 
-Requires LÖVE 11.x (developed against 11.5). No other dependencies.
+The menu opens and the game is fully playable. To produce the release artifacts (`.love` archive and Windows build), run `scripts/build.ps1 -Version 1.0.0` on Windows.
 
-## Development
+---
 
-### The dev tools
+## Usage
 
-Everything in this repo was built and is checked with the following toolchain.
+### First launch
 
-| Tool | Version | Used for | Install (Windows) |
-| --- | --- | --- | --- |
-| [LÖVE](https://love2d.org) | 11.5 | Running the game, `--screenshot` artwork mode | `winget install Love2d.Love2d` |
-| [LuaJIT](https://luajit.org) | 2.1 | Headless test suite — the same Lua VM LÖVE ships | `winget install DEVCOM.LuaJIT` |
-| [StyLua](https://github.com/JohnnyMorganz/StyLua) | 2.5.2 | Lua formatting (`stylua.toml`) | `winget install JohnnyMorganz.StyLua` |
-| [GitHub Actions](https://github.com/nekonaru/flip30/actions/workflows/ci.yml) | — | CI: `luajit tests/headless_tests.lua` + `stylua --check .` on every push and PR | — |
-| [GitHub CLI](https://cli.github.com) | 2.x | Releases (`gh release create` / `gh release download`) | `winget install GitHub.cli` |
-| Git + Conventional Commits | — | History; see [CONTRIBUTING.md](CONTRIBUTING.md) | — |
+1. Open the game with `love .` or via the prebuilt download
+2. The menu appears. Press **Enter** or **Space** to start
+3. A normal game begins. The first rule swap happens at t = 30 seconds
 
-On Linux/macOS, install the equivalents from your package manager or the
-respective project pages.
+> [!NOTE]
+> The UI text is in Bahasa Indonesia. The game is playable without reading it: green is good, red is bad.
 
-```sh
-love .                                # run the game
-luajit tests/headless_tests.lua       # 193 headless assertions
-stylua .                              # format all Lua sources
-stylua --check .                      # what CI runs
-love . --screenshot shot.png --frames 480   # regenerate artwork deterministically
-love . --screenshot shot.png --frames 60 --force-rule "LAYAR GELAP"
-```
+### Everyday use
 
-Local commands and CI are the same three: run the game, run the tests, check
-formatting. If CI is green locally, it is green on GitHub.
+- **Move**: A/D or the arrow keys
+- **Catch food**: green circle, +10 points
+- **Avoid enemies**: red triangle, -1 life, you start with 3
+- **Survive**: the longer you last, the faster the game gets
+- **Restart**: Enter or Space on the game over screen; Esc returns to the menu or quits
+- **High score**: shown on the menu and the game over screen; saved automatically
 
-### Project layout
+---
+
+## Project Structure
 
 ```
 flip30/
-  main.lua            -- LÖVE entry point (+ --screenshot artwork mode)
-  conf.lua            -- window, identity, icon, LÖVE version
+  main.lua            # LÖVE entry point, --screenshot artwork mode, --force-rule
+  conf.lua            # Window, identity, icon, LÖVE version
   src/
-    game.lua          -- state machine (menu/playing/gameover), letterboxing
-    player.lua        -- 40x40 sticky-note player movement
-    spawner.lua       -- FOOD/ENEMY spawns, difficulty curve, collisions
-    world.lua         -- all mutable world parameters + difficulty scaling
-    rulemanager.lua   -- rule loading, selection, apply/revert, 30s timer
-    modloader.lua     -- sandboxed mod loading from the save directory
-    ui.lua            -- HUD, banner, popups, hearts, menu, game over
-    storage.lua       -- high score via love.filesystem (highscore.txt)
-    particles.lua     -- sparkle bursts (generated sprite)
-    sfx.lua           -- synthesized SFX (no audio files)
-  rules/              -- one file per rule, hot-swapped every 30 seconds
-  assets/brand/       -- logo, icon, monochrome artwork
-  assets/screenshots/ -- in-game captures (deterministic --screenshot mode)
-  examples/rules/     -- example mod to copy into your save directory
-  tests/              -- headless LuaJIT test suite
-  scripts/            -- build.ps1 / build.sh release artifact builders
-  docs/               -- modding guide, release process, PRD
-  stylua.toml         -- formatter config (used locally and in CI)
+    game.lua          # State machine (menu, playing, gameover), letterboxing
+    player.lua        # 40x40 sticky-note movement
+    spawner.lua       # FOOD/ENEMY spawns, difficulty curve, collisions
+    world.lua         # Mutable world parameters and difficulty scaling
+    rulemanager.lua   # Rule loading, selection, apply/revert, 30s timer
+    modloader.lua     # Sandboxed mod loading from the save directory
+    ui.lua            # HUD, banner, popups, hearts, menu, game over
+    storage.lua       # High score via love.filesystem (highscore.txt)
+    particles.lua     # Sparkle bursts, generated sprite
+    sfx.lua           # Synthesized sound effects, no audio files
+  rules/              # One file per rule, hot-swapped every 30 seconds
+  assets/
+    brand/            # Logo, icon, monochrome artwork
+    screenshots/      # In-game captures from the screenshot mode
+  examples/rules/     # Example mod to copy into the save directory
+  tests/              # Headless LuaJIT test suite
+  scripts/            # build.ps1 and build.sh release artifact builders
+  docs/               # Modding guide, release process, PRD
+  stylua.toml         # Formatter config, used locally and in CI
+  README.md           # Documentation (English)
+  README.id.md        # Documentation (Bahasa Indonesia)
 ```
 
-### Design decisions (PRD open questions, resolved simply)
+---
 
-- **No rule is active at run start** — the first flip happens at t = 30s, so a
-  new player learns the base game first.
-- **Escape penalty floors at 0** — `MUSUH JADI POIN` can reduce your score to
-  zero but never below it.
-- **`world.elapsed` is not reset between rule swaps** — the difficulty curve is
-  a function of total play time, not of the current rule.
-- **UI text is Indonesian** (matching the game's tagline); code and docs are English.
-- **Default font only** — no external font files; the brand artwork carries the identity.
-- **Music is out of scope for v1.0** — SFX are synthesized at load; no assets needed.
-- **Resize letterboxing** — the game renders to a fixed 800x600 virtual canvas,
-  scaled to fit any window size with black bars.
+## Development
 
-## Contributing
+### Adding a new rule
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Adding a rule is the easiest first
-contribution: one file in `rules/`, no core changes. See the
-[rule contract](docs/modding.md#the-rule-contract).
+1. Create `rules/my_rule.lua` with `name`, `tags`, `apply`, and `revert`
+2. `apply` and `revert` must be exact inverses of each other
+3. Add the file to `bundled_rule_files` in `tests/headless_tests.lua`
+4. Run `luajit tests/headless_tests.lua`
 
-## Changelog & releases
+> [!NOTE]
+> The engine loads every rule in `rules/` automatically; only the four steps above are needed.
 
-See [CHANGELOG.md](CHANGELOG.md). Releases are built from tags and published
-with game `.love` archives attached; see [docs/RELEASING.md](docs/RELEASING.md).
+### Regenerating the screenshots
+
+```sh
+love . --screenshot shots/menu.png --frames 0
+love . --screenshot shots/gameplay.png --frames 260
+love . --screenshot shots/dark.png --frames 60 --force-rule "LAYAR GELAP"
+```
+
+---
+
+## Testing
+
+Verification before every push:
+
+```bash
+luajit tests/headless_tests.lua
+stylua --check .
+```
+
+| Check | Requirement |
+| --- | --- |
+| `luajit tests/headless_tests.lua` | All 193 assertions pass |
+| `stylua --check .` | No output (no diffs) |
+
+Formatting is configured in `stylua.toml`.
+
+---
+
+## Continuous Integration
+
+| Workflow | Purpose |
+| --- | --- |
+| `ci.yml` | Runs the headless test suite (LuaJIT) and `stylua --check .` on every push and pull request |
+
+The local commands are the same three as CI, so green locally means green on GitHub.
+
+---
+
+## FAQ
+
+<details>
+<summary><b>Why does the game keep changing the rules?</b></summary>
+
+That is the game. Every 30 seconds a different rule is applied, and the whole point is learning a new ruleset fast.
+
+</details>
+
+<details>
+<summary><b>Where is my high score stored?</b></summary>
+
+In `highscore.txt` inside the app's save directory (for example `%APPDATA%\love\flip30` on Windows). It survives closing the game.
+
+</details>
+
+<details>
+<summary><b>Can I add my own rules?</b></summary>
+
+Yes. Put a `.lua` file in the `rules` folder inside the save directory. See [docs/modding.md](docs/modding.md) for the rule contract and a complete example.
+
+</details>
+
+<details>
+<summary><b>Does the game need the internet?</b></summary>
+
+No. Everything runs locally, including the high score.
+
+</details>
+
+<details>
+<summary><b>How do I report a bug?</b></summary>
+
+Open an issue with your platform, the output of `love --version`, and whether any mods are loaded.
+
+</details>
+
+---
+
+## Author
+
+<div align="center">
+
+| [![Nicolas Dwi Dharma](https://github.com/nekonaru.png?size=100)](https://github.com/nekonaru) |
+|:---:|
+| **Nicolas Dwi Dharma** |
+| [github.com/nekonaru](https://github.com/nekonaru) |
+
+</div>
+
+---
 
 ## License
 
-[MIT](LICENSE) © 2026 Nicolas Dwi Dharma (nekonaru). Code and brand artwork
-are covered by the same license.
-
-<div align="center">
-  <img src="assets/brand/logo-mono.png" alt="Flip30 monochrome logo" width="480">
-</div>
+Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more information.
