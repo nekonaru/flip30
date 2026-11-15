@@ -13,8 +13,7 @@ Semantic Versioning. The current version lives in:
 ## Checklist
 
 1. Make sure CI is green on `main`.
-2. Move the `CHANGELOG.md` `Unreleased` section into a new `[x.y.z] - YYYY-MM-DD`
-   section and update the link refs at the bottom.
+2. Move the `CHANGELOG.md` and `CHANGELOG.id.md` `Unreleased` section into a new `## vX.Y.Z` section, keeping the summary sentence and the New features / Improvements / Bug fixes sections in sync across both files.
 3. Update `ui.version` in `src/game.lua`.
 4. Commit: `git commit -m "chore(release): vX.Y.Z"` and push.
 5. Tag and push the tag:

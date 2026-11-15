@@ -87,8 +87,10 @@ if ($LovePath -and (Test-Path (Join-Path $LovePath "love.exe"))) {
     $stream.Dispose()
   }
   Copy-Item (Join-Path $root "README.md") $bundleDir
+  Copy-Item (Join-Path $root "README.id.md") $bundleDir
   Copy-Item (Join-Path $root "LICENSE") $bundleDir
   Copy-Item (Join-Path $root "CHANGELOG.md") $bundleDir
+  Copy-Item (Join-Path $root "CHANGELOG.id.md") $bundleDir
 
   $zipPath = Join-Path $dist "flip30-$Version-win64.zip"
   if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
@@ -101,31 +103,53 @@ if ($LovePath -and (Test-Path (Join-Path $LovePath "love.exe"))) {
 }
 
 # ------------------------------------------------------------ release notes
-$changelog = Join-Path $root "CHANGELOG.md"
-$notes = Join-Path $dist "RELEASE_NOTES.md"
-$content = Get-Content $changelog -Raw -Encoding UTF8
-$escaped = [regex]::Escape($Version)
-$pattern = "(?s)## \[${escaped}\][^\n]*\r?\n(.*?)(?=\r?\n## \[|\z)"
-$match = [regex]::Match($content, $pattern)
-if ($match.Success) {
-  $body = "# Flip30 v$Version`r`n`r`n" + $match.Groups[1].Value.Trim() + "`r`n`r`n"
+# Notes are bilingual (English first, then Indonesian) and mirror the
+# changelogs: same summary sentence, same New features / Improvements /
+# Bug fixes sections. Publish with:
+#   gh release create vX.Y.Z <artifacts> --title "Flip30 vX.Y.Z" --notes-file dist/RELEASE_NOTES.md
+function Get-ReleaseSection($changelogPath, $version) {
+  $content = Get-Content $changelogPath -Raw -Encoding UTF8
+  $escaped = [regex]::Escape($version)
+  $pattern = "(?s)## v${escaped}(\r?\n|$)(.*?)(?=\r?\n## |\z)"
+  $match = [regex]::Match($content, $pattern)
+  if ($match.Success) {
+    return ($match.Groups[2].Value.Trim() -replace '(?m)^### ', '## ')
+  }
+  return $null
+}
 
-  # Append SHA-256 checksums of the freshly built artifacts so the release
-  # notes double as a verification manifest.
+$enSection = Get-ReleaseSection (Join-Path $root "CHANGELOG.md") $Version
+$idSection = Get-ReleaseSection (Join-Path $root "CHANGELOG.id.md") $Version
+$notes = Join-Path $dist "RELEASE_NOTES.md"
+
+if ($enSection -and $idSection) {
+  # SHA-256 of the freshly built artifacts; the notes double as a manifest.
   $artifacts = @($loveArchive)
   if ($zipPath) { $artifacts += $zipPath }
-  $body += "### Verify your download`r`n`r`n"
-  $body += "SHA-256 of the artifacts attached to this release:`r`n`r`n"
-  $body += "| File | SHA-256 |`r`n| --- | --- |`r`n"
+  $checksumTable = "| File | SHA-256 |`r`n| --- | --- |`r`n"
   foreach ($file in $artifacts) {
     $hash = (Get-FileHash $file -Algorithm SHA256).Hash
-    $body += "| ``$(Split-Path $file -Leaf)`` | ``$hash`` |`r`n"
+    $checksumTable += "| ``$(Split-Path $file -Leaf)`` | ``$hash`` |`r`n"
   }
-  $body += "`r`nVerify with ``Get-FileHash .\flip30-$Version.love -Algorithm SHA256`` (PowerShell)`r`n"
-  $body += "or ``shasum -a 256 flip30-$Version.love`` (macOS/Linux)`r`n"
+
+  $body = "# English`r`n`r`n" + $enSection + "`r`n`r`n"
+  $body += "## Install / Update`r`n`r`n"
+  $body += "Download the file for your platform from Assets below, open it and follow the prompts. Use ``flip30-$Version-win64.zip`` on Windows (no install needed). Use ``flip30-$Version.love`` with a LÖVE 11.x install on other platforms.`r`n`r`n"
+  $body += "## Verify your download`r`n`r`n"
+  $body += "SHA-256 of the artifacts attached to this release:`r`n`r`n" + $checksumTable + "`r`n"
+  $body += "Verify with ``Get-FileHash .\flip30-$Version.love -Algorithm SHA256`` (PowerShell)`r`n"
+  $body += "or ``shasum -a 256 flip30-$Version.love`` (macOS/Linux).`r`n`r`n"
+  $body += "<br>`r`n`r`n---`r`n`r`n<br>`r`n`r`n"
+  $body += "# Bahasa Indonesia`r`n`r`n" + $idSection + "`r`n`r`n"
+  $body += "## Instalasi / Update`r`n`r`n"
+  $body += "Download file untuk platformmu dari Assets di bawah, buka, lalu ikuti petunjuknya. Gunakan ``flip30-$Version-win64.zip`` di Windows (tidak perlu instalasi). Gunakan ``flip30-$Version.love`` dengan instalasi LÖVE 11.x di platform lain.`r`n`r`n"
+  $body += "## Verifikasi unduhan`r`n`r`n"
+  $body += "SHA-256 dari artifact yang terlampir di rilis ini:`r`n`r`n" + $checksumTable + "`r`n"
+  $body += "Verifikasi dengan ``Get-FileHash .\flip30-$Version.love -Algorithm SHA256`` (PowerShell)`r`n"
+  $body += "atau ``shasum -a 256 flip30-$Version.love`` (macOS/Linux)."
 
   Set-Content -Path $notes -Value $body -Encoding UTF8 -NoNewline
   Write-Output "wrote $notes"
 } else {
-  Write-Warning "could not extract [$Version] from CHANGELOG.md; $notes not written"
+  Write-Warning "could not extract the v$Version section from CHANGELOG.md and CHANGELOG.id.md; $notes not written"
 }

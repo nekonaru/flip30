@@ -2,9 +2,9 @@
 
 Perubahan Flip30 didokumentasikan di sini. Bahasa Inggris adalah sumbernya; Bahasa Indonesia (file ini) adalah terjemahan yang selalu selaras.
 
-## Unreleased
+## Belum rilis
 
-### Improvements
+### Peningkatan
 
 - **Dokumen mengikuti satu standar penulisan.** README dan CHANGELOG sekarang tersedia dalam Bahasa Inggris dan Bahasa Indonesia secara selaras, release notes memuat checksum SHA-256 dan daftar toolchain, dan wording di seluruh repository dirapikan menjadi kalimat pendek dan lugas.
 
@@ -12,7 +12,7 @@ Perubahan Flip30 didokumentasikan di sini. Bahasa Inggris adalah sumbernya; Baha
 
 Rilis publik pertama Flip30.
 
-### New features
+### Fitur baru
 
 - **Gameplay inti.** Arena 800x600 dengan player sticky note 40x40 lewat A/D atau tombol panah, makanan bernilai +10 dan musuh mengurangi 1 nyawa, dan kurva kesulitan yang menaikkan kecepatan jatuh dan laju spawn seiring waktu.
 - **Sistem aturan.** Aturan adalah satu file Lua di `rules/`, berganti otomatis setiap 30 detik dengan banner dua detik dan slow motion 0.3x. Aturan yang sama tidak pernah aktif dua kali berturut-turut, dan aturan dengan tag yang sama tidak pernah aktif bersamaan.
@@ -24,7 +24,7 @@ Rilis publik pertama Flip30.
 - **Mode artwork deterministik.** `love . --screenshot out.png --frames N [--force-rule "NAME"]` menghasilkan capture yang dipakai di repository ini.
 - **Open source.** Lisensi MIT.
 
-### Improvements
+### Peningkatan
 
 - **Kanvas letterbox.** Virtual canvas 800x600 di-letterbox dan di-scale ke ukuran jendela apa pun.
 - **Test suite headless.** 193 assertion di bawah LuaJIT, dijalankan di CI bersama pengecekan format StyLua.
