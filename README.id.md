@@ -61,12 +61,13 @@
 
 | Fitur | Deskripsi |
 | --- | --- |
-| **Player** | Geser sticky note 40x40 dengan A/D atau tombol panah, tertahan di dalam arena |
-| **Objek** | Makanan hijau bernilai +10 poin, musuh merah mengurangi 1 nyawa, dimainkan di kanvas 800x600 |
+| **Player** | Geser sticky note 40x40 dengan A/D atau tombol panah, tertahan di dalam arena. Mata mengikuti arah gerakmu |
+| **Objek** | Makanan hijau bernilai +10 poin, makanan keemasan adalah drop langka bernilai +50, tidak terpengaruh TUKAR WARNA. Musuh merah mengurangi 1 nyawa, dimainkan di kanvas 800x600 |
 | **Kesulitan** | Kecepatan jatuh dan laju spawn naik seiring waktu; kamu punya tiga nyawa per sesi |
 | **Skor terbaik** | Skor tertinggi disimpan secara lokal di `highscore.txt`, dirayakan saat rekor baru |
 | **Timer bertahan** | HUD menampilkan berapa lama kamu bertahan, mm:ss |
 | **Combo** | Setiap 4 tangkapan berturut-turut menaikkan multiplier sampai x5; kena musuh meresetnya |
+| **Statistik** | Tekan TAB di menu untuk melihat statistik sepanjang waktu: total main, total waktu bertahan, total skor, total makanan, skor terbaik, combo terbaik |
 | **Dua aturan di menit kedua** | Setelah menit ke-2, dua aturan aktif bersamaan; keduanya tidak boleh punya tag yang sama |
 | **Pause** | Tekan P untuk menjeda aksi, tekan P lagi untuk lanjut |
 | **Mute** | Tekan M untuk membisukan SFX, di mana pun |
@@ -85,7 +86,8 @@
 
 | Fitur | Deskripsi |
 | --- | --- |
-| **Juice** | Sparkle, screen shake, popup skor melayang, dan kilat merah saat kena hit |
+| **Juice** | Sparkle, screen shake, popup skor melayang, hitungan skor bertahap, kilat merah saat kena hit, dan denyut merah saat nyawa tinggal satu |
+| **Combo milestone** | Popup "COMBO x2 / x3 / x4 / x5" muncul saat streakmu melewati ambang tertentu |
 | **Suara** | SFX disintesis saat load time, tidak butuh file audio |
 
 ### Modding
@@ -100,7 +102,7 @@
 
 | Fitur | Deskripsi |
 | --- | --- |
-| **Test headless** | 245 assertion berjalan di bawah LuaJIT di CI |
+| **Test headless** | 249 assertion berjalan di bawah LuaJIT di CI |
 | **Kode terformat** | StyLua diwajibkan secara lokal dan di CI |
 | **Mode artwork** | Capture `--screenshot` deterministik yang dipakai di README ini |
 | **Kanvas responsif** | Virtual canvas 800x600 di-letterbox ke ukuran jendela apa pun |
@@ -139,11 +141,11 @@
 ### Opsi A: Unduh build siap pakai (paling mudah)
 
 1. Buka halaman [Releases](https://github.com/nekonaru/flip30/releases)
-2. Unduh `flip30-1.3.0-win64.zip` di Windows, atau `flip30-1.3.0.love` di platform lain
-3. Windows: extract zip ke mana saja lalu jalankan `Flip30.exe`. Platform lain: instal LÖVE 11.5, lalu jalankan `love flip30-1.3.0.love`
+2. Unduh `flip30-1.4.0-win64.zip` di Windows, atau `flip30-1.4.0.love` di platform lain
+3. Windows: extract zip ke mana saja lalu jalankan `Flip30.exe`. Platform lain: instal LÖVE 11.5, lalu jalankan `love flip30-1.4.0.love`
 
 > [!IMPORTANT]
-> Gunakan `flip30-1.3.0-win64.zip` di Windows. Gunakan `flip30-1.3.0.love` hanya dengan instalasi LÖVE 11.5 terpisah.
+> Gunakan `flip30-1.4.0-win64.zip` di Windows. Gunakan `flip30-1.4.0.love` hanya dengan instalasi LÖVE 11.5 terpisah.
 
 ### Opsi B: Build dari source (untuk development / untuk membaca atau mengubah kode)
 
@@ -192,7 +194,7 @@ Di Windows, cara tercepat adalah `winget install --id Love2d.Love2d -e`.
 love .
 ```
 
-Menu terbuka dan game langsung bisa dimainkan. Untuk menghasilkan artifact rilis (`.love` archive dan build Windows), jalankan `scripts/build.ps1 -Version 1.3.0` di Windows.
+Menu terbuka dan game langsung bisa dimainkan. Untuk menghasilkan artifact rilis (`.love` archive dan build Windows), jalankan `scripts/build.ps1 -Version 1.4.0` di Windows.
 
 ---
 
@@ -217,6 +219,8 @@ Menu terbuka dan game langsung bisa dimainkan. Untuk menghasilkan artifact rilis
 - **Bertahan**: makin lama kamu bertahan, makin cepat gamenya; setelah menit ke-2 dua aturan bisa aktif bersamaan
 - **Main lagi**: Enter atau Space di layar game over; Esc kembali ke menu atau keluar
 - **Skor terbaik**: tampil di menu dan layar game over; tersimpan otomatis
+- **Statistik**: TAB di menu membuka panel statistik sepanjang waktu
+- **Makanan keemasan**: pickup langka bernilai +50 poin, tidak terpengaruh TUKAR WARNA
 
 ---
 
@@ -285,7 +289,7 @@ stylua --check .
 
 | Check | Requirement |
 | --- | --- |
-| `luajit tests/headless_tests.lua` | Semua 245 assertion lolos |
+| `luajit tests/headless_tests.lua` | Semua 249 assertion lolos |
 | `stylua --check .` | Tidak ada output (tidak ada diff) |
 
 Formatting dikonfigurasi di `stylua.toml`.

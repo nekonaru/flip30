@@ -8,6 +8,7 @@ local ui = {}
 ui.banner = nil -- { text = string, t = number, duration = number, hint = string|nil }
 ui.popups = {} -- { x, y, text, color, t }
 ui.version = nil
+ui.show_stats = false -- TAB toggles the statistics overlay on the menu
 
 local FONTS = {}
 local LOGO = nil
@@ -273,7 +274,13 @@ function ui.drawMenu(highscore, time, best_combo, games_count)
   -- Controls strip
   love.graphics.setFont(FONTS.small)
   love.graphics.setColor(theme.text_mute[1], theme.text_mute[2], theme.text_mute[3], 1)
-  love.graphics.printf("A/D atau PANAH bergerak   ·   P pause   ·   M mute   ·   ESC keluar", 40, 450, 720, "center")
+  love.graphics.printf(
+    "A/D bergerak   ·   P pause   ·   M mute   ·   TAB statistik   ·   ESC keluar",
+    40,
+    450,
+    720,
+    "center"
+  )
 
   -- High score chip
   if highscore > 0 then
@@ -360,6 +367,13 @@ function ui.drawHUD(score, lives, rule_name, timer, duration, elapsed, double_ru
   draw_chip(400 - pill_w / 2, 12, pill_w, 30)
   love.graphics.setColor(theme.cyan[1], theme.cyan[2], theme.cyan[3], 1)
   love.graphics.printf(rule_text, 400 - pill_w / 2, 18, pill_w, "center")
+
+  -- Red heartbeat when a single life remains
+  if lives == 1 then
+    local pulse = 0.05 + 0.07 * math.sin((elapsed or 0) * 5)
+    love.graphics.setColor(theme.red[1], theme.red[2], theme.red[3], pulse)
+    love.graphics.rectangle("fill", 0, 0, 800, 600)
+  end
 
   -- Timer and difficulty, top-right
   draw_chip(622, 12, 166, 58)
@@ -459,6 +473,47 @@ function ui.drawGameOver(score, highscore, new_record, time, survived, best_comb
   love.graphics.setFont(FONTS.body)
   love.graphics.setColor(theme.text_dim[1], theme.text_dim[2], theme.text_dim[3], 1)
   love.graphics.printf("ENTER: main lagi      ESC: menu", px, py + 326, panel_w, "center")
+  love.graphics.setColor(1, 1, 1, 1)
+end
+
+-- ---------------------------------------------------------- statistics
+
+local function stat_row(label, value, x, y, w)
+  love.graphics.setFont(FONTS.body)
+  love.graphics.setColor(theme.text_dim[1], theme.text_dim[2], theme.text_dim[3], 1)
+  love.graphics.print(label, x, y)
+  love.graphics.setColor(theme.text[1], theme.text[2], theme.text[3], 1)
+  love.graphics.printf(tostring(value), x, y, w, "right")
+end
+
+function ui.drawStatsOverlay(highscore, best_combo, stats, games_count)
+  stats = stats or { time = 0, score = 0, food = 0 }
+  love.graphics.setColor(0.01, 0.012, 0.02, 0.82)
+  love.graphics.rectangle("fill", 0, 0, 800, 600)
+
+  local panel_w, panel_h = 460, 330
+  local px, py = 170, 135
+  draw_chip(px, py, panel_w, panel_h)
+  love.graphics.setColor(theme.cyan[1], theme.cyan[2], theme.cyan[3], 0.8)
+  love.graphics.setLineWidth(2)
+  round_rect("line", px, py, panel_w, panel_h, 12)
+  love.graphics.setLineWidth(1)
+
+  love.graphics.setFont(FONTS.big)
+  love.graphics.setColor(theme.cyan[1], theme.cyan[2], theme.cyan[3], 1)
+  love.graphics.printf("STATISTIK", px, py + 18, panel_w, "center")
+
+  local row_x, row_w = px + 36, panel_w - 72
+  stat_row("TOTAL MAIN", games_count or 0, row_x, py + 84, row_w)
+  stat_row("TOTAL WAKTU", mmss(stats.time or 0), row_x, py + 124, row_w)
+  stat_row("TOTAL SKOR", stats.score or 0, row_x, py + 164, row_w)
+  stat_row("TOTAL MAKANAN", stats.food or 0, row_x, py + 204, row_w)
+  stat_row("SKOR TERBAIK", highscore or 0, row_x, py + 244, row_w)
+  stat_row("COMBO TERBAIK", "x" .. tostring(best_combo or 0), row_x, py + 284, row_w)
+
+  love.graphics.setFont(FONTS.small)
+  love.graphics.setColor(theme.text_mute[1], theme.text_mute[2], theme.text_mute[3], 1)
+  love.graphics.printf("ESC atau TAB untuk kembali", px, py + panel_h + 12, panel_w, "center")
   love.graphics.setColor(1, 1, 1, 1)
 end
 

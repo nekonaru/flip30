@@ -24,6 +24,8 @@ local game = {
   shake_t = 0,
   hit_stop = 0, -- seconds of frozen simulation remaining
   flash = 0,
+  display_score = 0, -- smooth tally toward the real score
+  food_count = 0, -- food caught this run
   combo = 0, -- consecutive catches without touching an enemy
   combo_best = 0, -- best combo of this run
   best_combo_ever = 0, -- persisted best combo across runs
@@ -36,10 +38,11 @@ local COLOR_ORANGE = { 1.000, 0.576, 0.169 }
 
 function game.load()
   ui.load()
-  ui.version = "1.3.0"
+  ui.version = "1.4.0"
   game.highscore = storage.load()
   game.best_combo_ever = storage.loadBestCombo()
   game.games_count = storage.loadGamesCount()
+  game.stats = storage.loadStats()
   game.time = 0
   game.ctx = { player = player, world = world, spawner = spawner, ui = ui, sfx = sfx }
   sfx.load()
@@ -62,6 +65,8 @@ function game.startRun()
   game.games_count = game.games_count + 1
   storage.saveGamesCount(game.games_count)
   game.score = 0
+  game.display_score = 0
+  game.food_count = 0
   game.lives = 3
   game.new_record = false
   game.run_time = 0
@@ -81,6 +86,12 @@ function game.gameOver()
     game.best_combo_ever = game.combo_best
     storage.saveBestCombo(game.combo_best)
   end
+  local stats = game.stats or { time = 0, score = 0, food = 0 }
+  stats.time = stats.time + game.run_time
+  stats.score = stats.score + game.score
+  stats.food = stats.food + game.food_count
+  storage.saveStats(stats)
+  game.stats = stats
   if game.score > game.highscore then
     game.highscore = game.score
     game.new_record = true
@@ -98,6 +109,15 @@ end
 
 function game.update(dt)
   game.time = game.time + dt
+
+  -- Ease the displayed score toward the real value
+  if game.display_score ~= game.score then
+    local diff = game.score - game.display_score
+    game.display_score = game.display_score + diff * math.min(1, dt * 9)
+    if math.abs(diff) < 1 then
+      game.display_score = game.score
+    end
+  end
 
   if game.paused then
     return -- freeze the world, the banner and the clocks
@@ -133,18 +153,32 @@ function game.update(dt)
 
     local hits = spawner.collectHits(player)
     for _, hit in ipairs(hits) do
-      if hit.kind == spawner.FOOD then
+      if hit.kind == spawner.FOOD or hit.kind == spawner.GOLD then
+        local is_gold = hit.kind == spawner.GOLD
         game.combo = game.combo + 1
         local mult = world.comboMultiplier(game.combo)
-        local points = 10 * mult * world.score_mul
+        local base = is_gold and 50 or 10
+        local points = base * mult * world.score_mul
         game.score = game.score + points
+        game.food_count = game.food_count + 1
         if game.combo > game.combo_best then
           game.combo_best = game.combo
         end
         player.impact = 0.5
-        ui.addPopup(hit.x, hit.y, "+" .. points, COLOR_GREEN)
-        particles.burst(hit.x, hit.y, COLOR_GREEN[1], COLOR_GREEN[2], COLOR_GREEN[3], 14)
-        sfx.play("catch", 0.9 + 0.12 * mult)
+        ui.addPopup(hit.x, hit.y, "+" .. points, is_gold and theme.yellow or COLOR_GREEN)
+        particles.burst(
+          hit.x,
+          hit.y,
+          is_gold and 1 or COLOR_GREEN[1],
+          is_gold and 0.86 or COLOR_GREEN[2],
+          is_gold and 0.25 or COLOR_GREEN[3],
+          is_gold and 20 or 14
+        )
+        sfx.play("catch", is_gold and 1.6 or (0.9 + 0.12 * mult))
+        if game.combo == 4 or game.combo == 8 or game.combo == 12 or game.combo == 16 then
+          ui.addPopup(400, 340, "COMBO x" .. mult, COLOR_ORANGE)
+          sfx.play("record", 1.3 + 0.1 * mult)
+        end
       else
         game.combo = 0
         if world.enemy_gives_points then
@@ -177,9 +211,10 @@ function game.update(dt)
       sfx.play("swap", 0.65)
       particles.burst(400, 300, theme.yellow[1], theme.yellow[2], theme.yellow[3], 24)
     end
-
-    game.flash = math.max(0, game.flash - dt * 1.8)
   end
+
+  -- The red flash must always decay, including on the game over screen
+  game.flash = math.max(0, game.flash - dt * 1.8)
 
   ui.update(dt)
   particles.update(dt)
@@ -187,7 +222,14 @@ end
 
 function game.keypressed(key)
   if game.state == "menu" then
-    if key == "return" or key == "kpenter" or key == "space" then
+    if key == "tab" then
+      ui.show_stats = not ui.show_stats
+      sfx.play("select")
+    elseif ui.show_stats then
+      if key == "escape" then
+        ui.show_stats = false
+      end
+    elseif key == "return" or key == "kpenter" or key == "space" then
       sfx.play("select")
       game.startRun()
     elseif key == "m" then
@@ -251,6 +293,9 @@ function game.draw()
 
   if game.state == "menu" then
     ui.drawMenu(game.highscore, game.time, game.best_combo_ever, game.games_count)
+    if ui.show_stats then
+      ui.drawStatsOverlay(game.highscore, game.best_combo_ever, game.stats, game.games_count)
+    end
   else
     spawner.draw()
     player.draw()
@@ -265,7 +310,7 @@ function game.draw()
     end
 
     ui.drawHUD(
-      game.score,
+      math.floor(game.display_score),
       game.lives,
       rulemanager.activeName(),
       rulemanager.timer,

@@ -9,9 +9,11 @@ local spawner = {}
 
 spawner.FOOD = "food"
 spawner.ENEMY = "enemy"
+spawner.GOLD = "gold"
 
 local OBJECT_SIZE = 22
-local FOOD_CHANCE = 0.6
+local GOLD_CHANCE = 0.07 -- rare shiny drop, +50
+local FOOD_CHANCE = 0.60 -- probability of FOOD among non-gold rolls
 
 local TIME = 0 -- animation clock, advanced in update()
 
@@ -22,7 +24,15 @@ function spawner.reset()
 end
 
 local function spawn_one()
-  local kind = math.random() < FOOD_CHANCE and spawner.FOOD or spawner.ENEMY
+  local roll = math.random()
+  local kind
+  if roll < GOLD_CHANCE then
+    kind = spawner.GOLD
+  elseif roll < GOLD_CHANCE + FOOD_CHANCE then
+    kind = spawner.FOOD
+  else
+    kind = spawner.ENEMY
+  end
   local x = math.random(OBJECT_SIZE + 4, 800 - OBJECT_SIZE - 4)
   local y = world.fall_direction == 1 and -OBJECT_SIZE or 600 + OBJECT_SIZE
   table.insert(spawner.objects, {
@@ -85,8 +95,12 @@ end
 
 local COLOR_FOOD = theme.green
 local COLOR_ENEMY = theme.red
+local COLOR_GOLD = theme.yellow
 
 local function paint_for(kind)
+  if kind == spawner.GOLD then
+    return COLOR_GOLD -- gold is exempt from TUKAR WARNA
+  end
   -- TUKAR WARNA swaps the palette; behaviour keeps following `kind`.
   local show_food = kind == spawner.FOOD
   if world.swap_colors then
@@ -111,8 +125,8 @@ function spawner.draw()
     draw_glow(obj, color)
     love.graphics.setColor(color[1], color[2], color[3], 1)
 
-    if obj.kind == spawner.FOOD then
-      -- Yellow-green note, slight tumble so it reads as catching something physical
+    if obj.kind == spawner.FOOD or obj.kind == spawner.GOLD then
+      -- Yellow-green note-or-gold, slight tumble so it reads as catching something physical
       love.graphics.push()
       love.graphics.translate(obj.x, obj.y)
       love.graphics.rotate(obj.rot or 0)
@@ -120,6 +134,30 @@ function spawner.draw()
       love.graphics.rectangle("fill", -s * 0.5, -s * 0.5, s, s, 5, 5)
       love.graphics.setColor(1, 1, 1, 0.4)
       love.graphics.rectangle("fill", -s * 0.32, -s * 0.32, s * 0.64, s * 0.3, 3, 3)
+      if obj.kind == spawner.GOLD then
+        -- sparkle star behind the highlight, unmistakably gold
+        love.graphics.setColor(1.000, 1.000, 1.000, 0.85)
+        local r = s * 0.24
+        love.graphics.polygon(
+          "fill",
+          0,
+          -r,
+          r * 0.35,
+          -r * 0.35,
+          r,
+          0,
+          r * 0.35,
+          r * 0.35,
+          0,
+          r,
+          -r * 0.35,
+          r * 0.35,
+          -r,
+          0,
+          -r * 0.35,
+          -r * 0.35
+        )
+      end
       love.graphics.setColor(0, 0, 0, 0.25)
       love.graphics.setLineWidth(2)
       love.graphics.rectangle("line", -s * 0.5, -s * 0.5, s, s, 5, 5)
