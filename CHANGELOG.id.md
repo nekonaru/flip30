@@ -2,6 +2,20 @@
 
 Perubahan Flip30 didokumentasikan di sini. Bahasa Inggris adalah sumbernya; Bahasa Indonesia (file ini) adalah terjemahan yang selalu selaras.
 
+## v1.3.0
+
+Tiga belas aturan, aturan ukuran player, gravitasi turbulen, dan bug fix dari audit mendalam.
+
+### Fitur baru
+
+- **Tiga belas aturan.** Tiga aturan baru: `BESAR` (player menjadi lebar 72 px, tag control), `KECIL` (player menjadi 22 px, tag control), dan `GRAVITASI TURBULEN` (arah jatuh berganti setiap 2 detik, tag gravity).
+- **Penghitung total main.** Menu utama sekarang menampilkan berapa kali kamu sudah bermain secara total.
+
+### Perbaikan bug
+
+- **Player size bocor.** Ukuran player dikembalikan ke default 40 x 40 saat main lagi, supaya BESAR dan KECIL tidak meneruskan efeknya ke sesi berikutnya.
+- **Popup pinalti escape.** Musuh yang lolos ke sisi atas saat aturan gravitasi naik menampilkan popup di atas, bukan di bawah.
+
 ## v1.2.0
 
 Upgrade terbesar sejauh ini: combo scoring, dua aturan baru, dan presentasi paling kaya.

@@ -2,6 +2,20 @@
 
 Changes to Flip30 are documented here. English is the source; Indonesian ([CHANGELOG.id.md](CHANGELOG.id.md)) is a faithful translation kept in sync.
 
+## v1.3.0
+
+Thirteen rules, player-size rules, turbulent gravity, and bug fixes from the deep audit.
+
+### New features
+
+- **Thirteen rules.** Three new rules: `BESAR` (player becomes 72 px wide, tag control), `KECIL` (player becomes 22 px wide, tag control), and `GRAVITASI TURBULEN` (fall direction flips every 2 seconds, tag gravity).
+- **Total games counter.** The main menu now shows how many runs you have started in total.
+
+### Bug fixes
+
+- **Player size leaks.** The player's width is restored to the 40 x 40 default on restart, otherwise `BESAR` and `KECIL` would carry their effect into a new run.
+- **Escape penalty popup.** An enemy that leaves through the top during an upward-gravity rule shows the popup at the top, not at the bottom.
+
 ## v1.2.0
 
 The biggest upgrade yet: combo scoring, two new rules, and the richest presentation so far.
