@@ -138,6 +138,7 @@ local function snapshot()
     spawn_rate_mul = world.spawn_rate_mul,
     score_mul = world.score_mul,
     dir = player.dir,
+    w = player.w,
     always_move = player.always_move,
     last_dir = player.last_dir,
   }
@@ -163,6 +164,9 @@ local bundled_rule_files = {
   "rules/no_stop.lua",
   "rules/double_spawn.lua",
   "rules/double_score.lua",
+  "rules/big_player.lua",
+  "rules/small_player.lua",
+  "rules/gravity_turbulent.lua",
 }
 
 local ctx = { world = world, player = player, spawner = spawner, ui = nil, sfx = nil }

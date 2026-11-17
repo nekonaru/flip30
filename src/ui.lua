@@ -226,7 +226,7 @@ end
 
 -- --------------------------------------------------------------- menu
 
-function ui.drawMenu(highscore, time, best_combo)
+function ui.drawMenu(highscore, time, best_combo, games_count)
   local t = time or 0
   local pulse = 0.5 + 0.5 * math.sin(t * 1.6)
 
@@ -294,6 +294,12 @@ function ui.drawMenu(highscore, time, best_combo)
     love.graphics.setFont(FONTS.small)
     love.graphics.setColor(theme.orange[1], theme.orange[2], theme.orange[3], 1)
     love.graphics.printf(text, chip_x, 523, font_w, "center")
+  end
+
+  if (games_count or 0) > 0 then
+    love.graphics.setFont(FONTS.small)
+    love.graphics.setColor(theme.text_mute[1], theme.text_mute[2], theme.text_mute[3], 0.85)
+    love.graphics.printf("TOTAL MAIN:  " .. tostring(games_count), 250, 552, 300, "center")
   end
 
   if ui.version then

@@ -76,7 +76,7 @@
 | Fitur | Deskripsi |
 | --- | --- |
 | **Ganti aturan 30 detik** | Setiap 30 detik aturan yang aktif di-revert dan aturan acak baru di-apply |
-| **Sepuluh aturan** | KONTROL TERBALIK, GRAVITASI MATI, GRAVITASI NAIK, MUSUH JADI POIN, TUKAR WARNA, LAYAR GELAP, SEMUA 2X CEPAT, TIDAK BISA BERHENTI, HUJAN, SKOR GANDA |
+| **Tiga belas aturan** | KONTROL TERBALIK, GRAVITASI MATI, GRAVITASI NAIK, MUSUH JADI POIN, TUKAR WARNA, LAYAR GELAP, SEMUA 2X CEPAT, TIDAK BISA BERHENTI, HUJAN, SKOR GANDA, BESAR, KECIL, GRAVITASI TURBULEN |
 | **Pilihan adil** | Aturan yang sama tidak pernah aktif dua kali berturut-turut; aturan dengan tag yang sama tidak pernah aktif bersamaan |
 | **Banner pengumuman** | Banner besar selama dua detik saat action melambat ke 0.3x |
 | **Progress bar** | Bar timer tipis di bagian atas layar |
@@ -100,7 +100,7 @@
 
 | Fitur | Deskripsi |
 | --- | --- |
-| **Test headless** | 227 assertion berjalan di bawah LuaJIT di CI |
+| **Test headless** | 245 assertion berjalan di bawah LuaJIT di CI |
 | **Kode terformat** | StyLua diwajibkan secara lokal dan di CI |
 | **Mode artwork** | Capture `--screenshot` deterministik yang dipakai di README ini |
 | **Kanvas responsif** | Virtual canvas 800x600 di-letterbox ke ukuran jendela apa pun |
@@ -139,11 +139,11 @@
 ### Opsi A: Unduh build siap pakai (paling mudah)
 
 1. Buka halaman [Releases](https://github.com/nekonaru/flip30/releases)
-2. Unduh `flip30-1.2.0-win64.zip` di Windows, atau `flip30-1.2.0.love` di platform lain
-3. Windows: extract zip ke mana saja lalu jalankan `Flip30.exe`. Platform lain: instal LÖVE 11.5, lalu jalankan `love flip30-1.2.0.love`
+2. Unduh `flip30-1.3.0-win64.zip` di Windows, atau `flip30-1.3.0.love` di platform lain
+3. Windows: extract zip ke mana saja lalu jalankan `Flip30.exe`. Platform lain: instal LÖVE 11.5, lalu jalankan `love flip30-1.3.0.love`
 
 > [!IMPORTANT]
-> Gunakan `flip30-1.2.0-win64.zip` di Windows. Gunakan `flip30-1.2.0.love` hanya dengan instalasi LÖVE 11.5 terpisah.
+> Gunakan `flip30-1.3.0-win64.zip` di Windows. Gunakan `flip30-1.3.0.love` hanya dengan instalasi LÖVE 11.5 terpisah.
 
 ### Opsi B: Build dari source (untuk development / untuk membaca atau mengubah kode)
 
@@ -192,7 +192,7 @@ Di Windows, cara tercepat adalah `winget install --id Love2d.Love2d -e`.
 love .
 ```
 
-Menu terbuka dan game langsung bisa dimainkan. Untuk menghasilkan artifact rilis (`.love` archive dan build Windows), jalankan `scripts/build.ps1 -Version 1.2.0` di Windows.
+Menu terbuka dan game langsung bisa dimainkan. Untuk menghasilkan artifact rilis (`.love` archive dan build Windows), jalankan `scripts/build.ps1 -Version 1.3.0` di Windows.
 
 ---
 
@@ -285,7 +285,7 @@ stylua --check .
 
 | Check | Requirement |
 | --- | --- |
-| `luajit tests/headless_tests.lua` | Semua 227 assertion lolos |
+| `luajit tests/headless_tests.lua` | Semua 245 assertion lolos |
 | `stylua --check .` | Tidak ada output (tidak ada diff) |
 
 Formatting dikonfigurasi di `stylua.toml`.

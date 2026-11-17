@@ -11,6 +11,8 @@ player.h = 40
 player.base_speed = 400 -- px/s
 
 function player.reset()
+  player.w = 40
+  player.h = 40
   player.x = (800 - player.w) / 2
   player.y = 600 - player.h - 24
   player.dir = 1 -- control multiplier, KONTROL TERBALIK flips it

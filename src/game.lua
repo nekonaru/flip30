@@ -36,9 +36,10 @@ local COLOR_ORANGE = { 1.000, 0.576, 0.169 }
 
 function game.load()
   ui.load()
-  ui.version = "1.2.0"
+  ui.version = "1.3.0"
   game.highscore = storage.load()
   game.best_combo_ever = storage.loadBestCombo()
+  game.games_count = storage.loadGamesCount()
   game.time = 0
   game.ctx = { player = player, world = world, spawner = spawner, ui = ui, sfx = sfx }
   sfx.load()
@@ -58,6 +59,8 @@ function game.startRun()
   rulemanager.resetToDefaults(game.ctx)
   rulemanager.max_active = 1 -- escalation to 2 rules happens at the two-minute mark
   spawner.reset()
+  game.games_count = game.games_count + 1
+  storage.saveGamesCount(game.games_count)
   game.score = 0
   game.lives = 3
   game.new_record = false
@@ -123,7 +126,8 @@ function game.update(dt)
     for _, ev in ipairs(events) do
       if ev.type == "enemy_escaped" and world.enemy_gives_points then
         game.score = math.max(0, game.score - world.enemy_escape_penalty)
-        ui.addPopup(ev.x, 560, "-" .. world.enemy_escape_penalty, COLOR_RED)
+        local popup_y = world.fall_direction == 1 and 560 or 60
+        ui.addPopup(ev.x, popup_y, "-" .. world.enemy_escape_penalty, COLOR_RED)
       end
     end
 
@@ -246,7 +250,7 @@ function game.draw()
   ui.drawArenaBackground()
 
   if game.state == "menu" then
-    ui.drawMenu(game.highscore, game.time, game.best_combo_ever)
+    ui.drawMenu(game.highscore, game.time, game.best_combo_ever, game.games_count)
   else
     spawner.draw()
     player.draw()
