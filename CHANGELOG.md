@@ -2,6 +2,22 @@
 
 Changes to Flip30 are documented here. English is the source; Indonesian ([CHANGELOG.id.md](CHANGELOG.id.md)) is a faithful translation kept in sync.
 
+## v1.4.0
+
+Lifetime statistics, golden food, and many small joys layered over v1.3.0.
+
+### New features
+
+- **Lifetime statistics panel.** Press TAB on the menu to see total games, total time survived, total score, total food, best score, and best combo. Stats are stored locally and accumulate across runs.
+- **Golden food.** A rare (7%) drop worth +50 points and exempt from TUKAR WARNA.
+- **Combo milestones.** "COMBO x2 / x3 / x4 / x5" popups fire when your streak crosses a threshold.
+- **Heartbeat pulse.** A red vignette pulses when only one life is left.
+- **Animated score.** The score counter eases toward the real value instead of snapping.
+
+### Bug fixes
+
+- **Red flash stuck on game over.** The flash lifetime now decays even after the run ends, so the game-over screen is never tinted.
+
 ## v1.3.0
 
 Thirteen rules, player-size rules, turbulent gravity, and bug fixes from the deep audit.

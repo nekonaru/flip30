@@ -2,6 +2,22 @@
 
 Perubahan Flip30 didokumentasikan di sini. Bahasa Inggris adalah sumbernya; Bahasa Indonesia (file ini) adalah terjemahan yang selalu selaras.
 
+## v1.4.0
+
+Statistik sepanjang waktu, makanan keemasan, dan banyak kejutan kecil di atas v1.3.0.
+
+### Fitur baru
+
+- **Panel statistik sepanjang waktu.** Tekan TAB di menu untuk melihat total main, total waktu bertahan, total skor, total makanan, skor terbaik, dan combo terbaik. Stats disimpan secara lokal dan terakumulasi di setiap run.
+- **Makanan keemasan.** Drop langka (7%) bernilai +50 poin, bebas dari TUKAR WARNA.
+- **Combo milestone.** Popup "COMBO x2 / x3 / x4 / x5" muncul saat streak melewati ambang tertentu.
+- **Denyut jantung.** Vignet merah berdenyut saat nyawa tinggal satu.
+- **Angka skor bertahap.** Counter skor memudahkan angka ke harga aslinya, tidak patah mendadak.
+
+### Perbaikan bug
+
+- **Kilat merah nyangkut di game over.** Umur flash sekarang terus meluruh setelah run berakhir, jadi layar game over tidak pernah kemerahan permanen.
+
 ## v1.3.0
 
 Tiga belas aturan, aturan ukuran player, gravitasi turbulen, dan bug fix dari audit mendalam.

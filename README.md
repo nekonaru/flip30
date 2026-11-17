@@ -62,11 +62,12 @@
 | Feature | Description |
 | --- | --- |
 | **Player** | Slide the 40x40 sticky note with A/D or the arrow keys, clamped to the arena. Eyes track where it is heading |
-| **Objects** | Green food is +10 points, red enemies cost 1 life, played on an 800x600 canvas |
+| **Objects** | Green food is +10 points. Golden food is a rare drop worth +50, exempt from TUKAR WARNA. Red enemies cost 1 life, played on an 800x600 canvas |
 | **Difficulty** | Fall speed and spawn rate ramp up over time; you get three lives per run |
 | **High score** | Best score saved locally to `highscore.txt`, celebrated on a new record |
 | **Survival timer** | The HUD shows how long you have lasted, mm:ss |
 | **Combo** | Every 4 catches in a row raises the multiplier, up to x5; an enemy hit resets it |
+| **Statistics** | Press TAB on the menu to see lifetime stats: total games, total time survived, total score, total food, best score, best combo |
 | **Two rules at two minutes** | Past 2:00, two rules run at once; they never share a tag |
 | **Pause** | Press P to freeze the action and P again to resume |
 | **Mute** | Press M to silence SFX, anywhere |
@@ -85,7 +86,8 @@
 
 | Feature | Description |
 | --- | --- |
-| **Juice** | Sparkles, screen shake, floating score popups, and a red flash when you are hit |
+| **Juice** | Sparkles, screen shake, floating score popups, animated score tally, a red flash when you are hit, and a heartbeat pulse when only one life remains |
+| **Combo milestones** | "COMBO x2 / x3 / x4 / x5" popups fire when your streak crosses a threshold |
 | **Sound** | Synthesized SFX generated at load time, no audio files needed |
 
 ### Modding
@@ -100,7 +102,7 @@
 
 | Feature | Description |
 | --- | --- |
-| **Headless tests** | 245 assertions run under LuaJIT in CI |
+| **Headless tests** | 249 assertions run under LuaJIT in CI |
 | **Formatted code** | StyLua enforced locally and in CI |
 | **Artwork mode** | Deterministic `--screenshot` captures used for this README |
 | **Responsive canvas** | 800x600 virtual canvas letterboxed to any window size |
@@ -139,11 +141,11 @@
 ### Option A: Download the prebuilt build (easiest)
 
 1. Open the [Releases](https://github.com/nekonaru/flip30/releases) page
-2. Download `flip30-1.3.0-win64.zip` on Windows, or `flip30-1.3.0.love` on other platforms
-3. Windows: extract the zip anywhere and run `Flip30.exe`. Other platforms: install LÖVE 11.5, then run `love flip30-1.3.0.love`
+2. Download `flip30-1.4.0-win64.zip` on Windows, or `flip30-1.4.0.love` on other platforms
+3. Windows: extract the zip anywhere and run `Flip30.exe`. Other platforms: install LÖVE 11.5, then run `love flip30-1.4.0.love`
 
 > [!IMPORTANT]
-> Use `flip30-1.3.0-win64.zip` on Windows. Use `flip30-1.3.0.love` only with a separate LÖVE 11.5 install.
+> Use `flip30-1.4.0-win64.zip` on Windows. Use `flip30-1.4.0.love` only with a separate LÖVE 11.5 install.
 
 ### Option B: Build from source (for development / to read or change the code)
 
@@ -192,7 +194,7 @@ On Windows, the fastest install is `winget install --id Love2d.Love2d -e`.
 love .
 ```
 
-The menu opens and the game is fully playable. To produce the release artifacts (`.love` archive and Windows build), run `scripts/build.ps1 -Version 1.3.0` on Windows.
+The menu opens and the game is fully playable. To produce the release artifacts (`.love` archive and Windows build), run `scripts/build.ps1 -Version 1.4.0` on Windows.
 
 ---
 
@@ -217,6 +219,8 @@ The menu opens and the game is fully playable. To produce the release artifacts 
 - **Survive**: the longer you last, the faster the game gets; past 2:00 two rules can run at once
 - **Restart**: Enter or Space on the game over screen; Esc returns to the menu or quits
 - **High score**: shown on the menu and the game over screen; saved automatically
+- **Stats**: TAB on the menu opens the lifetime statistics panel
+- **Golden food**: a rare, exempt-from-color-swap pickup worth +50 points
 
 ---
 
@@ -285,7 +289,7 @@ stylua --check .
 
 | Check | Requirement |
 | --- | --- |
-| `luajit tests/headless_tests.lua` | All 245 assertions pass |
+| `luajit tests/headless_tests.lua` | All 249 assertions pass |
 | `stylua --check .` | No output (no diffs) |
 
 Formatting is configured in `stylua.toml`.
