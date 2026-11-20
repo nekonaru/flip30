@@ -110,20 +110,21 @@ local function paint_for(kind)
 end
 
 -- Additive glow halo behind each object; cheap enough for a handful of objects.
-local function draw_glow(obj, color)
+local function draw_glow(obj, color, alpha_mul)
   local pulse = 0.65 + 0.35 * math.sin(TIME * 4 + (obj.seed or 0))
   local radius = obj.size * (0.9 + 0.35 * pulse)
   love.graphics.setBlendMode("add")
-  love.graphics.setColor(color[1], color[2], color[3], 0.28 * pulse)
+  love.graphics.setColor(color[1], color[2], color[3], 0.28 * pulse * (alpha_mul or 1))
   love.graphics.circle("fill", obj.x, obj.y, radius)
   love.graphics.setBlendMode("alpha")
 end
 
 function spawner.draw()
+  local alpha_mul = world.alpha or 1
   for _, obj in ipairs(spawner.objects) do
     local color = paint_for(obj.kind)
-    draw_glow(obj, color)
-    love.graphics.setColor(color[1], color[2], color[3], 1)
+    draw_glow(obj, color, alpha_mul)
+    love.graphics.setColor(color[1], color[2], color[3], alpha_mul)
 
     if obj.kind == spawner.FOOD or obj.kind == spawner.GOLD then
       -- Yellow-green note-or-gold, slight tumble so it reads as catching something physical

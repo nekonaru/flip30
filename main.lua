@@ -14,6 +14,8 @@ local game = require("src.game")
 local screenshot_path = nil
 local screenshot_frames = 0
 local force_rule = nil
+local force_stats = false
+local debug_overlay = false
 
 local function parse_args(arg)
   for i = 1, #(arg or {}) do
@@ -23,6 +25,10 @@ local function parse_args(arg)
       screenshot_frames = tonumber(arg[i + 1]) or 0
     elseif arg[i] == "--force-rule" then
       force_rule = arg[i + 1]
+    elseif arg[i] == "--force-stats" then
+      force_stats = true
+    elseif arg[i] == "--debug" then
+      debug_overlay = true
     end
   end
 end
@@ -62,6 +68,15 @@ function love.load(arg)
         break
       end
     end
+  end
+
+  if force_stats then
+    require("src.ui").show_stats = true
+  end
+
+  game.debug_overlay = debug_overlay
+  if debug_overlay then
+    require("src.debugpanel").visible = true
   end
 
   for _ = 1, screenshot_frames do

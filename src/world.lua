@@ -23,6 +23,7 @@ local DEFAULTS = {
   enemy_life_damage = 1,
   swap_colors = false, -- TUKAR WARNA
   darkness = 0, -- LAYAR GELAP strength, 0..1
+  alpha = 1, -- HANTU: global object opacity, 1 = solid
   spawn_rate_mul = 1, -- HUJAN: multiplier on the spawn rate
   score_mul = 1, -- SKOR GANDA: multiplier on score gains
 

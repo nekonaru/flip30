@@ -2,6 +2,19 @@
 
 Changes to Flip30 are documented here. English is the source; Indonesian ([CHANGELOG.id.md](CHANGELOG.id.md)) is a faithful translation kept in sync.
 
+## v1.5.0
+
+Two new rules, an in-game debug overlay, and a combo display fix.
+
+### New features
+
+- **Fifteen rules.** Two new rules: `HANTU` (objects turn translucent, tag vision) and `WAKTU LAMBAT` (everything crawls at half speed, tag speed).
+- **Debug overlay.** `love . --debug` shows FPS, draw calls, canvas switches, live objects and texture memory. Press I to toggle it in game.
+
+### Bug fixes
+
+- **Combo display.** The menu and game over panels showed the raw streak as "COMBO TERBAIK xN"; they now show the multiplier that streak actually awards (a streak of 4 is x2, not x4).
+
 ## v1.4.0
 
 Lifetime statistics, golden food, and many small joys layered over v1.3.0.

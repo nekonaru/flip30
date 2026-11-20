@@ -77,7 +77,7 @@
 | Feature | Description |
 | --- | --- |
 | **Thirty second flips** | Every 30 seconds the active rule is reverted and a random one is applied |
-| **Thirteen rules** | KONTROL TERBALIK, GRAVITASI MATI, GRAVITASI NAIK, MUSUH JADI POIN, TUKAR WARNA, LAYAR GELAP, SEMUA 2X CEPAT, TIDAK BISA BERHENTI, HUJAN, SKOR GANDA, BESAR, KECIL, GRAVITASI TURBULEN |
+| **Fifteen rules** | KONTROL TERBALIK, GRAVITASI MATI, GRAVITASI NAIK, MUSUH JADI POIN, TUKAR WARNA, LAYAR GELAP, SEMUA 2X CEPAT, TIDAK BISA BERHENTI, HUJAN, SKOR GANDA, BESAR, KECIL, GRAVITASI TURBULEN, HANTU, WAKTU LAMBAT |
 | **Fair picks** | Never the same rule twice in a row; rules sharing a tag are never active together |
 | **Announcement banner** | Big two second banner with a description line while the action slows to 0.3x |
 | **Countdown bar** | Thin timer bar across the top of the screen |
@@ -102,7 +102,7 @@
 
 | Feature | Description |
 | --- | --- |
-| **Headless tests** | 249 assertions run under LuaJIT in CI |
+| **Headless tests** | 261 assertions run under LuaJIT in CI |
 | **Formatted code** | StyLua enforced locally and in CI |
 | **Artwork mode** | Deterministic `--screenshot` captures used for this README |
 | **Responsive canvas** | 800x600 virtual canvas letterboxed to any window size |
@@ -141,11 +141,11 @@
 ### Option A: Download the prebuilt build (easiest)
 
 1. Open the [Releases](https://github.com/nekonaru/flip30/releases) page
-2. Download `flip30-1.4.0-win64.zip` on Windows, or `flip30-1.4.0.love` on other platforms
-3. Windows: extract the zip anywhere and run `Flip30.exe`. Other platforms: install LÖVE 11.5, then run `love flip30-1.4.0.love`
+2. Download `flip30-1.5.0-win64.zip` on Windows, or `flip30-1.5.0.love` on other platforms
+3. Windows: extract the zip anywhere and run `Flip30.exe`. Other platforms: install LÖVE 11.5, then run `love flip30-1.5.0.love`
 
 > [!IMPORTANT]
-> Use `flip30-1.4.0-win64.zip` on Windows. Use `flip30-1.4.0.love` only with a separate LÖVE 11.5 install.
+> Use `flip30-1.5.0-win64.zip` on Windows. Use `flip30-1.5.0.love` only with a separate LÖVE 11.5 install.
 
 ### Option B: Build from source (for development / to read or change the code)
 
@@ -194,7 +194,7 @@ On Windows, the fastest install is `winget install --id Love2d.Love2d -e`.
 love .
 ```
 
-The menu opens and the game is fully playable. To produce the release artifacts (`.love` archive and Windows build), run `scripts/build.ps1 -Version 1.4.0` on Windows.
+The menu opens and the game is fully playable. To produce the release artifacts (`.love` archive and Windows build), run `scripts/build.ps1 -Version 1.5.0` on Windows.
 
 ---
 
@@ -276,6 +276,14 @@ love . --screenshot shots/gameplay.png --frames 260
 love . --screenshot shots/dark.png --frames 60 --force-rule "LAYAR GELAP"
 ```
 
+### Debug overlay
+
+```sh
+love . --debug
+```
+
+Press I to toggle the overlay. It shows FPS, draw calls, canvas switches, live objects and texture memory.
+
 ---
 
 ## Testing
@@ -289,7 +297,7 @@ stylua --check .
 
 | Check | Requirement |
 | --- | --- |
-| `luajit tests/headless_tests.lua` | All 249 assertions pass |
+| `luajit tests/headless_tests.lua` | All 261 assertions pass |
 | `stylua --check .` | No output (no diffs) |
 
 Formatting is configured in `stylua.toml`.

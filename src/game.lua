@@ -10,6 +10,7 @@ local rulemanager = require("src.rulemanager")
 local particles = require("src.particles")
 local sfx = require("src.sfx")
 local theme = require("src.theme")
+local debugpanel = require("src.debugpanel")
 
 local game = {
   state = "menu", -- "menu" | "playing" | "gameover"
@@ -38,7 +39,7 @@ local COLOR_ORANGE = { 1.000, 0.576, 0.169 }
 
 function game.load()
   ui.load()
-  ui.version = "1.4.0"
+  ui.version = "1.5.0"
   game.highscore = storage.load()
   game.best_combo_ever = storage.loadBestCombo()
   game.games_count = storage.loadGamesCount()
@@ -218,6 +219,9 @@ function game.update(dt)
 
   ui.update(dt)
   particles.update(dt)
+  if game.debug_overlay then
+    debugpanel.update(dt)
+  end
 end
 
 function game.keypressed(key)
@@ -245,6 +249,8 @@ function game.keypressed(key)
     elseif key == "m" then
       game.muted = not game.muted
       sfx.muted = game.muted
+    elseif key == "i" and game.debug_overlay then
+      debugpanel.toggle()
     elseif key == "escape" then
       game.state = "menu"
     end
@@ -292,7 +298,7 @@ function game.draw()
   ui.drawArenaBackground()
 
   if game.state == "menu" then
-    ui.drawMenu(game.highscore, game.time, game.best_combo_ever, game.games_count)
+    ui.drawMenu(game.highscore, game.time, world.comboMultiplier(game.best_combo_ever), game.games_count)
     if ui.show_stats then
       ui.drawStatsOverlay(game.highscore, game.best_combo_ever, game.stats, game.games_count)
     end
@@ -328,7 +334,7 @@ function game.draw()
         game.new_record,
         game.time,
         game.run_time,
-        math.max(game.combo_best, game.best_combo_ever)
+        world.comboMultiplier(math.max(game.combo_best, game.best_combo_ever))
       )
     elseif game.paused then
       ui.drawPaused()
@@ -340,6 +346,10 @@ function game.draw()
   love.graphics.pop()
   love.graphics.setScissor()
   love.graphics.setColor(1, 1, 1, 1)
+
+  if game.debug_overlay then
+    debugpanel.draw()
+  end
 end
 
 return game
