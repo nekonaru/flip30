@@ -2,6 +2,19 @@
 
 Perubahan Flip30 didokumentasikan di sini. Bahasa Inggris adalah sumbernya; Bahasa Indonesia (file ini) adalah terjemahan yang selalu selaras.
 
+## v1.5.0
+
+Dua aturan baru, overlay debug in-game, dan perbaikan tampilan combo.
+
+### Fitur baru
+
+- **Lima belas aturan.** Dua aturan baru: `HANTU` (objek jadi tembus pandang, tag vision) dan `WAKTU LAMBAT` (semua merayap setengah kecepatan, tag speed).
+- **Overlay debug.** `love . --debug` menampilkan FPS, draw call, canvas switch, objek aktif, dan memori tekstur. Tekan I untuk menampilkannya di dalam game.
+
+### Perbaikan bug
+
+- **Tampilan combo.** Menu dan layar game over menampilkan streak mentah sebagai "COMBO TERBAIK xN"; sekarang menampilkan multiplier yang benar (streak 4 adalah x2, bukan x4).
+
 ## v1.4.0
 
 Statistik sepanjang waktu, makanan keemasan, dan banyak kejutan kecil di atas v1.3.0.

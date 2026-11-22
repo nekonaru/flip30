@@ -175,6 +175,8 @@ local bundled_rule_files = {
   "rules/big_player.lua",
   "rules/small_player.lua",
   "rules/gravity_turbulent.lua",
+  "rules/ghost_objects.lua",
+  "rules/slow_time.lua",
 }
 
 local ctx = { world = world, player = player, spawner = spawner, ui = nil, sfx = nil }

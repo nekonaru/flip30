@@ -110,20 +110,21 @@ local function paint_for(kind)
 end
 
 -- Additive glow halo behind each object; cheap enough for a handful of objects.
-local function draw_glow(obj, color)
+local function draw_glow(obj, color, alpha_mul)
   local pulse = 0.65 + 0.35 * math.sin(TIME * 4 + (obj.seed or 0))
   local radius = obj.size * (0.9 + 0.35 * pulse)
   love.graphics.setBlendMode("add")
-  love.graphics.setColor(color[1], color[2], color[3], 0.28 * pulse)
+  love.graphics.setColor(color[1], color[2], color[3], 0.28 * pulse * (alpha_mul or 1))
   love.graphics.circle("fill", obj.x, obj.y, radius)
   love.graphics.setBlendMode("alpha")
 end
 
 function spawner.draw()
+  local alpha_mul = world.alpha or 1
   for _, obj in ipairs(spawner.objects) do
     local color = paint_for(obj.kind)
-    draw_glow(obj, color)
-    love.graphics.setColor(color[1], color[2], color[3], 1)
+    draw_glow(obj, color, alpha_mul)
+    love.graphics.setColor(color[1], color[2], color[3], alpha_mul)
 
     if obj.kind == spawner.FOOD or obj.kind == spawner.GOLD then
       -- Yellow-green note-or-gold, slight tumble so it reads as catching something physical
@@ -132,11 +133,11 @@ function spawner.draw()
       love.graphics.rotate(obj.rot or 0)
       local s = obj.size
       love.graphics.rectangle("fill", -s * 0.5, -s * 0.5, s, s, 5, 5)
-      love.graphics.setColor(1, 1, 1, 0.4)
+      love.graphics.setColor(1, 1, 1, 0.4 * alpha_mul)
       love.graphics.rectangle("fill", -s * 0.32, -s * 0.32, s * 0.64, s * 0.3, 3, 3)
       if obj.kind == spawner.GOLD then
         -- sparkle star behind the highlight, unmistakably gold
-        love.graphics.setColor(1.000, 1.000, 1.000, 0.85)
+        love.graphics.setColor(1.000, 1.000, 1.000, 0.85 * alpha_mul)
         local r = s * 0.24
         love.graphics.polygon(
           "fill",
@@ -158,7 +159,7 @@ function spawner.draw()
           -r * 0.35
         )
       end
-      love.graphics.setColor(0, 0, 0, 0.25)
+      love.graphics.setColor(0, 0, 0, 0.25 * alpha_mul)
       love.graphics.setLineWidth(2)
       love.graphics.rectangle("line", -s * 0.5, -s * 0.5, s, s, 5, 5)
       love.graphics.setLineWidth(1)
@@ -170,11 +171,11 @@ function spawner.draw()
       love.graphics.push()
       love.graphics.translate(obj.x, obj.y)
       love.graphics.rotate(wobble)
-      love.graphics.setColor(color[1], color[2], color[3], 1)
+      love.graphics.setColor(color[1], color[2], color[3], alpha_mul)
       love.graphics.polygon("fill", 0, -r, r * 0.95, r * 0.72, -r * 0.95, r * 0.72)
-      love.graphics.setColor(1, 1, 1, 0.3)
+      love.graphics.setColor(1, 1, 1, 0.3 * alpha_mul)
       love.graphics.polygon("fill", 0, -r * 0.55, r * 0.48, r * 0.42, -r * 0.48, r * 0.42)
-      love.graphics.setColor(0, 0, 0, 0.3)
+      love.graphics.setColor(0, 0, 0, 0.3 * alpha_mul)
       love.graphics.polygon("line", 0, -r, r * 0.95, r * 0.72, -r * 0.95, r * 0.72)
       love.graphics.pop()
     end
