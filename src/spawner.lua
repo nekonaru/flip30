@@ -133,11 +133,11 @@ function spawner.draw()
       love.graphics.rotate(obj.rot or 0)
       local s = obj.size
       love.graphics.rectangle("fill", -s * 0.5, -s * 0.5, s, s, 5, 5)
-      love.graphics.setColor(1, 1, 1, 0.4)
+      love.graphics.setColor(1, 1, 1, 0.4 * alpha_mul)
       love.graphics.rectangle("fill", -s * 0.32, -s * 0.32, s * 0.64, s * 0.3, 3, 3)
       if obj.kind == spawner.GOLD then
         -- sparkle star behind the highlight, unmistakably gold
-        love.graphics.setColor(1.000, 1.000, 1.000, 0.85)
+        love.graphics.setColor(1.000, 1.000, 1.000, 0.85 * alpha_mul)
         local r = s * 0.24
         love.graphics.polygon(
           "fill",
@@ -159,7 +159,7 @@ function spawner.draw()
           -r * 0.35
         )
       end
-      love.graphics.setColor(0, 0, 0, 0.25)
+      love.graphics.setColor(0, 0, 0, 0.25 * alpha_mul)
       love.graphics.setLineWidth(2)
       love.graphics.rectangle("line", -s * 0.5, -s * 0.5, s, s, 5, 5)
       love.graphics.setLineWidth(1)
@@ -171,11 +171,11 @@ function spawner.draw()
       love.graphics.push()
       love.graphics.translate(obj.x, obj.y)
       love.graphics.rotate(wobble)
-      love.graphics.setColor(color[1], color[2], color[3], 1)
+      love.graphics.setColor(color[1], color[2], color[3], alpha_mul)
       love.graphics.polygon("fill", 0, -r, r * 0.95, r * 0.72, -r * 0.95, r * 0.72)
-      love.graphics.setColor(1, 1, 1, 0.3)
+      love.graphics.setColor(1, 1, 1, 0.3 * alpha_mul)
       love.graphics.polygon("fill", 0, -r * 0.55, r * 0.48, r * 0.42, -r * 0.48, r * 0.42)
-      love.graphics.setColor(0, 0, 0, 0.3)
+      love.graphics.setColor(0, 0, 0, 0.3 * alpha_mul)
       love.graphics.polygon("line", 0, -r, r * 0.95, r * 0.72, -r * 0.95, r * 0.72)
       love.graphics.pop()
     end
