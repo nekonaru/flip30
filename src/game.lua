@@ -11,6 +11,7 @@ local particles = require("src.particles")
 local sfx = require("src.sfx")
 local theme = require("src.theme")
 local debugpanel = require("src.debugpanel")
+local music = require("src.music")
 
 local game = {
   state = "menu", -- "menu" | "playing" | "gameover"
@@ -37,9 +38,15 @@ local COLOR_GREEN = { 0.239, 0.859, 0.541 }
 local COLOR_RED = { 1.000, 0.302, 0.361 }
 local COLOR_ORANGE = { 1.000, 0.576, 0.169 }
 
+function game.setMute(muted)
+  game.muted = muted
+  sfx.muted = muted
+end
+
 function game.load()
   ui.load()
-  ui.version = "1.5.0"
+  music.load()
+  ui.version = "1.6.0"
   game.highscore = storage.load()
   game.best_combo_ever = storage.loadBestCombo()
   game.games_count = storage.loadGamesCount()
@@ -59,10 +66,17 @@ function game.load()
   spawner.reset()
 end
 
+function game.setMute(muted)
+  game.muted = muted
+  sfx.muted = muted
+  music.muted = muted
+end
+
 function game.startRun()
   rulemanager.resetToDefaults(game.ctx)
   rulemanager.max_active = 1 -- escalation to 2 rules happens at the two-minute mark
   spawner.reset()
+  music.play(game.ctx)
   game.games_count = game.games_count + 1
   storage.saveGamesCount(game.games_count)
   game.score = 0
@@ -83,6 +97,8 @@ end
 
 function game.gameOver()
   game.state = "gameover"
+  music.stop()
+  game.display_score = game.score
   if game.combo_best > game.best_combo_ever then
     game.best_combo_ever = game.combo_best
     storage.saveBestCombo(game.combo_best)
@@ -248,7 +264,10 @@ function game.keypressed(key)
       sfx.play("select")
     elseif key == "m" then
       game.muted = not game.muted
-      sfx.muted = game.muted
+      game.setMute(game.muted)
+      if not game.muted then
+        music.play(game.ctx)
+      end
     elseif key == "i" and game.debug_overlay then
       debugpanel.toggle()
     elseif key == "escape" then
@@ -260,7 +279,7 @@ function game.keypressed(key)
       game.startRun()
     elseif key == "m" then
       game.muted = not game.muted
-      sfx.muted = game.muted
+      game.setMute(game.muted)
     elseif key == "escape" then
       game.state = "menu"
     end

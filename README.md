@@ -105,6 +105,8 @@
 | **Headless tests** | 261 assertions run under LuaJIT in CI |
 | **Formatted code** | StyLua enforced locally and in CI |
 | **Artwork mode** | Deterministic `--screenshot` captures used for this README |
+| **Debug overlay** | `love . --debug` shows FPS, objects, canvas switches; press I to toggle |
+| **Procedural music** | Generated loop sounding like the rule range in the key (see below) |
 | **Responsive canvas** | 800x600 virtual canvas letterboxed to any window size |
 | **Open source** | MIT license |
 
@@ -141,11 +143,11 @@
 ### Option A: Download the prebuilt build (easiest)
 
 1. Open the [Releases](https://github.com/nekonaru/flip30/releases) page
-2. Download `flip30-1.5.0-win64.zip` on Windows, or `flip30-1.5.0.love` on other platforms
-3. Windows: extract the zip anywhere and run `Flip30.exe`. Other platforms: install LÖVE 11.5, then run `love flip30-1.5.0.love`
+2. Download `flip30-1.6.0-win64.zip` on Windows, or `flip30-1.6.0.love` on other platforms
+3. Windows: extract the zip anywhere and run `Flip30.exe`. Other platforms: install LÖVE 11.5, then run `love flip30-1.6.0.love`
 
 > [!IMPORTANT]
-> Use `flip30-1.5.0-win64.zip` on Windows. Use `flip30-1.5.0.love` only with a separate LÖVE 11.5 install.
+> Use `flip30-1.6.0-win64.zip` on Windows. Use `flip30-1.6.0.love` only with a separate LÖVE 11.5 install.
 
 ### Option B: Build from source (for development / to read or change the code)
 
@@ -194,7 +196,7 @@ On Windows, the fastest install is `winget install --id Love2d.Love2d -e`.
 love .
 ```
 
-The menu opens and the game is fully playable. To produce the release artifacts (`.love` archive and Windows build), run `scripts/build.ps1 -Version 1.5.0` on Windows.
+The menu opens and the game is fully playable. To produce the release artifacts (`.love` archive and Windows build), run `scripts/build.ps1 -Version 1.6.0` on Windows.
 
 ---
 
@@ -241,6 +243,8 @@ flip30/
     storage.lua       # High score via love.filesystem (highscore.txt)
     particles.lua     # Sparkle bursts, generated sprite
     sfx.lua           # Synthesized sound effects, no audio files
+    music.lua         # Procedural 10s loop, pitch shifts per active rule
+    debugpanel.lua    # FPS/objects dev overlay (love . --debug)
   rules/              # One file per rule, hot-swapped every 30 seconds
   assets/
     brand/            # Logo, icon, monochrome artwork
