@@ -105,6 +105,8 @@
 | **Test headless** | 261 assertion berjalan di bawah LuaJIT di CI |
 | **Kode terformat** | StyLua diwajibkan secara lokal dan di CI |
 | **Mode artwork** | Capture `--screenshot` deterministik yang dipakai di README ini |
+| **Overlay debug** | `love . --debug` menampilkan FPS, objek, canvas switch; tekan I untuk toggle |
+| **Musik procedur** | Loop yang dibangkitkan sesuai suasana aturan yang aktif |
 | **Kanvas responsif** | Virtual canvas 800x600 di-letterbox ke ukuran jendela apa pun |
 | **Open source** | Lisensi MIT |
 
@@ -141,11 +143,11 @@
 ### Opsi A: Unduh build siap pakai (paling mudah)
 
 1. Buka halaman [Releases](https://github.com/nekonaru/flip30/releases)
-2. Unduh `flip30-1.5.0-win64.zip` di Windows, atau `flip30-1.5.0.love` di platform lain
-3. Windows: extract zip ke mana saja lalu jalankan `Flip30.exe`. Platform lain: instal LÖVE 11.5, lalu jalankan `love flip30-1.5.0.love`
+2. Unduh `flip30-1.6.0-win64.zip` di Windows, atau `flip30-1.6.0.love` di platform lain
+3. Windows: extract zip ke mana saja lalu jalankan `Flip30.exe`. Platform lain: instal LÖVE 11.5, lalu jalankan `love flip30-1.6.0.love`
 
 > [!IMPORTANT]
-> Gunakan `flip30-1.5.0-win64.zip` di Windows. Gunakan `flip30-1.5.0.love` hanya dengan instalasi LÖVE 11.5 terpisah.
+> Gunakan `flip30-1.6.0-win64.zip` di Windows. Gunakan `flip30-1.6.0.love` hanya dengan instalasi LÖVE 11.5 terpisah.
 
 ### Opsi B: Build dari source (untuk development / untuk membaca atau mengubah kode)
 
@@ -194,7 +196,7 @@ Di Windows, cara tercepat adalah `winget install --id Love2d.Love2d -e`.
 love .
 ```
 
-Menu terbuka dan game langsung bisa dimainkan. Untuk menghasilkan artifact rilis (`.love` archive dan build Windows), jalankan `scripts/build.ps1 -Version 1.5.0` di Windows.
+Menu terbuka dan game langsung bisa dimainkan. Untuk menghasilkan artifact rilis (`.love` archive dan build Windows), jalankan `scripts/build.ps1 -Version 1.6.0` di Windows.
 
 ---
 
@@ -241,6 +243,8 @@ flip30/
     storage.lua       # Skor terbaik via love.filesystem (highscore.txt)
     particles.lua     # Sparkle burst, sprite dihasilkan sendiri
     sfx.lua           # SFX disintesis, tanpa file audio
+    music.lua         # Loop prosedural 10 detik, pitch per aturan aktif
+    debugpanel.lua    # Dev overlay FPS/objects (love . --debug)
   rules/              # Satu file per aturan, berganti otomatis tiap 30 detik
   assets/
     brand/            # Logo, ikon, artwork monokrom

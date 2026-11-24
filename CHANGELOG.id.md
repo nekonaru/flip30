@@ -2,6 +2,14 @@
 
 Perubahan Flip30 didokumentasikan di sini. Bahasa Inggris adalah sumbernya; Bahasa Indonesia (file ini) adalah terjemahan yang selalu selaras.
 
+## v1.6.0
+
+Musik prosedural pada saat main.
+
+### Fitur baru
+
+- **Musik prosedural.** Loop generatif 10 detik yang dimainkan saat main, dengan pitch berubah sesuai aturan aktif (KONTROL TERBALIK sedikit rendah, WAKTU LAMBAT jauh lebih rendah, SEMUA 2X CEPAT dikali.). Tanpa pengaturan, langsung terasa sekitar aturanmu.
+
 ## v1.5.0
 
 Dua aturan baru, overlay debug in-game, dan perbaikan tampilan combo.
