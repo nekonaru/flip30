@@ -2,6 +2,14 @@
 
 Changes to Flip30 are documented here. English is the source; Indonesian ([CHANGELOG.id.md](CHANGELOG.id.md)) is a faithful translation kept in sync.
 
+## v1.6.0
+
+Procedural music during the run.
+
+### New features
+
+- **Procedural music.** A generated 10-second loop playing during the run, with pitch shifts for the active rules (KONTROL TERBALIK is slightly low, WAKTU LAMBAT lower, SEMUA 2X CEPAT up). Nothing to set, it just sounds around your rules.
+
 ## v1.5.0
 
 Two new rules, an in-game debug overlay, and a combo display fix.
