@@ -56,8 +56,8 @@ function sfx.play(name, pitch)
   local source = sources[name]
   if source then
     source:stop()
-    if pitch and source.setPitch then
-      source:setPitch(pitch)
+    if source.setPitch then
+      source:setPitch(pitch or 1)
     end
     source:play()
   end

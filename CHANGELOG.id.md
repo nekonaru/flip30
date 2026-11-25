@@ -2,6 +2,20 @@
 
 Perubahan Flip30 didokumentasikan di sini. Bahasa Inggris adalah sumbernya; Bahasa Indonesia (file ini) adalah terjemahan yang selalu selaras.
 
+## v1.7.0
+
+Dua aturan baru, musik mengikuti aturan, dan beberapa perbaikan dari audit mendalam.
+
+### Fitur baru
+
+- **Tujuh belas aturan.** `TANPA BATAS` membuat player bisa lewat tepi layar, bukan berhenti. `HUJAN EMAS` melipatgandakan kemunculan makanan keemasan.
+- **Musik mengikuti aturan.** Loop prosedural sekarang berubah pitch saat aturan baru aktif, dan berhenti saat keluar dari game.
+
+### Perbaikan bug
+
+- **Pitch SFX bocor antar-suara.** `sfx.play` sekarang mengembalikan pitch ke x1 bila tidak ada pitch, sehingga suara high-pitch dari emas tidak mengubah suara biasa.
+- **Musik tidak bisa melihat aturan.** `game.ctx` sekarang membawa `rulemanager` dan `music`, sehingga manager bisa menyuruh musik berubah.
+
 ## v1.6.0
 
 Musik prosedural pada saat main.

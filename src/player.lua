@@ -26,7 +26,7 @@ end
 
 -- `left`/`right` are booleans, `speed_mul` comes from the world so
 -- SEMUA 2X CEPAT also accelerates the player.
-function player.update(dt, left, right, speed_mul)
+function player.update(dt, left, right, speed_mul, wrap)
   local move = 0
   if left then
     move = move - 1
@@ -48,11 +48,16 @@ function player.update(dt, left, right, speed_mul)
   end
 
   player.x = player.x + move * player.speed * (speed_mul or 1) * dt
-  if player.x < 0 then
-    player.x = 0
-  end
-  if player.x > 800 - player.w then
-    player.x = 800 - player.w
+  -- TANPA BATAS wraps around instead of clamping at the arena edge
+  if wrap then
+    player.x = (player.x + player.w) % 800 - player.w
+  else
+    if player.x < 0 then
+      player.x = 0
+    end
+    if player.x > 800 - player.w then
+      player.x = 800 - player.w
+    end
   end
 
   player.impact = math.max(0, player.impact - dt * 2.6)

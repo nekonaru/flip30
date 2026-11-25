@@ -2,6 +2,20 @@
 
 Changes to Flip30 are documented here. English is the source; Indonesian ([CHANGELOG.id.md](CHANGELOG.id.md)) is a faithful translation kept in sync.
 
+## v1.7.0
+
+Two new rules, music that follows the rules, and small bug fixes from a deep audit.
+
+### New features
+
+- **Seventeen rules.** `TANPA BATAS` lets the player wrap around the arena edge instead of stopping. `HUJAN EMAS` quadruples the golden drop chance.
+- **Music follows the rules.** The procedural loop now changes pitch when a new rule is applied, and stops when you leave the game.
+
+### Bug fixes
+
+- **SFX pitch leaked between sounds.** `sfx.play` now resets the pitch to x1 when no pitch is passed, so a high-pitched gold pickup no longer leaves later catch sounds high.
+- **Music could not see the rules.** `game.ctx` now carries `rulemanager` and `music`, so the rule manager can ask the music module to retune.
+
 ## v1.6.0
 
 Procedural music during the run.
