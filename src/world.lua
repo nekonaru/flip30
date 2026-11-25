@@ -24,6 +24,8 @@ local DEFAULTS = {
   swap_colors = false, -- TUKAR WARNA
   darkness = 0, -- LAYAR GELAP strength, 0..1
   alpha = 1, -- HANTU: global object opacity, 1 = solid
+  wrap = false, -- TANPA BATAS: player wraps around the arena edge
+  gold_mul = 1, -- HUJAN EMAS: multiplier on the golden drop chance
   spawn_rate_mul = 1, -- HUJAN: multiplier on the spawn rate
   score_mul = 1, -- SKOR GANDA: multiplier on score gains
 

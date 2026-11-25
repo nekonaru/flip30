@@ -75,6 +75,17 @@ check(st.time == 0 and st.score == 0 and st.food == 0, "parseStats rejects short
 st = storage.parseStats(nil)
 check(st.time == 0 and st.score == 0 and st.food == 0, "parseStats rejects nil")
 check(storage.parse("abc") == 0, "storage.parse corrupt string")
+
+-- wrap movement: player can cross the arena edge and appear on the other side
+player.reset()
+player.update(0.25, false, true, 1, true)
+player.x = 790
+player.update(0.5, false, true, 1, true)
+check(player.x >= 0 and player.x < 200, "wrap around the right edge")
+player.x = 10
+player.update(0.5, true, false, 1, true)
+check(player.x > 600 and player.x < 800, "wrap around the left edge")
+player.reset()
 check(storage.parse("") == 0, "storage.parse empty string")
 check(storage.parse("-7") == 0, "storage.parse negative score")
 check(storage.parse(nil) == 0, "storage.parse nil")
@@ -145,6 +156,8 @@ local function snapshot()
     darkness = world.darkness,
     spawn_rate_mul = world.spawn_rate_mul,
     score_mul = world.score_mul,
+    wrap = world.wrap,
+    gold_mul = world.gold_mul,
     dir = player.dir,
     w = player.w,
     always_move = player.always_move,
@@ -177,6 +190,8 @@ local bundled_rule_files = {
   "rules/gravity_turbulent.lua",
   "rules/ghost_objects.lua",
   "rules/slow_time.lua",
+  "rules/wrap_player.lua",
+  "rules/gold_rain.lua",
 }
 
 local ctx = { world = world, player = player, spawner = spawner, ui = nil, sfx = nil }

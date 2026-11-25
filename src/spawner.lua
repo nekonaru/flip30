@@ -26,7 +26,8 @@ end
 local function spawn_one()
   local roll = math.random()
   local kind
-  if roll < GOLD_CHANCE then
+  local gold_chance = GOLD_CHANCE * (world.gold_mul or 1)
+  if roll < gold_chance then
     kind = spawner.GOLD
   elseif roll < GOLD_CHANCE + FOOD_CHANCE then
     kind = spawner.FOOD

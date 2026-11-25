@@ -46,13 +46,21 @@ end
 function game.load()
   ui.load()
   music.load()
-  ui.version = "1.6.0"
+  ui.version = "1.7.0"
   game.highscore = storage.load()
   game.best_combo_ever = storage.loadBestCombo()
   game.games_count = storage.loadGamesCount()
   game.stats = storage.loadStats()
   game.time = 0
-  game.ctx = { player = player, world = world, spawner = spawner, ui = ui, sfx = sfx }
+  game.ctx = {
+    player = player,
+    world = world,
+    spawner = spawner,
+    ui = ui,
+    sfx = sfx,
+    rulemanager = rulemanager,
+    music = music,
+  }
   sfx.load()
   particles.load()
   local modloader = require("src.modloader")
@@ -92,6 +100,7 @@ function game.startRun()
   game.shake_t = 0
   game.hit_stop = 0
   game.flash = 0
+  ui.show_stats = false
   game.state = "playing"
 end
 
@@ -157,7 +166,7 @@ function game.update(dt)
 
     local left = love.keyboard.isDown("a", "left")
     local right = love.keyboard.isDown("d", "right")
-    player.update(sim_dt, left, right, world.speed_mul)
+    player.update(sim_dt, left, right, world.speed_mul, world.wrap)
 
     local events = spawner.update(sim_dt)
     for _, ev in ipairs(events) do
@@ -261,6 +270,11 @@ function game.keypressed(key)
   elseif game.state == "playing" then
     if key == "p" then
       game.paused = not game.paused
+      if game.paused then
+        music.stop()
+      else
+        music.play(game.ctx)
+      end
       sfx.play("select")
     elseif key == "m" then
       game.muted = not game.muted
@@ -271,6 +285,7 @@ function game.keypressed(key)
     elseif key == "i" and game.debug_overlay then
       debugpanel.toggle()
     elseif key == "escape" then
+      music.stop()
       game.state = "menu"
     end
   elseif game.state == "gameover" then

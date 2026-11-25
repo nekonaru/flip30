@@ -207,6 +207,9 @@ function rulemanager.swap(ctx)
     if ctx and ctx.sfx and ctx.sfx.play then
       pcall(ctx.sfx.play, "swap", tag_pitch(picked[1]))
     end
+    if ctx and ctx.music and ctx.music.play then
+      pcall(ctx.music.play, ctx)
+    end
   else
     if ctx and ctx.ui and ctx.ui.showBanner then
       ctx.ui.showBanner("NORMAL")
