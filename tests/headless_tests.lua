@@ -74,6 +74,15 @@ st = storage.parseStats("12")
 check(st.time == 0 and st.score == 0 and st.food == 0, "parseStats rejects short input")
 st = storage.parseStats(nil)
 check(st.time == 0 and st.score == 0 and st.food == 0, "parseStats rejects nil")
+
+local top = storage.parseScores("10,50,30")
+check(#top == 3 and top[1] == 50 and top[2] == 30 and top[3] == 10, "parseScores sorts descending")
+top = storage.parseScores("99,88,77,66,55,44")
+check(#top == 5 and top[1] == 99 and top[5] == 55, "parseScores keeps only five scores")
+top = storage.parseScores("garbage")
+check(#top == 0, "parseScores rejects garbage")
+top = storage.parseScores(nil)
+check(#top == 0, "parseScores rejects nil")
 check(storage.parse("abc") == 0, "storage.parse corrupt string")
 
 -- wrap movement: player can cross the arena edge and appear on the other side

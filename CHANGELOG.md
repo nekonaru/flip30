@@ -2,6 +2,23 @@
 
 Changes to Flip30 are documented here. English is the source; Indonesian ([CHANGELOG.id.md](CHANGELOG.id.md)) is a faithful translation kept in sync.
 
+## v1.8.0
+
+Top-five scores, a fuller pause menu, and fixes from a deep source audit.
+
+### New features
+
+- **Top five scores.** `scores.txt` stores your five best scores; the stats panel on the menu shows all five.
+- **Pause menu actions.** R restarts the run, Q or ESC returns to menu, P resumes, M mutes.
+
+### Bug fixes
+
+- **Mute did not reach music from the menu.** The M key now calls `game.setMute` everywhere, so music is muted too.
+- **Stats panel showed raw streak as multiplier.** It now shows the multiplier awarded (streak 4 becomes x2).
+- **Music source churn.** The loop source is created once and reused, instead of rebuilt at every restart.
+- **Duplicate `game.setMute` definition.** Removed the dead copy.
+- **Missing rule pitches.** SKOR GANDA, HUJAN EMAS and TANPA BATAS now retune the music too.
+
 ## v1.7.0
 
 Two new rules, music that follows the rules, and small bug fixes from a deep audit.
