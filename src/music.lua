@@ -25,6 +25,9 @@ local pitches = {
   ["KECIL"] = 0.85,
   ["TIDAK BISA BERHENTI"] = 0.5,
   ["LAYAR GELAP"] = 0.75,
+  ["SKOR GANDA"] = 1.15,
+  ["HUJAN EMAS"] = 1.2,
+  ["TANPA BATAS"] = 0.9,
   default = 1.0,
 }
 
@@ -92,14 +95,13 @@ local function pitch_for(ctx)
 end
 
 function music.play(ctx)
-  if music.muted then
+  if music.muted or not music._base then
     return
   end
-  if not music._base or not music._playing then
+  if not music._src then
     music._src = love.audio.newSource(music._base, "stream")
     music._src:setLooping(true)
     music._src:setVolume(0.18)
-    music._playing = true
   end
   music._src:stop()
   music._src:setPitch(pitch_for(ctx))
@@ -108,15 +110,13 @@ end
 
 function music.stop()
   if music._src then
-    music._src:pause()
+    music._src:stop()
   end
-  music._playing = false
 end
 
+-- resume() is a no-op alias kept for API stability; play() already reuses the source
 function music.resume(ctx)
-  if not music._playing then
-    music.play(ctx)
-  end
+  music.play(ctx)
 end
 
 return music

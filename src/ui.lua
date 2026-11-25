@@ -417,8 +417,9 @@ function ui.drawPaused()
 
   love.graphics.setFont(FONTS.body)
   love.graphics.setColor(theme.text_dim[1], theme.text_dim[2], theme.text_dim[3], 1)
-  love.graphics.printf("P: lanjut bermain", px, py + 108, panel_w, "center")
-  love.graphics.printf("ESC: kembali ke menu", px, py + 138, panel_w, "center")
+  love.graphics.printf("P: lanjut bermain", px, py + 92, panel_w, "center")
+  love.graphics.printf("R: main lagi   ·   Q / ESC: menu", px, py + 124, panel_w, "center")
+  love.graphics.printf("M: bisukan suara", px, py + 156, panel_w, "center")
   love.graphics.setColor(1, 1, 1, 1)
 end
 
@@ -486,13 +487,13 @@ local function stat_row(label, value, x, y, w)
   love.graphics.printf(tostring(value), x, y, w, "right")
 end
 
-function ui.drawStatsOverlay(highscore, best_combo, stats, games_count)
+function ui.drawStatsOverlay(highscore, best_combo, stats, games_count, top_scores)
   stats = stats or { time = 0, score = 0, food = 0 }
   love.graphics.setColor(0.01, 0.012, 0.02, 0.82)
   love.graphics.rectangle("fill", 0, 0, 800, 600)
 
-  local panel_w, panel_h = 460, 330
-  local px, py = 170, 135
+  local panel_w, panel_h = 560, 330
+  local px, py = 120, 135
   draw_chip(px, py, panel_w, panel_h)
   love.graphics.setColor(theme.cyan[1], theme.cyan[2], theme.cyan[3], 0.8)
   love.graphics.setLineWidth(2)
@@ -503,13 +504,32 @@ function ui.drawStatsOverlay(highscore, best_combo, stats, games_count)
   love.graphics.setColor(theme.cyan[1], theme.cyan[2], theme.cyan[3], 1)
   love.graphics.printf("STATISTIK", px, py + 18, panel_w, "center")
 
-  local row_x, row_w = px + 36, panel_w - 72
+  local row_x, row_w = px + 36, 244
   stat_row("TOTAL MAIN", games_count or 0, row_x, py + 84, row_w)
   stat_row("TOTAL WAKTU", mmss(stats.time or 0), row_x, py + 124, row_w)
   stat_row("TOTAL SKOR", stats.score or 0, row_x, py + 164, row_w)
   stat_row("TOTAL MAKANAN", stats.food or 0, row_x, py + 204, row_w)
   stat_row("SKOR TERBAIK", highscore or 0, row_x, py + 244, row_w)
   stat_row("COMBO TERBAIK", "x" .. tostring(best_combo or 0), row_x, py + 284, row_w)
+
+  -- Top five scores on the right side
+  local top_x = px + 316
+  love.graphics.setFont(FONTS.body)
+  love.graphics.setColor(theme.cyan[1], theme.cyan[2], theme.cyan[3], 1)
+  love.graphics.print("TOP 5", top_x, py + 84)
+  for i = 1, 5 do
+    local value = top_scores and top_scores[i] or 0
+    love.graphics.setFont(FONTS.body)
+    love.graphics.setColor(theme.text_mute[1], theme.text_mute[2], theme.text_mute[3], 1)
+    love.graphics.print(i .. ".", top_x, py + 124 + (i - 1) * 40)
+    love.graphics.setColor(
+      i == 1 and theme.yellow[1] or theme.text[1],
+      i == 1 and theme.yellow[2] or theme.text[2],
+      i == 1 and theme.yellow[3] or theme.text[3],
+      1
+    )
+    love.graphics.print(tostring(value), top_x + 36, py + 124 + (i - 1) * 40)
+  end
 
   love.graphics.setFont(FONTS.small)
   love.graphics.setColor(theme.text_mute[1], theme.text_mute[2], theme.text_mute[3], 1)

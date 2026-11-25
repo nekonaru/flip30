@@ -65,11 +65,12 @@
 | **Objek** | Makanan hijau bernilai +10 poin, makanan keemasan adalah drop langka bernilai +50, tidak terpengaruh TUKAR WARNA. Musuh merah mengurangi 1 nyawa, dimainkan di kanvas 800x600 |
 | **Kesulitan** | Kecepatan jatuh dan laju spawn naik seiring waktu; kamu punya tiga nyawa per sesi |
 | **Skor terbaik** | Skor tertinggi disimpan secara lokal di `highscore.txt`, dirayakan saat rekor baru |
+| **Lima terbaik** | Panel statistik menampilkan lima skor terbaik dari `scores.txt` |
 | **Timer bertahan** | HUD menampilkan berapa lama kamu bertahan, mm:ss |
 | **Combo** | Setiap 4 tangkapan berturut-turut menaikkan multiplier sampai x5; kena musuh meresetnya |
 | **Statistik** | Tekan TAB di menu untuk melihat statistik sepanjang waktu: total main, total waktu bertahan, total skor, total makanan, skor terbaik, combo terbaik |
 | **Dua aturan di menit kedua** | Setelah menit ke-2, dua aturan aktif bersamaan; keduanya tidak boleh punya tag yang sama |
-| **Pause** | Tekan P untuk menjeda aksi, tekan P lagi untuk lanjut |
+| **Pause** | Tekan P untuk menjeda; R main lagi, Q / ESC kembali ke menu |
 | **Mute** | Tekan M untuk membisukan SFX, di mana pun |
 
 ### Aturan yang berganti timer
@@ -102,7 +103,7 @@
 
 | Fitur | Deskripsi |
 | --- | --- |
-| **Test headless** | 275 assertion berjalan di bawah LuaJIT di CI |
+| **Test headless** | 279 assertion berjalan di bawah LuaJIT di CI |
 | **Kode terformat** | StyLua diwajibkan secara lokal dan di CI |
 | **Mode artwork** | Capture `--screenshot` deterministik yang dipakai di README ini |
 | **Overlay debug** | `love . --debug` menampilkan FPS, objek, canvas switch; tekan I untuk toggle |
@@ -143,11 +144,11 @@
 ### Opsi A: Unduh build siap pakai (paling mudah)
 
 1. Buka halaman [Releases](https://github.com/nekonaru/flip30/releases)
-2. Unduh `flip30-1.7.0-win64.zip` di Windows, atau `flip30-1.7.0.love` di platform lain
-3. Windows: extract zip ke mana saja lalu jalankan `Flip30.exe`. Platform lain: instal LÖVE 11.5, lalu jalankan `love flip30-1.7.0.love`
+2. Unduh `flip30-1.8.0-win64.zip` di Windows, atau `flip30-1.8.0.love` di platform lain
+3. Windows: extract zip ke mana saja lalu jalankan `Flip30.exe`. Platform lain: instal LÖVE 11.5, lalu jalankan `love flip30-1.8.0.love`
 
 > [!IMPORTANT]
-> Gunakan `flip30-1.7.0-win64.zip` di Windows. Gunakan `flip30-1.7.0.love` hanya dengan instalasi LÖVE 11.5 terpisah.
+> Gunakan `flip30-1.8.0-win64.zip` di Windows. Gunakan `flip30-1.8.0.love` hanya dengan instalasi LÖVE 11.5 terpisah.
 
 ### Opsi B: Build dari source (untuk development / untuk membaca atau mengubah kode)
 
@@ -196,7 +197,7 @@ Di Windows, cara tercepat adalah `winget install --id Love2d.Love2d -e`.
 love .
 ```
 
-Menu terbuka dan game langsung bisa dimainkan. Untuk menghasilkan artifact rilis (`.love` archive dan build Windows), jalankan `scripts/build.ps1 -Version 1.7.0` di Windows.
+Menu terbuka dan game langsung bisa dimainkan. Untuk menghasilkan artifact rilis (`.love` archive dan build Windows), jalankan `scripts/build.ps1 -Version 1.8.0` di Windows.
 
 ---
 
@@ -301,7 +302,7 @@ stylua --check .
 
 | Check | Requirement |
 | --- | --- |
-| `luajit tests/headless_tests.lua` | Semua 275 assertion lolos |
+| `luajit tests/headless_tests.lua` | Semua 279 assertion lolos |
 | `stylua --check .` | Tidak ada output (tidak ada diff) |
 
 Formatting dikonfigurasi di `stylua.toml`.

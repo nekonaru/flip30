@@ -2,6 +2,23 @@
 
 Perubahan Flip30 didokumentasikan di sini. Bahasa Inggris adalah sumbernya; Bahasa Indonesia (file ini) adalah terjemahan yang selalu selaras.
 
+## v1.8.0
+
+Lima skor terbaik, menu pause lebih lengkap, dan perbaikan dari audit source mendalam.
+
+### Fitur baru
+
+- **Lima skor terbaik.** `scores.txt` menyimpan lima skor terbaikmu; panel statistik di menu menampilkan semuanya.
+- **Aksi menu pause.** R main lagi, Q / ESC kembali ke menu, P lanjut, M bisu.
+
+### Perbaikan bug
+
+- **Mute dari menu tidak kena musik.** Tombol M sekarang memanggil `game.setMute` di semua state.
+- **Panel statistik menampilkan streak mentah sebagai multiplier.** Sekarang menampilkan multiplier yang didapat (streak 4 jadi x2).
+- **Source musik dibuat ulang terus.** Loop sekarang dibuat sekali dan dipakai ulang.
+- **Definisi `game.setMute` ganda.** Copy mati dihapus.
+- **Pitch aturan belum lengkap.** SKOR GANDA, HUJAN EMAS dan TANPA BATAS sekarang ikut mengubah musik.
+
 ## v1.7.0
 
 Dua aturan baru, musik mengikuti aturan, dan beberapa perbaikan dari audit mendalam.

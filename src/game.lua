@@ -38,19 +38,15 @@ local COLOR_GREEN = { 0.239, 0.859, 0.541 }
 local COLOR_RED = { 1.000, 0.302, 0.361 }
 local COLOR_ORANGE = { 1.000, 0.576, 0.169 }
 
-function game.setMute(muted)
-  game.muted = muted
-  sfx.muted = muted
-end
-
 function game.load()
   ui.load()
   music.load()
-  ui.version = "1.7.0"
+  ui.version = "1.8.0"
   game.highscore = storage.load()
   game.best_combo_ever = storage.loadBestCombo()
   game.games_count = storage.loadGamesCount()
   game.stats = storage.loadStats()
+  game.top_scores = storage.loadScores()
   game.time = 0
   game.ctx = {
     player = player,
@@ -118,6 +114,21 @@ function game.gameOver()
   stats.food = stats.food + game.food_count
   storage.saveStats(stats)
   game.stats = stats
+  if game.score > 0 then
+    local scores = {}
+    for i, value in ipairs(game.top_scores or {}) do
+      scores[i] = value
+    end
+    table.insert(scores, game.score)
+    table.sort(scores, function(a, b)
+      return a > b
+    end)
+    while #scores > 5 do
+      table.remove(scores)
+    end
+    game.top_scores = scores
+    storage.saveScores(scores)
+  end
   if game.score > game.highscore then
     game.highscore = game.score
     game.new_record = true
@@ -263,7 +274,7 @@ function game.keypressed(key)
       game.startRun()
     elseif key == "m" then
       game.muted = not game.muted
-      sfx.muted = game.muted
+      game.setMute(game.muted)
     elseif key == "escape" then
       love.event.quit()
     end
@@ -284,6 +295,11 @@ function game.keypressed(key)
       end
     elseif key == "i" and game.debug_overlay then
       debugpanel.toggle()
+    elseif game.paused and key == "r" then
+      game.startRun()
+    elseif game.paused and key == "q" then
+      music.stop()
+      game.state = "menu"
     elseif key == "escape" then
       music.stop()
       game.state = "menu"
@@ -334,7 +350,13 @@ function game.draw()
   if game.state == "menu" then
     ui.drawMenu(game.highscore, game.time, world.comboMultiplier(game.best_combo_ever), game.games_count)
     if ui.show_stats then
-      ui.drawStatsOverlay(game.highscore, game.best_combo_ever, game.stats, game.games_count)
+      ui.drawStatsOverlay(
+        game.highscore,
+        world.comboMultiplier(game.best_combo_ever),
+        game.stats,
+        game.games_count,
+        game.top_scores
+      )
     end
   else
     spawner.draw()

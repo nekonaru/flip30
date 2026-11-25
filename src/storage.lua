@@ -8,6 +8,7 @@ local FILE_NAME = "highscore.txt"
 local BEST_COMBO_FILE = "bestcombo.txt"
 local GAMES_FILE = "games.txt"
 local STATS_FILE = "stats.txt" -- "total_time total_score total_food"
+local SCORES_FILE = "scores.txt" -- top five scores, comma separated
 
 -- Parses a raw file body into a non-negative integer score.
 -- Corrupt or missing data yields 0.
@@ -106,6 +107,51 @@ function storage.parseStats(raw)
     score = tonumber(b) or 0,
     food = tonumber(c) or 0,
   }
+end
+
+-- Pure parser for the top-five list; trailing junk is ignored
+function storage.parseScores(raw)
+  local scores = {}
+  if type(raw) ~= "string" then
+    return scores
+  end
+  for value in raw:gmatch("%d+") do
+    table.insert(scores, tonumber(value) or 0)
+    if #scores >= 5 then
+      break
+    end
+  end
+  table.sort(scores, function(a, b)
+    return a > b
+  end)
+  return scores
+end
+
+function storage.loadScores()
+  if not (love and love.filesystem and love.filesystem.getInfo) then
+    return {}
+  end
+  local ok, exists = pcall(love.filesystem.getInfo, SCORES_FILE)
+  if not ok or not exists then
+    return {}
+  end
+  local ok_read, data = pcall(love.filesystem.read, SCORES_FILE)
+  if not ok_read then
+    return {}
+  end
+  return storage.parseScores(data)
+end
+
+function storage.saveScores(scores)
+  if not (love and love.filesystem) then
+    return false
+  end
+  local parts = {}
+  for i = 1, math.min(5, #scores) do
+    parts[i] = tostring(math.floor(scores[i]))
+  end
+  local ok, written = pcall(love.filesystem.write, SCORES_FILE, table.concat(parts, ","))
+  return ok and written and true or false
 end
 
 function storage.loadGamesCount()
