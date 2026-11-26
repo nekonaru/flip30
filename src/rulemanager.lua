@@ -15,6 +15,8 @@ rulemanager.last_name = nil
 rulemanager.max_active = 1 -- N active rules at once; tags prevent conflicts
 rulemanager.rule_duration = 30
 rulemanager.timer = rulemanager.rule_duration
+rulemanager.draft = false -- when true, player picks one of three rules
+rulemanager.pending = nil
 
 local function tags_of(rule)
   if type(rule.tags) == "table" then
@@ -172,11 +174,34 @@ local function try_apply(rule, ctx)
   return false
 end
 
-function rulemanager.swap(ctx)
+function rulemanager.begin_swap(ctx)
   rulemanager.revertAll(ctx)
+  local candidates = {}
+  for _, rule in ipairs(shuffled_candidates()) do
+    if #candidates >= 3 then
+      break
+    end
+    table.insert(candidates, rule)
+  end
+  if #candidates == 0 then
+    rulemanager.timer = rulemanager.rule_duration
+    return false
+  end
+  if rulemanager.draft then
+    rulemanager.pending = candidates
+    rulemanager.timer = rulemanager.rule_duration
+    if ctx and ctx.ui and ctx.ui.showDraft then
+      ctx.ui.showDraft(candidates)
+    end
+    return true
+  end
+  rulemanager.apply_picks(ctx, candidates)
+  return true
+end
 
+function rulemanager.apply_picks(ctx, candidates)
   local picked = {}
-  for _, candidate in ipairs(shuffled_candidates()) do
+  for _, candidate in ipairs(candidates) do
     if #picked >= rulemanager.max_active then
       break
     end
@@ -191,10 +216,8 @@ function rulemanager.swap(ctx)
       table.insert(picked, candidate)
     end
   end
-
   rulemanager.active = picked
   rulemanager.timer = rulemanager.rule_duration
-
   if #picked > 0 then
     rulemanager.last_name = picked[#picked].name
     local label = picked[1].name
@@ -215,6 +238,28 @@ function rulemanager.swap(ctx)
       ctx.ui.showBanner("NORMAL")
     end
   end
+end
+
+function rulemanager.choose(ctx, index)
+  if not rulemanager.pending then
+    return false
+  end
+  local rule = rulemanager.pending[index]
+  rulemanager.pending = nil
+  if ctx and ctx.ui and ctx.ui.hideDraft then
+    ctx.ui.hideDraft()
+  end
+  if rule then
+    rulemanager.apply_picks(ctx, { rule })
+  end
+  return true
+end
+
+function rulemanager.swap(ctx)
+  if rulemanager.pending then
+    return
+  end
+  rulemanager.begin_swap(ctx)
 end
 
 function rulemanager.update(ctx, dt)
@@ -247,6 +292,8 @@ end
 function rulemanager.resetToDefaults(ctx)
   rulemanager.revertAll(ctx)
   rulemanager.last_name = nil
+  rulemanager.pending = nil
+  rulemanager.rule_duration = 30
   rulemanager.timer = rulemanager.rule_duration
   if ctx then
     if ctx.world and ctx.world.reset then

@@ -78,7 +78,7 @@
 | Fitur | Deskripsi |
 | --- | --- |
 | **Ganti aturan 30 detik** | Setiap 30 detik aturan yang aktif di-revert dan aturan acak baru di-apply |
-| **Tujuh belas aturan** | KONTROL TERBALIK, GRAVITASI MATI, GRAVITASI NAIK, MUSUH JADI POIN, TUKAR WARNA, LAYAR GELAP, SEMUA 2X CEPAT, TIDAK BISA BERHENTI, HUJAN, SKOR GANDA, BESAR, KECIL, GRAVITASI TURBULEN, HANTU, WAKTU LAMBAT, TANPA BATAS, HUJAN EMAS |
+| **Tiga puluh aturan** | KONTROL TERBALIK, GRAVITASI MATI, GRAVITASI NAIK, MUSUH JADI POIN, TUKAR WARNA, LAYAR GELAP, SEMUA 2X CEPAT, TIDAK BISA BERHENTI, HUJAN, SKOR GANDA, BESAR, KECIL, GRAVITASI TURBULEN, HANTU, WAKTU LAMBAT, TANPA BATAS, HUJAN EMAS, KOMBO CEPAT, HUJAN MUSUH, HUJAN ITEM, PENGHASIL, AMAN, FREEZE, MAGNET, WAKTU TAMBAH, XP GANDA, KOIN GANDA, NYAWA CADANGAN, MUSUH LAMBAT, ATURAN KUNCI |
 | **Pilihan adil** | Aturan yang sama tidak pernah aktif dua kali berturut-turut; aturan dengan tag yang sama tidak pernah aktif bersamaan |
 | **Banner pengumuman** | Banner besar selama dua detik saat action melambat ke 0.3x |
 | **Progress bar** | Bar timer tipis di bagian atas layar |
@@ -103,13 +103,35 @@
 
 | Fitur | Deskripsi |
 | --- | --- |
-| **Test headless** | 279 assertion berjalan di bawah LuaJIT di CI |
+| **Test headless** | 383 assertion berjalan di bawah LuaJIT di CI |
 | **Kode terformat** | StyLua diwajibkan secara lokal dan di CI |
 | **Mode artwork** | Capture `--screenshot` deterministik yang dipakai di README ini |
 | **Overlay debug** | `love . --debug` menampilkan FPS, objek, canvas switch; tekan I untuk toggle |
 | **Musik procedur** | Loop yang dibangkitkan sesuai suasana aturan yang aktif |
 | **Kanvas responsif** | Virtual canvas 800x600 di-letterbox ke ukuran jendela apa pun |
 | **Open source** | Lisensi MIT |
+
+### Mode
+
+| Mode | Deskripsi |
+| --- | --- |
+| **KLASIK** | Aturan berganti tiap 30 detik |
+| **BLITZ** | Sprint skor 60 detik, poin 1.5x |
+| **MARATHON** | Kesulitan naik tajam, tanpa batas |
+| **ZEN** | Tanpa musuh, skor santai |
+| **CHAOS** | Tiga aturan aktif dari awal, pilih sendiri |
+| **HARIAN** | Seed berdasarkan tanggal, sama untuk semua |
+| **BOSS RUSH** | Bos tiap dua menit, kalahkan dengan menangkap |
+
+### Sistem lain
+
+| Sistem | Deskripsi |
+| --- | --- |
+| **Varian musuh** | Cepat, zirah, pembelah, phantom, bom terbuka seiring waktu |
+| **Item** | Magnet, shield, freeze, double, nyawa, skip aturan, bersihkan layar |
+| **Kemampuan** | Dash dengan Shift, focus slow-mo dengan Space |
+| **Progresi** | XP, level, skin, 20 pencapaian, 3 profil, toko koin |
+| **Replay** | Seed dan input terekam, hantu pemain |
 
 ---
 
@@ -302,7 +324,7 @@ stylua --check .
 
 | Check | Requirement |
 | --- | --- |
-| `luajit tests/headless_tests.lua` | Semua 279 assertion lolos |
+| `luajit tests/headless_tests.lua` | Semua 383 assertion lolos |
 | `stylua --check .` | Tidak ada output (tidak ada diff) |
 
 Formatting dikonfigurasi di `stylua.toml`.

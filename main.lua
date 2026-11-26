@@ -84,8 +84,15 @@ function love.load(arg)
   end
 end
 
+local accumulator = 0
+local STEP = 1 / 60
+
 function love.update(dt)
-  game.update(dt)
+  accumulator = accumulator + math.min(dt, 0.25)
+  while accumulator >= STEP do
+    game.update(STEP)
+    accumulator = accumulator - STEP
+  end
 end
 
 function love.draw()

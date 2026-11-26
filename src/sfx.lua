@@ -59,6 +59,9 @@ function sfx.play(name, pitch)
     if source.setPitch then
       source:setPitch(pitch or 1)
     end
+    if source.setVolume then
+      source:setVolume(sfx.volume or 1)
+    end
     source:play()
   end
 end
