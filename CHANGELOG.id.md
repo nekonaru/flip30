@@ -2,6 +2,20 @@
 
 Perubahan Flip30 didokumentasikan di sini. Bahasa Inggris adalah sumbernya; Bahasa Indonesia (file ini) adalah terjemahan yang selalu selaras.
 
+## v2.0.0
+
+Update Flip30 terbesar: tujuh mode, tiga puluh aturan, varian musuh, item, kemampuan, progresi dan replay.
+
+### Fitur baru
+
+- **Tujuh mode.** Klasik, Blitz, Marathon, Zen, Chaos, Harian dan Boss Rush, dipilih dengan F1.
+- **Tiga puluh aturan.** Tiga belas aturan baru dan sistem draft di Chaos, pilih satu dari tiga.
+- **Varian musuh.** Cepat, zirah, pembelah, phantom dan bom terbuka seiring waktu.
+- **Item dan kemampuan.** Magnet, shield, freeze, double, nyawa, skip aturan, bersihkan layar. Dash dengan Shift dan focus dengan Space.
+- **Progresi.** XP, level, 20 pencapaian, tiga profil, toko koin, ekspor/import.
+- **Layar baru.** Pengaturan, codex, pencapaian, profil dan replay, plus seed harian dan rekam input untuk hantu.
+- **Script build web** dan metadata itch.io.
+
 ## v1.8.0
 
 Lima skor terbaik, menu pause lebih lengkap, dan perbaikan dari audit source mendalam.

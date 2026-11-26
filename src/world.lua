@@ -26,6 +26,18 @@ local DEFAULTS = {
   alpha = 1, -- HANTU: global object opacity, 1 = solid
   wrap = false, -- TANPA BATAS: player wraps around the arena edge
   gold_mul = 1, -- HUJAN EMAS: multiplier on the golden drop chance
+  enemy_chance_mul = 1, -- HUJAN MUSUH: enemy chance multiplier
+  pickup_mul = 1, -- pickup drop multiplier
+  freeze_timer = 0, -- FREEZE: object motion paused
+  combo_step = 4, -- combo catches per multiplier level
+  score_per_sec = 0, -- PASSIVE: score earned per survived second
+  no_penalty = false, -- escape penalty disabled
+  enemy_speed_mul = 1, -- MUSUH LAMBAT: enemy speed multiplier
+  magnet = false, -- MAGNET: food drifts toward the player
+  time_bonus = 0, -- WAKTU TAMBAH: rule timer added per catch
+  xp_mul = 1, -- XP GANDA
+  coin_mul = 1, -- KOIN GANDA
+  revive = 0, -- NYAWA CADANGAN: free revive on death
   spawn_rate_mul = 1, -- HUJAN: multiplier on the spawn rate
   score_mul = 1, -- SKOR GANDA: multiplier on score gains
 
@@ -40,6 +52,9 @@ end
 
 function world.update(dt)
   world.elapsed = world.elapsed + dt
+  if world.freeze_timer then
+    world.freeze_timer = math.max(0, world.freeze_timer - dt)
+  end
 end
 
 -- Effective fall speed after difficulty scaling and rule modifiers.
@@ -63,7 +78,7 @@ function world.comboMultiplier(streak)
   if type(streak) ~= "number" or streak < 0 then
     return 1
   end
-  local level = math.floor(streak / 4) + 1
+  local level = math.floor(streak / (world.combo_step or 4)) + 1
   if level > 5 then
     level = 5
   end

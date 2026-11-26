@@ -2,6 +2,20 @@
 
 Changes to Flip30 are documented here. English is the source; Indonesian ([CHANGELOG.id.md](CHANGELOG.id.md)) is a faithful translation kept in sync.
 
+## v2.0.0
+
+The biggest Flip30 update: seven modes, thirty rules, enemy variants, pickups, abilities, progression and replay.
+
+### New features
+
+- **Seven modes.** Classic, Blitz, Marathon, Zen, Chaos, Daily and Boss Rush, selectable with F1.
+- **Thirty rules.** Thirteen new rules plus a draft system in Chaos where you pick one of three.
+- **Enemy variants.** Fast, armored, splitter, phantom and bomb enemies unlock as you survive.
+- **Pickups and abilities.** Magnet, shield, freeze, double, life, rule skip, screen clear. Dash with Shift and focus with Space.
+- **Progression.** XP, levels, 20 achievements, three profiles, coin shop and export/import.
+- **Screens.** Settings, codex, achievements, profiles and replay, plus a daily seed and run recording for ghost playback.
+- **Web build script** and itch.io metadata.
+
 ## v1.8.0
 
 Top-five scores, a fuller pause menu, and fixes from a deep source audit.

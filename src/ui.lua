@@ -303,12 +303,7 @@ function ui.drawMenu(highscore, time, best_combo, games_count)
     love.graphics.printf(text, chip_x, 523, font_w, "center")
   end
 
-  if (games_count or 0) > 0 then
-    love.graphics.setFont(FONTS.small)
-    love.graphics.setColor(theme.text_mute[1], theme.text_mute[2], theme.text_mute[3], 0.85)
-    love.graphics.printf("TOTAL MAIN:  " .. tostring(games_count), 250, 552, 300, "center")
-  end
-
+  -- total runs are shown in the stats overlay instead of the footer
   if ui.version then
     love.graphics.setFont(FONTS.small)
     love.graphics.setColor(theme.text_mute[1], theme.text_mute[2], theme.text_mute[3], 0.85)
@@ -536,5 +531,180 @@ function ui.drawStatsOverlay(highscore, best_combo, stats, games_count, top_scor
   love.graphics.printf("ESC atau TAB untuk kembali", px, py + panel_h + 12, panel_w, "center")
   love.graphics.setColor(1, 1, 1, 1)
 end
+
+-- ---------------------------------------------------------- v2 screens
+
+ui.screen = nil -- "modes" | "settings" | "codex" | "achievements" | "profiles" | "replay" | "shop"
+ui.selection = 1
+ui.showDraft = function(options)
+  ui.draft = options
+end
+ui.hideDraft = function()
+  ui.draft = nil
+end
+ui.draft = nil
+
+local function overlay_panel(title, w, h)
+  w = w or 620
+  h = h or 460
+  local px, py = 400 - w / 2, 300 - h / 2
+  love.graphics.setColor(0.01, 0.012, 0.02, 0.9)
+  love.graphics.rectangle("fill", 0, 0, 800, 600)
+  draw_chip(px, py, w, h)
+  love.graphics.setColor(theme.cyan[1], theme.cyan[2], theme.cyan[3], 0.8)
+  love.graphics.setLineWidth(2)
+  round_rect("line", px, py, w, h, 12)
+  love.graphics.setLineWidth(1)
+  love.graphics.setFont(FONTS.big)
+  love.graphics.setColor(theme.cyan[1], theme.cyan[2], theme.cyan[3], 1)
+  love.graphics.printf(title, px, py + 16, w, "center")
+  return px, py, w, h
+end
+
+local function menu_row(text, x, y, w, selected, hint)
+  love.graphics.setColor(
+    selected and theme.cyan[1] or theme.text_dim[1],
+    selected and theme.cyan[2] or theme.text_dim[2],
+    selected and theme.cyan[3] or theme.text_dim[3],
+    1
+  )
+  love.graphics.setFont(FONTS.body)
+  love.graphics.print(selected and ("> " .. text) or ("  " .. text), x, y)
+  if hint then
+    love.graphics.setFont(FONTS.small)
+    love.graphics.setColor(theme.text_mute[1], theme.text_mute[2], theme.text_mute[3], 1)
+    love.graphics.printf(hint, x + 200, y + 2, w - 220, "right")
+  end
+end
+
+function ui.drawModeSelect(modes, selection)
+  local px, py, w, h = overlay_panel("PILIH MODE", 640, 500)
+  for i, mode in ipairs(modes.list) do
+    menu_row(mode.name, px + 40, py + 84 + (i - 1) * 38, w - 80, i == selection, mode.hint)
+  end
+  love.graphics.setFont(FONTS.small)
+  love.graphics.setColor(theme.text_mute[1], theme.text_mute[2], theme.text_mute[3], 1)
+  love.graphics.printf("PANAH pilih   ·   ENTER mulai   ·   ESC kembali", px, py + h - 42, w, "center")
+end
+
+local SETTING_KEYS = { "music_volume", "sfx_volume", "shake", "flash", "colorblind", "reduced_motion" }
+local SETTING_NAMES = { "VOLUME MUSIK", "VOLUME SFX", "GETAR", "KILAT", "BUTA WARNA", "GERAK MINIMAL" }
+
+function ui.drawSettings(values, selection)
+  local px, py, w, h = overlay_panel("PENGATURAN", 620, 440)
+  for i, key in ipairs(SETTING_KEYS) do
+    local value = values[key] or 0
+    local text = SETTING_NAMES[i] .. "  " .. string.format("%.2f", value)
+    menu_row(text, px + 40, py + 80 + (i - 1) * 42, w - 80, i == selection)
+  end
+  love.graphics.setFont(FONTS.small)
+  love.graphics.setColor(theme.text_mute[1], theme.text_mute[2], theme.text_mute[3], 1)
+  love.graphics.printf("PANAH ubah   ·   ESC simpan dan kembali", px, py + h - 40, w, "center")
+end
+
+function ui.setting_key(index)
+  return SETTING_KEYS[index]
+end
+
+function ui.setting_count()
+  return #SETTING_KEYS
+end
+
+function ui.drawCodex(entries, selection)
+  local px, py, w, h = overlay_panel("KODEKS ATURAN", 660, 500)
+  local first = math.max(1, selection - 5)
+  for i = first, math.min(#entries, first + 9) do
+    local e = entries[i]
+    local text = string.format("%02d. %s", i, e.name)
+    menu_row(text, px + 30, py + 72 + (i - first) * 34, w - 60, i == selection)
+  end
+  local e = entries[selection]
+  if e then
+    love.graphics.setFont(FONTS.small)
+    love.graphics.setColor(theme.text_dim[1], theme.text_dim[2], theme.text_dim[3], 1)
+    love.graphics.printf(e.hint .. "   [" .. e.tags .. "]", px + 30, py + h - 60, w - 60, "left")
+  end
+end
+
+function ui.drawAchievements(profile, list)
+  local px, py, w, h = overlay_panel("PENCAPAIAN", 660, 500)
+  for i, a in ipairs(list) do
+    local col = i <= 10 and 0 or 1
+    local row = (i - 1) % 10 + 1
+    local done = profile.achievements and profile.achievements[a.id]
+    love.graphics.setFont(FONTS.small)
+    love.graphics.setColor(
+      done and theme.yellow[1] or theme.text_mute[1],
+      done and theme.yellow[2] or theme.text_mute[2],
+      done and theme.yellow[3] or theme.text_mute[3],
+      1
+    )
+    love.graphics.print((done and "[x] " or "[ ] ") .. a.name, px + 30 + col * 310, py + 76 + (row - 1) * 38)
+  end
+end
+
+function ui.drawProfiles(profiles, slot, profile)
+  local px, py, w, h = overlay_panel("PROFIL", 620, 400)
+  for i = 1, 3 do
+    local p = profiles[i]
+    local text = "SLOT " .. i .. "  Level " .. p.level .. "  Skor " .. p.best_score
+    menu_row(text, px + 40, py + 90 + (i - 1) * 48, w - 80, i == slot)
+  end
+  love.graphics.setFont(FONTS.small)
+  love.graphics.setColor(theme.text_dim[1], theme.text_dim[2], theme.text_dim[3], 1)
+  love.graphics.printf("Koin: " .. profile.coins .. "   XP: " .. profile.xp, px, py + h - 70, w, "center")
+end
+
+function ui.drawReplay(rec, count)
+  local px, py, w, h = overlay_panel("REPLAY", 620, 400)
+  love.graphics.setFont(FONTS.body)
+  love.graphics.setColor(theme.text[1], theme.text[2], theme.text[3], 1)
+  love.graphics.printf("Seed: " .. (rec.seed or 0) .. "   Mode: " .. (rec.mode or "-"), px, py + 90, w, "center")
+  love.graphics.printf(
+    "Frame terekam: " .. #(rec.frames or {}) .. "   Hantu: " .. (rec.ghost and "aktif" or "mati"),
+    px,
+    py + 140,
+    w,
+    "center"
+  )
+  love.graphics.setFont(FONTS.small)
+  love.graphics.setColor(theme.text_mute[1], theme.text_mute[2], theme.text_mute[3], 1)
+  love.graphics.printf("ENTER mulai replay   ·   ESC kembali", px, py + h - 60, w, "center")
+end
+
+function ui.drawShop(items, coins, selection)
+  local px, py, w, h = overlay_panel("TOKO", 640, 460)
+  love.graphics.setFont(FONTS.small)
+  love.graphics.setColor(theme.yellow[1], theme.yellow[2], theme.yellow[3], 1)
+  love.graphics.print("Koin: " .. coins, px + 40, py + 68)
+  for i, item in ipairs(items) do
+    menu_row(
+      item.name .. "  (" .. item.cost .. ")",
+      px + 40,
+      py + 100 + (i - 1) * 42,
+      w - 80,
+      i == selection,
+      item.hint
+    )
+  end
+  love.graphics.setFont(FONTS.small)
+  love.graphics.setColor(theme.text_mute[1], theme.text_mute[2], theme.text_mute[3], 1)
+  love.graphics.printf("PANAH pilih   ·   ENTER beli   ·   ESC lanjut", px, py + h - 40, w, "center")
+end
+
+function ui.drawDraft(options)
+  local px, py, w, h = overlay_panel("PILIH ATURAN", 640, 300)
+  for i, rule in ipairs(options) do
+    menu_row(i .. ". " .. rule.name, px + 40, py + 84 + (i - 1) * 44, w - 80, false, rule.hint)
+  end
+end
+
+function ui.drawMenuHint(text)
+  love.graphics.setFont(FONTS.small)
+  love.graphics.setColor(theme.text_mute[1], theme.text_mute[2], theme.text_mute[3], 1)
+  love.graphics.printf(text, 40, 552, 720, "center")
+end
+
+ui.FONTS = FONTS
 
 return ui

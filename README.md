@@ -78,7 +78,7 @@
 | Feature | Description |
 | --- | --- |
 | **Thirty second flips** | Every 30 seconds the active rule is reverted and a random one is applied |
-| **Seventeen rules** | KONTROL TERBALIK, GRAVITASI MATI, GRAVITASI NAIK, MUSUH JADI POIN, TUKAR WARNA, LAYAR GELAP, SEMUA 2X CEPAT, TIDAK BISA BERHENTI, HUJAN, SKOR GANDA, BESAR, KECIL, GRAVITASI TURBULEN, HANTU, WAKTU LAMBAT, TANPA BATAS, HUJAN EMAS |
+| **Thirty rules** | KONTROL TERBALIK, GRAVITASI MATI, GRAVITASI NAIK, MUSUH JADI POIN, TUKAR WARNA, LAYAR GELAP, SEMUA 2X CEPAT, TIDAK BISA BERHENTI, HUJAN, SKOR GANDA, BESAR, KECIL, GRAVITASI TURBULEN, HANTU, WAKTU LAMBAT, TANPA BATAS, HUJAN EMAS, KOMBO CEPAT, HUJAN MUSUH, HUJAN ITEM, PENGHASIL, AMAN, FREEZE, MAGNET, WAKTU TAMBAH, XP GANDA, KOIN GANDA, NYAWA CADANGAN, MUSUH LAMBAT, ATURAN KUNCI |
 | **Fair picks** | Never the same rule twice in a row; rules sharing a tag are never active together |
 | **Announcement banner** | Big two second banner with a description line while the action slows to 0.3x |
 | **Countdown bar** | Thin timer bar across the top of the screen |
@@ -103,13 +103,35 @@
 
 | Feature | Description |
 | --- | --- |
-| **Headless tests** | 279 assertions run under LuaJIT in CI |
+| **Headless tests** | 383 assertions run under LuaJIT in CI |
 | **Formatted code** | StyLua enforced locally and in CI |
 | **Artwork mode** | Deterministic `--screenshot` captures used for this README |
 | **Debug overlay** | `love . --debug` shows FPS, objects, canvas switches; press I to toggle |
 | **Procedural music** | Generated loop sounding like the rule range in the key (see below) |
 | **Responsive canvas** | 800x600 virtual canvas letterboxed to any window size |
 | **Open source** | MIT license |
+
+### Modes
+
+| Mode | Description |
+| --- | --- |
+| **KLASIK** | Rules flip every 30 seconds |
+| **BLITZ** | 60-second score sprint, 1.5x points |
+| **MARATHON** | Steep difficulty ramp, endless |
+| **ZEN** | No enemies, relaxed scoring |
+| **CHAOS** | Three rules active from the start, draft your picks |
+| **HARIAN** | Date-seeded run shared by everyone |
+| **BOSS RUSH** | Boss every two minutes, catch to defeat |
+
+### Other systems
+
+| System | Description |
+| --- | --- |
+| **Enemy variants** | Fast, armored, splitter, phantom, bomb unlock as you survive |
+| **Pickups** | Magnet, shield, freeze, double, extra life, rule skip, screen clear |
+| **Abilities** | Dash with Shift, focus slow-mo with Space |
+| **Progression** | XP, levels, skins, 20 achievements, 3 profiles, coin shop |
+| **Replay** | Recorded seed and inputs, ghost playback |
 
 ---
 
@@ -302,7 +324,7 @@ stylua --check .
 
 | Check | Requirement |
 | --- | --- |
-| `luajit tests/headless_tests.lua` | All 279 assertions pass |
+| `luajit tests/headless_tests.lua` | All 383 assertions pass |
 | `stylua --check .` | No output (no diffs) |
 
 Formatting is configured in `stylua.toml`.

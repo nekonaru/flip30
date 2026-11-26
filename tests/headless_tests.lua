@@ -1,5 +1,5 @@
 -- tests/headless_tests.lua
--- Headless unit tests for Flip30, run with LuaJIT (the same VM LÖVE ships):
+-- Headless unit tests for Flip30, run with LuaJIT (the same VM LÃ–VE ships):
 --
 --   luajit tests/headless_tests.lua
 --
@@ -135,7 +135,7 @@ check(spawned, "spawner spawns within 10 simulated seconds")
 spawner.reset()
 table.insert(spawner.objects, { kind = spawner.FOOD, x = 400, y = 700, size = 22 })
 local events = spawner.update(1 / 60)
-check(#events == 1 and events[1].type == "food_escaped", "off-screen food emits food_escaped")
+check(#events == 1 and events[1].type == "object_escaped", "off-screen food emits food_escaped")
 check(#spawner.objects == 0, "off-screen food is culled")
 spawner.reset()
 table.insert(spawner.objects, { kind = spawner.FOOD, x = 400, y = 540, size = 22 })
@@ -167,6 +167,18 @@ local function snapshot()
     score_mul = world.score_mul,
     wrap = world.wrap,
     gold_mul = world.gold_mul,
+    enemy_chance_mul = world.enemy_chance_mul,
+    pickup_mul = world.pickup_mul,
+    freeze_timer = world.freeze_timer,
+    combo_step = world.combo_step,
+    score_per_sec = world.score_per_sec,
+    no_penalty = world.no_penalty,
+    enemy_speed_mul = world.enemy_speed_mul,
+    magnet = world.magnet,
+    time_bonus = world.time_bonus,
+    xp_mul = world.xp_mul,
+    coin_mul = world.coin_mul,
+    revive = world.revive,
     dir = player.dir,
     w = player.w,
     always_move = player.always_move,
@@ -201,6 +213,19 @@ local bundled_rule_files = {
   "rules/slow_time.lua",
   "rules/wrap_player.lua",
   "rules/gold_rain.lua",
+  "rules/combo_fast.lua",
+  "rules/enemy_rain.lua",
+  "rules/item_rain.lua",
+  "rules/passive_score.lua",
+  "rules/no_penalty.lua",
+  "rules/freeze.lua",
+  "rules/magnet.lua",
+  "rules/time_bonus.lua",
+  "rules/xp_double.lua",
+  "rules/coin_double.lua",
+  "rules/revive.lua",
+  "rules/enemy_slow.lua",
+  "rules/rule_lock.lua",
 }
 
 local ctx = { world = world, player = player, spawner = spawner, ui = nil, sfx = nil }
@@ -237,6 +262,91 @@ end
 check(rulemanager.registerRule(nil, "bad-1") == false, "registerRule rejects nil")
 check(rulemanager.registerRule({}, "bad-2") == false, "registerRule rejects nameless rule")
 check(rulemanager.registerRule({ name = "x" }, "bad-3") == false, "registerRule rejects missing apply/revert")
+
+-- v2 modules
+local rng = require("src.rng")
+rng.set_seed(42)
+local r1 = rng.random()
+rng.set_seed(42)
+local r2 = rng.random()
+check(r1 == r2, "rng seed reproduces values")
+check(rng.random(1, 6) >= 1 and rng.random(1, 6) <= 6, "rng range")
+
+local modes = require("src.modes")
+check(modes.count() == 7, "seven game modes")
+check(modes.get("blitz").time_limit == 60, "blitz time limit")
+check(modes.get("zen").enemy_chance == 0, "zen has no enemies")
+
+local enemies = require("src.enemies")
+check(enemies.get("fast").speed_mul > 1, "fast enemy speed")
+check(enemies.get("armored").hp == 2, "armored enemy hp")
+check(enemies.pick(0, 0, rng) == nil, "no enemy when chance is zero")
+
+local pickups = require("src.pickups")
+check(pickups.get("shield").duration > 0, "shield duration")
+check(pickups.pick(0, rng) == nil, "no pickup when chance is zero")
+
+local abilities = require("src.abilities")
+local ab = abilities.new()
+check(abilities.try_dash(ab) == true, "dash available")
+check(abilities.try_dash(ab) == false, "dash cooldown")
+abilities.update(ab, 1, true)
+check(ab.focus < abilities.FOCUS_MAX, "focus drains")
+
+local settings = require("src.settings")
+local st2 = settings.parse("music_volume=0.5\nshake=0.25")
+check(st2.music_volume == 0.5 and st2.shake == 0.25, "settings parse")
+check(settings.parse(nil).music_volume == 0.18, "settings default")
+
+local progression = require("src.progression")
+local profile = progression.new()
+progression.add_xp(profile, 150)
+check(profile.level == 2, "level up")
+check(progression.xp_for_level(2) == 150, "xp curve")
+
+local achievements = require("src.achievements")
+check(#achievements.list == 20, "twenty achievements")
+local summary = {
+  runs = 1,
+  best = 100,
+  combo = 4,
+  time = 60,
+  gold = 0,
+  rules_seen = 0,
+  mods = 0,
+  modes = {},
+  bosses = 0,
+  shields = 0,
+  dashes = 0,
+  purchases = 0,
+}
+local unlocked = achievements.check_all(profile, summary)
+check(#unlocked >= 3, "achievements unlock")
+
+local shop = require("src.shop")
+check(shop.get("heal").cost == 20, "shop item cost")
+
+local replay = require("src.replay")
+local rec = replay.new()
+replay.begin(rec, 99, "classic")
+replay.record(rec, 3)
+check(rec.frames[1] == 3 and rec.seed == 99, "replay records")
+
+local boss_mod = require("src.boss")
+local bs = boss_mod.new()
+boss_mod.update(bs, 121)
+check(bs.active and bs.hp == 10, "boss activates")
+for _ = 1, 10 do
+  boss_mod.hit(bs)
+end
+check(not bs.active, "boss defeated")
+
+local codex = require("src.codex")
+local entries = codex.build({ rules = bundled_rules })
+check(#entries == #bundled_rules, "codex lists all rules")
+
+check(settings.parse("bad=1").music_volume == 0.18, "settings ignores unknown keys")
+check(progression.parse(nil).level == 1, "profile parse nil")
 
 -- swap cycle: reset state and flip 40 times, must never crash or stick
 rulemanager.rules = {}
