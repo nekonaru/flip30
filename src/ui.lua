@@ -705,6 +705,70 @@ function ui.drawMenuHint(text)
   love.graphics.printf(text, 40, 552, 720, "center")
 end
 
+function ui.drawCampaign(chapters, progress, selection)
+  local px, py, w, h = overlay_panel("KAMPANYE", 660, 500)
+  for i, ch in ipairs(chapters) do
+    local status = i < progress and "[x]" or (i == progress and "[>]" or "[ ]")
+    menu_row(status .. " " .. i .. ". " .. ch.name, px + 30, py + 72 + (i - 1) * 38, w - 60, i == selection, ch.hint)
+  end
+end
+
+function ui.drawCosmetics(skins, level, selection)
+  local px, py, w, h = overlay_panel("SKIN PLAYER", 640, 460)
+  for i, skin in ipairs(skins) do
+    local locked = skin.level > level
+    menu_row(
+      i .. ". " .. skin.name .. (locked and " [TERKUNCI]" or ""),
+      px + 40,
+      py + 72 + (i - 1) * 40,
+      w - 80,
+      i == selection
+    )
+  end
+end
+
+function ui.drawMultiplayerMenu(items, selection)
+  local px, py, w, h = overlay_panel("MULTIPLAYER", 620, 330)
+  for i, item in ipairs(items) do
+    menu_row(item.name, px + 40, py + 84 + (i - 1) * 46, w - 80, i == selection, item.hint)
+  end
+end
+
+function ui.drawCrafting(conditions, effects, cond_index, effect_index)
+  local px, py, w, h = overlay_panel("BUAT ATURAN", 660, 420)
+  love.graphics.setFont(FONTS.body)
+  love.graphics.setColor(theme.cyan[1], theme.cyan[2], theme.cyan[3], 1)
+  love.graphics.print("KONDISI", px + 30, py + 70)
+  love.graphics.print("EFEK", px + 340, py + 70)
+  for i, c in ipairs(conditions) do
+    menu_row(c.name, px + 30, py + 100 + (i - 1) * 38, 280, i == cond_index)
+  end
+  for i, e in ipairs(effects) do
+    menu_row(e.name, px + 340, py + 100 + (i - 1) * 38, 280, i == effect_index)
+  end
+end
+
+function ui.drawLeaderboard(board)
+  local px, py, w, h = overlay_panel("PAPAN SKOR HARIAN", 620, 420)
+  love.graphics.setFont(FONTS.body)
+  love.graphics.setColor(theme.text_dim[1], theme.text_dim[2], theme.text_dim[3], 1)
+  love.graphics.print(board.date or "-", px + 40, py + 70)
+  for i = 1, 10 do
+    local score = board.scores and board.scores[i] or 0
+    love.graphics.print(i .. ".  " .. score, px + 40, py + 106 + (i - 1) * 30)
+  end
+end
+
+function ui.drawTournament(t)
+  local px, py, w, h = overlay_panel("TURNAMENT", 620, 420)
+  love.graphics.setFont(FONTS.body)
+  love.graphics.setColor(theme.text_dim[1], theme.text_dim[2], theme.text_dim[3], 1)
+  love.graphics.print("Babak " .. t.round .. "  Pertandingan " .. t.match, px + 40, py + 70)
+  for i, name in ipairs(t.results or {}) do
+    love.graphics.print(i .. ". " .. name, px + 40, py + 110 + (i - 1) * 32)
+  end
+end
+
 ui.FONTS = FONTS
 
 return ui

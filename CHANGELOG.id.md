@@ -2,6 +2,21 @@
 
 Perubahan Flip30 didokumentasikan di sini. Bahasa Inggris adalah sumbernya; Bahasa Indonesia (file ini) adalah terjemahan yang selalu selaras.
 
+## v3.0.0
+
+Update arena: kampanye, bos, multiplayer, hazard dan craft aturan.
+
+### Fitur baru
+
+- **Kampanye.** Delapan bab dengan target skor, bertahan dan bos, dipilih dengan F9.
+- **Bos.** Lima pola dengan HP, kecepatan dan transparansi berbeda.
+- **Multiplayer.** Co-op, versus dan hot-seat dengan F11.
+- **Crafting.** Gabungkan kondisi dan efek jadi aturan yang bisa dibalik dengan F12.
+- **Skin.** Delapan skin dengan F10.
+- **Hazard.** Laser, arena menyusut dan blackout.
+- **Papan skor dan turnamen.** Sepuluh terbaik harian dengan L, bracket delapan pemain dengan T.
+- **Dokumen desain akhir.** `docs/GDD.md` dan `docs/GDD.id.md`.
+
 ## v2.0.0
 
 Update Flip30 terbesar: tujuh mode, tiga puluh aturan, varian musuh, item, kemampuan, progresi dan replay.

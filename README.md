@@ -103,7 +103,7 @@
 
 | Feature | Description |
 | --- | --- |
-| **Headless tests** | 383 assertions run under LuaJIT in CI |
+| **Headless tests** | 395 assertions run under LuaJIT in CI |
 | **Formatted code** | StyLua enforced locally and in CI |
 | **Artwork mode** | Deterministic `--screenshot` captures used for this README |
 | **Debug overlay** | `love . --debug` shows FPS, objects, canvas switches; press I to toggle |
@@ -132,6 +132,18 @@
 | **Abilities** | Dash with Shift, focus slow-mo with Space |
 | **Progression** | XP, levels, skins, 20 achievements, 3 profiles, coin shop |
 | **Replay** | Recorded seed and inputs, ghost playback |
+
+### Campaign and social
+
+| System | Description |
+| --- | --- |
+| **Campaign** | Eight chapters with score, survival and boss goals, selectable with F9 |
+| **Bosses** | Five boss patterns in Boss Rush and campaign chapters |
+| **Local multiplayer** | Co-op, versus and hot-seat with F11 |
+| **Crafting** | Build a rule from condition and effect with F12 |
+| **Cosmetics** | Eight unlockable player skins with F10 |
+| **Hazards** | Laser, shrinking arena and blackout in long runs |
+| **Leaderboard** | Daily top ten with L, tournament bracket with T |
 
 ---
 
@@ -324,7 +336,7 @@ stylua --check .
 
 | Check | Requirement |
 | --- | --- |
-| `luajit tests/headless_tests.lua` | All 383 assertions pass |
+| `luajit tests/headless_tests.lua` | All 395 assertions pass |
 | `stylua --check .` | No output (no diffs) |
 
 Formatting is configured in `stylua.toml`.

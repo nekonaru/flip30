@@ -348,6 +348,44 @@ check(#entries == #bundled_rules, "codex lists all rules")
 check(settings.parse("bad=1").music_volume == 0.18, "settings ignores unknown keys")
 check(progression.parse(nil).level == 1, "profile parse nil")
 
+local campaign = require("src.campaign")
+check(campaign.count() == 8, "eight campaign chapters")
+check(campaign.complete(campaign.get(1), 100, 0, 0), "chapter 1 complete")
+check(not campaign.complete(campaign.get(1), 99, 0, 0), "chapter 1 needs score")
+
+local bosspatterns = require("src.bosspatterns")
+check(bosspatterns.count() == 5, "five boss patterns")
+check(bosspatterns.get(5).hp == 30, "final boss hp")
+
+local multiplayer = require("src.multiplayer")
+local mp = multiplayer.new()
+multiplayer.begin(mp, "coop")
+mp.p1.score, mp.p2.score = 10, 20
+check(multiplayer.winner(mp) == 2, "versus winner")
+
+local cosmetics = require("src.cosmetics")
+check(#cosmetics.list == 8, "eight skins")
+check(not cosmetics.unlocked(3, 8), "skin locked")
+
+local hazards = require("src.hazards")
+local hz = hazards.new_state()
+hazards.update(hz, 1, 200)
+check(hz.laser > 0, "laser activates after 30s")
+
+local crafting = require("src.crafting")
+local custom = crafting.compile("always", "double")
+check(custom and custom.name == "BUATAN", "craft rule")
+
+local leaderboard = require("src.leaderboard")
+local board = leaderboard.parse("01/01/2026\n100\n50")
+check(board.scores[1] == 100 and board.scores[2] == 50, "leaderboard parse")
+
+local tournament = require("src.tournament")
+local tr = tournament.new()
+tournament.begin(tr, { "A", "B", "C", "D", "E", "F", "G", "H" })
+local a, b = tournament.pair(tr)
+check(a.name == "A" and b.name == "H", "tournament pair")
+
 -- swap cycle: reset state and flip 40 times, must never crash or stick
 rulemanager.rules = {}
 for _, rule in ipairs(bundled_rules) do

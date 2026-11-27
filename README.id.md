@@ -103,7 +103,7 @@
 
 | Fitur | Deskripsi |
 | --- | --- |
-| **Test headless** | 383 assertion berjalan di bawah LuaJIT di CI |
+| **Test headless** | 395 assertion berjalan di bawah LuaJIT di CI |
 | **Kode terformat** | StyLua diwajibkan secara lokal dan di CI |
 | **Mode artwork** | Capture `--screenshot` deterministik yang dipakai di README ini |
 | **Overlay debug** | `love . --debug` menampilkan FPS, objek, canvas switch; tekan I untuk toggle |
@@ -132,6 +132,18 @@
 | **Kemampuan** | Dash dengan Shift, focus slow-mo dengan Space |
 | **Progresi** | XP, level, skin, 20 pencapaian, 3 profil, toko koin |
 | **Replay** | Seed dan input terekam, hantu pemain |
+
+### Kampanye dan sosial
+
+| Sistem | Deskripsi |
+| --- | --- |
+| **Kampanye** | Delapan bab dengan target skor, bertahan dan bos, dipilih dengan F9 |
+| **Bos** | Lima pola bos di Boss Rush dan bab kampanye |
+| **Multiplayer lokal** | Co-op, versus dan hot-seat dengan F11 |
+| **Crafting** | Buat aturan dari kondisi dan efek dengan F12 |
+| **Skin** | Delapan skin player terbuka lewat level dengan F10 |
+| **Hazard** | Laser, arena menyusut dan blackout di run panjang |
+| **Papan skor** | Sepuluh terbaik harian dengan L, bracket turnamen dengan T |
 
 ---
 
@@ -324,7 +336,7 @@ stylua --check .
 
 | Check | Requirement |
 | --- | --- |
-| `luajit tests/headless_tests.lua` | Semua 383 assertion lolos |
+| `luajit tests/headless_tests.lua` | Semua 395 assertion lolos |
 | `stylua --check .` | Tidak ada output (tidak ada diff) |
 
 Formatting dikonfigurasi di `stylua.toml`.

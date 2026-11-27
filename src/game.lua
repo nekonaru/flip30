@@ -25,6 +25,14 @@ local replay = require("src.replay")
 local codex = require("src.codex")
 local boss = require("src.boss")
 local rng = require("src.rng")
+local campaign = require("src.campaign")
+local patterns = require("src.bosspatterns")
+local multiplayer = require("src.multiplayer")
+local cosmetics = require("src.cosmetics")
+local hazards = require("src.hazards")
+local crafting = require("src.crafting")
+local leaderboard = require("src.leaderboard")
+local tournament = require("src.tournament")
 
 local game = {
   state = "menu", -- "menu" | "playing" | "gameover"
@@ -67,6 +75,16 @@ local game = {
   codex_entries = {},
   draft_options = nil,
   show_shop = false,
+  chapter = 1,
+  campaign_progress = 1,
+  mp = multiplayer.new(),
+  hazard = hazards.new_state(),
+  board = leaderboard.new(),
+  tourney = tournament.new(),
+  skin = 1,
+  craft_cond = 1,
+  craft_effect = 1,
+  tourney_names = {},
 }
 
 local COLOR_GREEN = theme.green
@@ -76,7 +94,7 @@ local COLOR_ORANGE = theme.orange
 function game.load()
   ui.load()
   music.load()
-  ui.version = "2.0.0"
+  ui.version = "3.0.0"
   game.highscore = storage.load()
   game.best_combo_ever = storage.loadBestCombo()
   game.games_count = storage.loadGamesCount()
@@ -87,6 +105,9 @@ function game.load()
     game.profiles[i] = progression.load(i)
   end
   game.profile = game.profiles[game.profile_slot]
+  game.board = leaderboard.load()
+  game.campaign_progress = math.max(1, game.profile.level or 1)
+  game.chapter = math.min(campaign.count(), game.campaign_progress)
   game.time = 0
   game.ctx = {
     player = player,
@@ -168,6 +189,26 @@ end
 
 function game.startRun(mode_id)
   local mode = modes.get(mode_id or game.mode.id)
+  if mode_id == "campaign" then
+    local ch = campaign.get(game.chapter)
+    mode = {
+      id = "campaign",
+      name = "KAMPANYE",
+      hint = ch.hint,
+      time_limit = ch.time,
+      start_rules = ch.rules,
+      enemy_chance = ch.enemy or 0.35,
+      spawn_mul = 1,
+      score_mul = 1,
+      color = "yellow",
+    }
+    if ch.force then
+      table.insert(
+        rulemanager.rules,
+        { name = ch.force, tags = { "story" }, hint = "Aturan cerita", apply = function() end, revert = function() end }
+      )
+    end
+  end
   game.mode = mode
   spawner.configure(mode)
   rulemanager.resetToDefaults(game.ctx)
@@ -209,6 +250,12 @@ function game.startRun(mode_id)
   game.shields_used = 0
   game.gold_caught = 0
   game.show_shop = false
+  hazards.reset(game.hazard)
+  if mode.id == "coop" or mode.id == "versus" then
+    multiplayer.begin(game.mp, mode.id)
+  else
+    game.mp.enabled = false
+  end
   ui.show_stats = false
   ui.screen = nil
   game.state = "playing"
@@ -269,6 +316,19 @@ function game.gameOver()
     end
     game.top_scores = scores
     storage.saveScores(scores)
+    if game.mode.id == "daily" then
+      leaderboard.submit(game.board, daily.label(), game.score)
+    end
+  end
+  if game.mode.id == "campaign" then
+    local ch = campaign.get(game.chapter)
+    if campaign.complete(ch, game.score, game.run_time, game.bosses_defeated) then
+      game.campaign_progress = math.min(campaign.count(), game.chapter + 1)
+      game.chapter = game.campaign_progress
+      game.profile.level = math.max(game.profile.level or 1, game.chapter)
+      progression.save(game.profile_slot, game.profile)
+      ui.addPopup(400, 220, "BAB SELESAI", theme.yellow)
+    end
   end
   if game.score > game.highscore then
     game.highscore = game.score
@@ -399,6 +459,17 @@ function game.update(dt)
     if game.mode.time_limit > 0 and game.mode_time >= game.mode.time_limit then
       game.gameOver()
       return
+    end
+    hazards.update(game.hazard, dt, world.elapsed)
+    if hazards.hits_player(game.hazard, player) and game.hazard.laser > 0 then
+      game.hazard.laser = 0
+      game.lives = math.max(0, game.lives - 1)
+      add_trauma(0.4)
+      ui.addPopup(player.x + 20, player.y, "LASER!", COLOR_RED)
+      if game.lives <= 0 then
+        game.gameOver()
+        return
+      end
     end
 
     for key, value in pairs(game.effects) do
@@ -597,6 +668,51 @@ function game.keypressed(key)
       elseif key == "down" then
         ui.selection = math.min(3, ui.selection + 1)
       end
+    elseif ui.screen == "campaign" then
+      if key == "up" then
+        ui.selection = math.max(1, ui.selection - 1)
+      elseif key == "down" then
+        ui.selection = math.min(campaign.count(), ui.selection + 1)
+      elseif key == "return" then
+        game.chapter = ui.selection
+        game.startRun("campaign")
+      end
+    elseif ui.screen == "cosmetics" then
+      if key == "up" then
+        ui.selection = math.max(1, ui.selection - 1)
+      elseif key == "down" then
+        ui.selection = math.min(#cosmetics.list, ui.selection + 1)
+      elseif key == "return" and cosmetics.unlocked(game.profile.level or 1, ui.selection) then
+        game.skin = ui.selection
+        sfx.play("record")
+      end
+    elseif ui.screen == "multiplayer" then
+      if key == "up" then
+        ui.selection = math.max(1, ui.selection - 1)
+      elseif key == "down" then
+        ui.selection = math.min(#multiplayer.modes, ui.selection + 1)
+      elseif key == "return" then
+        game.startRun(multiplayer.modes[ui.selection].id)
+      end
+    elseif ui.screen == "crafting" then
+      if key == "left" then
+        game.craft_cond = math.max(1, game.craft_cond - 1)
+      elseif key == "right" then
+        game.craft_cond = math.min(#crafting.conditions, game.craft_cond + 1)
+      elseif key == "up" then
+        game.craft_effect = math.max(1, game.craft_effect - 1)
+      elseif key == "down" then
+        game.craft_effect = math.min(#crafting.effects, game.craft_effect + 1)
+      elseif key == "return" then
+        local rule = crafting.compile(crafting.conditions[game.craft_cond].id, crafting.effects[game.craft_effect].id)
+        if rule then
+          table.insert(rulemanager.rules, rule)
+          game.codex_entries = codex.build(rulemanager)
+          ui.addPopup(400, 520, "ATURAN DIBUAT", theme.yellow)
+        end
+      end
+    elseif ui.screen == "leaderboard" or ui.screen == "tournament" then
+      -- view only
     elseif ui.screen == "replay" then
       if key == "return" then
         rng.set_seed(game.rec.seed)
@@ -648,6 +764,18 @@ function game.keypressed(key)
       if game.import_profile() then
         ui.addPopup(400, 520, "PROFIL DIIMPOR", theme.yellow)
       end
+    elseif key == "f9" then
+      menu_enter("campaign")
+    elseif key == "f10" then
+      menu_enter("cosmetics")
+    elseif key == "f11" then
+      menu_enter("multiplayer")
+    elseif key == "f12" then
+      menu_enter("crafting")
+    elseif key == "l" then
+      menu_enter("leaderboard")
+    elseif key == "t" then
+      menu_enter("tournament")
     elseif key == "escape" then
       love.event.quit()
     end
@@ -769,6 +897,13 @@ function game.draw()
       game.muted
     )
 
+    if game.mode.id == "campaign" then
+      local ch = campaign.get(game.chapter)
+      love.graphics.setFont(ui.FONTS.small)
+      love.graphics.setColor(theme.yellow[1], theme.yellow[2], theme.yellow[3], 1)
+      love.graphics.printf("BAB " .. game.chapter .. ": " .. ch.name, 200, 556, 400, "center")
+    end
+
     if game.mode.time_limit > 0 then
       love.graphics.setFont(ui.FONTS and ui.FONTS.small or love.graphics.newFont(13))
       love.graphics.setColor(theme.yellow[1], theme.yellow[2], theme.yellow[3], 1)
@@ -820,6 +955,18 @@ function game.draw()
     ui.drawReplay(game.rec, #game.rec.frames)
   elseif ui.screen == "shop" then
     ui.drawShop(shop.items, game.profile.coins, ui.selection)
+  elseif ui.screen == "campaign" then
+    ui.drawCampaign(campaign.chapters, game.campaign_progress, ui.selection)
+  elseif ui.screen == "cosmetics" then
+    ui.drawCosmetics(cosmetics.list, game.profile.level or 1, ui.selection)
+  elseif ui.screen == "multiplayer" then
+    ui.drawMultiplayerMenu(multiplayer.modes, ui.selection)
+  elseif ui.screen == "crafting" then
+    ui.drawCrafting(crafting.conditions, crafting.effects, game.craft_cond, game.craft_effect)
+  elseif ui.screen == "leaderboard" then
+    ui.drawLeaderboard(game.board)
+  elseif ui.screen == "tournament" then
+    ui.drawTournament(game.tourney)
   end
 
   love.graphics.pop()
