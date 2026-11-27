@@ -13,6 +13,10 @@ local DEFAULTS = {
   flash = 1.0,
   colorblind = 0,
   reduced_motion = 0,
+  bass_gain = 1,
+  mid_gain = 1,
+  high_gain = 1,
+  ui_scale = 1,
 }
 
 local function default()

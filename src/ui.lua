@@ -827,6 +827,55 @@ function ui.drawOnboarding(step)
   love.graphics.printf("ENTER lanjut   ·   ESC lewati", px, py + h - 50, w, "center")
 end
 
+function ui.drawPalette(actions, selection)
+  local px, py, w, h = overlay_panel("AKSI CEPAT", 620, 480)
+  for i, a in ipairs(actions) do
+    menu_row(a.name, px + 40, py + 70 + (i - 1) * 34, w - 80, i == selection, a.hint)
+  end
+end
+
+function ui.drawMixer(bands, settings, selection)
+  local px, py, w, h = overlay_panel("MIXER AUDIO", 620, 330)
+  for i, b in ipairs(bands) do
+    local value = settings[b.key] or b.default
+    local bar = string.rep("#", math.floor(value * 20))
+    menu_row(
+      b.name .. "  " .. bar .. string.format(" %.2f", value),
+      px + 40,
+      py + 80 + (i - 1) * 48,
+      w - 80,
+      i == selection
+    )
+  end
+  love.graphics.setFont(FONTS.small)
+  love.graphics.printf("PANAH ubah   ·   ESC simpan", px, py + h - 40, w, "center")
+end
+
+function ui.drawRemap(map, actions, index)
+  local px, py, w, h = overlay_panel("REMAP TOMBOL", 620, 420)
+  for i, action in ipairs(actions) do
+    local text = action .. "  =  " .. (map[action] or "-")
+    menu_row(text, px + 40, py + 80 + (i - 1) * 44, w - 80, i == index)
+  end
+  love.graphics.setFont(FONTS.small)
+  love.graphics.printf("Tekan tombol baru   ·   ESC selesai", px, py + h - 40, w, "center")
+end
+
+function ui.drawShare(card, font)
+  local px, py, w, h = overlay_panel("BAGIKAN HASIL", 620, 340)
+  love.graphics.setFont(font or FONTS.body)
+  love.graphics.setColor(theme.text[1], theme.text[2], theme.text[3], 1)
+  local lines = {
+    card.title,
+    "SKOR " .. card.score .. "   GRADE " .. card.grade,
+    "WAKTU " .. card.time .. "   COMBO " .. card.combo,
+    "SEED " .. card.seed,
+  }
+  for i, line in ipairs(lines) do
+    love.graphics.printf(line, px, py + 80 + (i - 1) * 40, w, "center")
+  end
+end
+
 ui.FONTS = FONTS
 
 return ui
