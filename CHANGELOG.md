@@ -2,6 +2,29 @@
 
 Changes to Flip30 are documented here. English is the source; Indonesian ([CHANGELOG.id.md](CHANGELOG.id.md)) is a faithful translation kept in sync.
 
+## v4.2.0
+
+Input flexibility and save safety complete the v4 roadmap.
+
+### New features
+
+- **Command palette.** Slash opens quick actions.
+- **Audio mixer.** Three-band gains with G.
+- **Key remap.** R rebinds movement, dash, focus, pause and mute.
+- **Gamepad and touch input.** Joystick axes, gamepad buttons and touch zones.
+- **Save utility.** U backs up all save files, Y restores them, plus a verifier.
+
+## v4.1.0
+
+Share cards and quick tools.
+
+### New features
+
+- **Share card.** Post-run grade, score, time, combo and seed.
+- **Command palette.** Slash opens the action list.
+- **Audio mixer.** Three-band gains persisted in settings.
+- **Theme persistence.** Accent and HUD preset survive restarts.
+
 ## v4.0.0
 
 The motion and UX update.

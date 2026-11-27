@@ -41,6 +41,13 @@ local recap = require("src.recap")
 local photomode = require("src.photomode")
 local theme_editor = require("src.theme_editor")
 local modmanager_v2 = require("src.modmanager_v2")
+local sharecard = require("src.sharecard")
+local commandpalette = require("src.commandpalette")
+local mixer = require("src.mixer")
+local inputmap = require("src.inputmap")
+local gamepad = require("src.gamepad")
+local touch = require("src.touch")
+local saveutil = require("src.saveutil")
 
 local game = {
   state = "menu", -- "menu" | "playing" | "gameover"
@@ -96,6 +103,10 @@ local game = {
   recap = recap.new(),
   onboarding = 0,
   mod_list = {},
+  input_map = inputmap.new(),
+  remap_action = 1,
+  share = nil,
+  touch_input = {},
 }
 
 local COLOR_GREEN = theme.green
@@ -105,7 +116,8 @@ local COLOR_ORANGE = theme.orange
 function game.load()
   ui.load()
   music.load()
-  ui.version = "4.0.0"
+  ui.version = "4.2.0"
+  mixer.ensure(game.settings)
   game.highscore = storage.load()
   game.best_combo_ever = storage.loadBestCombo()
   game.games_count = storage.loadGamesCount()
@@ -158,7 +170,7 @@ function game.apply_settings()
   sfx.volume = game.settings.sfx_volume or 1
   music.muted = game.muted
   if music._src and music._src.setVolume then
-    music._src:setVolume(game.settings.music_volume or 0.18)
+    music._src:setVolume(mixer.music_volume(game.settings))
   end
   if (game.settings.colorblind or 0) > 0 then
     theme.green = { 0.20, 0.55, 1.00 }
@@ -312,6 +324,14 @@ end
 function game.gameOver()
   game.state = "gameover"
   recap.finish(game.recap, game.score, game.run_time, math.max(game.combo_best, game.best_combo_ever), game.rules_seen)
+  game.share = sharecard.build({
+    mode = game.mode.name,
+    score = game.score,
+    grade = game.recap.grade,
+    time = game.run_time,
+    combo = game.combo_best,
+    seed = game.seed,
+  })
   toast.push("SESI SELESAI: GRADE " .. game.recap.grade, design.grade_colors[game.recap.grade])
   music.stop()
   replay.stop(game.rec)
@@ -518,8 +538,12 @@ function game.update(dt)
       game.score = game.score + world.score_per_sec * dt
     end
 
-    local left = love.keyboard.isDown("a", "left")
-    local right = love.keyboard.isDown("d", "right")
+    local left = love.keyboard.isDown(game.input_map.left, "left")
+      or (gamepad.read().left or false)
+      or game.touch_input.left
+    local right = love.keyboard.isDown(game.input_map.right, "right")
+      or (gamepad.read().right or false)
+      or game.touch_input.right
     player.update(sim_dt, left, right, world.speed_mul, world.wrap)
     local dash_mul = game.ab.dash_cd > abilities.DASH_CD - 0.15 and 3 or 1
     if dash_mul > 1 then
@@ -616,6 +640,45 @@ local function menu_enter(screen)
 end
 
 function game.keypressed(key)
+  if ui.screen == "palette" then
+    if key == "escape" then
+      ui.screen = nil
+    elseif key == "up" then
+      ui.selection = math.max(1, ui.selection - 1)
+    elseif key == "down" then
+      ui.selection = math.min(#commandpalette.actions, ui.selection + 1)
+    elseif key == "return" then
+      local action = commandpalette.actions[ui.selection]
+      if action then
+        ui.screen = action.id
+        ui.selection = 1
+      end
+    end
+    return
+  end
+  if ui.screen == "mixer" then
+    if key == "escape" then
+      settings.save(game.settings)
+      ui.screen = nil
+    elseif key == "up" then
+      ui.selection = math.max(1, ui.selection - 1)
+    elseif key == "down" then
+      ui.selection = math.min(#mixer.bands, ui.selection + 1)
+    elseif key == "left" or key == "right" then
+      mixer.adjust(game.settings, ui.selection, key == "right" and 0.1 or -0.1)
+      game.apply_settings()
+    end
+    return
+  end
+  if ui.screen == "remap" then
+    if key == "escape" then
+      ui.screen = nil
+    elseif key ~= "return" then
+      inputmap.bind(game.input_map, inputmap.actions[game.remap_action], key)
+      game.remap_action = math.min(#inputmap.actions, game.remap_action + 1)
+    end
+    return
+  end
   if game.onboarding > 0 then
     if key == "return" or key == "kpenter" or key == "space" then
       game.onboarding = game.onboarding + 1
@@ -863,6 +926,20 @@ function game.keypressed(key)
       menu_enter("recap")
     elseif key == "h" then
       game.onboarding = 1
+    elseif key == "/" then
+      menu_enter("palette")
+    elseif key == "g" then
+      menu_enter("mixer")
+    elseif key == "r" then
+      menu_enter("remap")
+    elseif key == "u" then
+      if saveutil.backup() then
+        toast.push("BACKUP TERSIMPAN", theme.yellow)
+      end
+    elseif key == "y" then
+      if saveutil.restore() then
+        toast.push("BACKUP DIPULIHKAN", theme.yellow)
+      end
     elseif key == "escape" then
       love.event.quit()
     end
@@ -948,7 +1025,9 @@ function game.draw()
   end
   if game.state == "menu" then
     ui.drawMenu(game.highscore, game.time, world.comboMultiplier(game.best_combo_ever), game.games_count)
-    ui.drawMenuHint("F1 mode   F2 setting   F3 codex   F4 pencapaian   F5 profil   F6 replay   F7/F8 ekspor/import")
+    ui.drawMenuHint(
+      "F1 mode   F2 setting   F3 codex   F4 pencapaian   F5 profil   F6 replay   / aksi   G mixer   R remap"
+    )
     if ui.show_stats then
       ui.drawStatsOverlay(
         game.highscore,
@@ -1070,6 +1149,14 @@ function game.draw()
     ui.drawThemeEditor(theme_editor.state, theme_editor.accents, theme_editor.presets, ui.selection)
   elseif ui.screen == "modmanager" then
     ui.drawModManager(game.mod_list, ui.selection, modmanager_v2.conflict(game.mod_list))
+  elseif ui.screen == "palette" then
+    ui.drawPalette(commandpalette.actions, ui.selection)
+  elseif ui.screen == "mixer" then
+    ui.drawMixer(mixer.bands, game.settings, ui.selection)
+  elseif ui.screen == "remap" then
+    ui.drawRemap(game.input_map, inputmap.actions, game.remap_action)
+  elseif ui.screen == "share" and game.share then
+    ui.drawShare(game.share, ui.FONTS.body)
   end
 
   love.graphics.pop()

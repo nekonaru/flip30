@@ -103,7 +103,7 @@
 
 | Feature | Description |
 | --- | --- |
-| **Headless tests** | 408 assertions run under LuaJIT in CI |
+| **Headless tests** | 420 assertions run under LuaJIT in CI |
 | **Formatted code** | StyLua enforced locally and in CI |
 | **Artwork mode** | Deterministic `--screenshot` captures used for this README |
 | **Debug overlay** | `love . --debug` shows FPS, objects, canvas switches; press I to toggle |
@@ -157,6 +157,8 @@
 | **Theme** | Accent colour and HUD preset editor with N |
 | **Mod manager** | Enable and disable mods with B |
 | **Photo mode** | Freeze with J, capture with K |
+| **v4.1 tools** | Share card, command palette with slash, audio mixer with G |
+| **v4.2 input** | Gamepad, touch, key remap with R, save backup U and restore Y |
 
 ---
 
@@ -349,7 +351,7 @@ stylua --check .
 
 | Check | Requirement |
 | --- | --- |
-| `luajit tests/headless_tests.lua` | All 408 assertions pass |
+| `luajit tests/headless_tests.lua` | All 420 assertions pass |
 | `stylua --check .` | No output (no diffs) |
 
 Formatting is configured in `stylua.toml`.

@@ -434,6 +434,39 @@ local tag = modmanager.conflict({
 })
 check(tag == "speed", "mod conflict")
 
+local sharecard = require("src.sharecard")
+local card = sharecard.build({ mode = "CLASSIC", score = 100, grade = "A", time = 60, combo = 4, seed = 42 })
+check(card.grade == "A" and card.combo == "x2", "share card")
+check(sharecard.text(card):find("SKOR 100") ~= nil, "share text")
+
+local commandpalette = require("src.commandpalette")
+local action, index = commandpalette.find("settings")
+check(index and action.name == "PENGATURAN", "palette find")
+
+local mixer = require("src.mixer")
+local mix = { music_volume = 0.2 }
+mixer.ensure(mix)
+check(mix.bass_gain == 1 and mix.mid_gain == 1, "mixer defaults")
+mixer.adjust(mix, 1, 0.2)
+check(mix.bass_gain > 1, "mixer adjust")
+check(mixer.music_volume(mix) > 0.2, "mixer volume")
+
+local inputmap = require("src.inputmap")
+local keymap = inputmap.new()
+check(keymap.left == "a", "default key")
+inputmap.bind(keymap, "left", "j")
+check(inputmap.matches(keymap, "left", "j"), "remap key")
+
+local gamepad = require("src.gamepad")
+check(type(gamepad.connected()) == "number", "gamepad count")
+
+local touch = require("src.touch")
+check(touch.read(100, 500).left == true, "touch left")
+check(touch.read(700, 500).right == true, "touch right")
+
+local saveutil = require("src.saveutil")
+check(#saveutil.list_files() >= 10, "save file list")
+
 -- swap cycle: reset state and flip 40 times, must never crash or stick
 rulemanager.rules = {}
 for _, rule in ipairs(bundled_rules) do

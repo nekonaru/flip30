@@ -2,6 +2,29 @@
 
 Perubahan Flip30 didokumentasikan di sini. Bahasa Inggris adalah sumbernya; Bahasa Indonesia (file ini) adalah terjemahan yang selalu selaras.
 
+## v4.2.0
+
+Input fleksibel dan keamanan save melengkapi roadmap v4.
+
+### Fitur baru
+
+- **Command palette.** Slash membuka aksi cepat.
+- **Mixer audio.** Gain tiga band dengan G.
+- **Remap tombol.** R mengubah gerak, dash, focus, pause dan mute.
+- **Input gamepad dan touch.** Axis joystick, tombol gamepad dan zona sentuh.
+- **Utilitas save.** U mencadangkan semua file save, Y memulihkan, plus verifier.
+
+## v4.1.0
+
+Kartu bagikan dan alat cepat.
+
+### Fitur baru
+
+- **Kartu bagikan.** Grade, skor, waktu, combo dan seed setelah run.
+- **Command palette.** Slash membuka daftar aksi.
+- **Mixer audio.** Gain tiga band tersimpan di pengaturan.
+- **Tema persist.** Warna aksen dan preset HUD bertahan setelah restart.
+
 ## v4.0.0
 
 Update gerak dan UX.

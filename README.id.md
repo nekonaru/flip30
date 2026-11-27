@@ -103,7 +103,7 @@
 
 | Fitur | Deskripsi |
 | --- | --- |
-| **Test headless** | 408 assertion berjalan di bawah LuaJIT di CI |
+| **Test headless** | 420 assertion berjalan di bawah LuaJIT di CI |
 | **Kode terformat** | StyLua diwajibkan secara lokal dan di CI |
 | **Mode artwork** | Capture `--screenshot` deterministik yang dipakai di README ini |
 | **Overlay debug** | `love . --debug` menampilkan FPS, objek, canvas switch; tekan I untuk toggle |
@@ -157,6 +157,8 @@
 | **Tema** | Editor warna aksen dan preset HUD dengan N |
 | **Mod manager** | Aktif dan nonaktifkan mod dengan B |
 | **Foto mode** | Bekukan dengan J, ambil gambar dengan K |
+| **Tool v4.1** | Kartu bagikan, palette aksi dengan slash, mixer audio dengan G |
+| **Input v4.2** | Gamepad, touch, remap dengan R, backup U dan pulihkan Y |
 
 ---
 
@@ -349,7 +351,7 @@ stylua --check .
 
 | Check | Requirement |
 | --- | --- |
-| `luajit tests/headless_tests.lua` | Semua 408 assertion lolos |
+| `luajit tests/headless_tests.lua` | Semua 420 assertion lolos |
 | `stylua --check .` | Tidak ada output (tidak ada diff) |
 
 Formatting dikonfigurasi di `stylua.toml`.

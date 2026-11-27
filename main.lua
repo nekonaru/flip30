@@ -130,3 +130,11 @@ end
 function love.resize(width, height)
   game.resize(width, height)
 end
+
+function love.touchpressed(id, x, y)
+  game.touch_input = require("src.touch").read(x, y)
+end
+
+function love.touchreleased()
+  game.touch_input = {}
+end
