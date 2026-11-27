@@ -2,6 +2,21 @@
 
 Changes to Flip30 are documented here. English is the source; Indonesian ([CHANGELOG.id.md](CHANGELOG.id.md)) is a faithful translation kept in sync.
 
+## v4.0.0
+
+The motion and UX update.
+
+### New features
+
+- **Design system.** Shared tokens for colour, spacing, radius, elevation and motion.
+- **Animations.** Tweens, easing, stagger, screen wipe, squash and spring. All durations respect reduce motion.
+- **Onboarding.** Three-step first-run guide, H to replay.
+- **Recap.** Post-run grade, score graph, peak combo and rules seen, press V.
+- **Toast system.** Transient notifications for achievements and records.
+- **Theme editor.** Accent colour and HUD preset with N.
+- **Mod manager.** Enable and disable mods with B.
+- **Photo mode.** Freeze with J and capture PNG with K.
+
 ## v3.0.0
 
 The arena update: campaign, bosses, multiplayer, hazards and rule crafting.

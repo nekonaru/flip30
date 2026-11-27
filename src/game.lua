@@ -33,6 +33,14 @@ local hazards = require("src.hazards")
 local crafting = require("src.crafting")
 local leaderboard = require("src.leaderboard")
 local tournament = require("src.tournament")
+local design = require("src.design")
+local anim = require("src.anim")
+local transition = require("src.transition")
+local toast = require("src.toast")
+local recap = require("src.recap")
+local photomode = require("src.photomode")
+local theme_editor = require("src.theme_editor")
+local modmanager_v2 = require("src.modmanager_v2")
 
 local game = {
   state = "menu", -- "menu" | "playing" | "gameover"
@@ -85,6 +93,9 @@ local game = {
   craft_cond = 1,
   craft_effect = 1,
   tourney_names = {},
+  recap = recap.new(),
+  onboarding = 0,
+  mod_list = {},
 }
 
 local COLOR_GREEN = theme.green
@@ -94,7 +105,7 @@ local COLOR_ORANGE = theme.orange
 function game.load()
   ui.load()
   music.load()
-  ui.version = "3.0.0"
+  ui.version = "4.0.0"
   game.highscore = storage.load()
   game.best_combo_ever = storage.loadBestCombo()
   game.games_count = storage.loadGamesCount()
@@ -108,6 +119,9 @@ function game.load()
   game.board = leaderboard.load()
   game.campaign_progress = math.max(1, game.profile.level or 1)
   game.chapter = math.min(campaign.count(), game.campaign_progress)
+  if (game.profile.total_runs or 0) == 0 then
+    game.onboarding = 1
+  end
   game.time = 0
   game.ctx = {
     player = player,
@@ -132,6 +146,8 @@ function game.load()
     game.mod_count = 0
   end
   game.codex_entries = codex.build(rulemanager)
+  game.mod_list = modmanager_v2.scan(rulemanager, ok_mods and mods or {})
+  recap.begin(game.recap)
   rulemanager.resetToDefaults(game.ctx)
   spawner.reset()
   game.apply_settings()
@@ -188,77 +204,83 @@ function game.setMute(muted)
 end
 
 function game.startRun(mode_id)
-  local mode = modes.get(mode_id or game.mode.id)
-  if mode_id == "campaign" then
-    local ch = campaign.get(game.chapter)
-    mode = {
-      id = "campaign",
-      name = "KAMPANYE",
-      hint = ch.hint,
-      time_limit = ch.time,
-      start_rules = ch.rules,
-      enemy_chance = ch.enemy or 0.35,
-      spawn_mul = 1,
-      score_mul = 1,
-      color = "yellow",
-    }
-    if ch.force then
-      table.insert(
-        rulemanager.rules,
-        { name = ch.force, tags = { "story" }, hint = "Aturan cerita", apply = function() end, revert = function() end }
-      )
+  transition.start(function()
+    local mode = modes.get(mode_id or game.mode.id)
+    if mode_id == "campaign" then
+      local ch = campaign.get(game.chapter)
+      mode = {
+        id = "campaign",
+        name = "KAMPANYE",
+        hint = ch.hint,
+        time_limit = ch.time,
+        start_rules = ch.rules,
+        enemy_chance = ch.enemy or 0.35,
+        spawn_mul = 1,
+        score_mul = 1,
+        color = "yellow",
+      }
+      if ch.force then
+        table.insert(rulemanager.rules, {
+          name = ch.force,
+          tags = { "story" },
+          hint = "Aturan cerita",
+          apply = function() end,
+          revert = function() end,
+        })
+      end
     end
-  end
-  game.mode = mode
-  spawner.configure(mode)
-  rulemanager.resetToDefaults(game.ctx)
-  rulemanager.max_active = mode.start_rules > 1 and 3 or 1
-  rulemanager.draft = mode.id == "chaos"
-  if mode.id == "daily" then
-    rng.set_seed(daily.seed())
-  elseif mode.id == "chaos" then
-    rng.set_seed(os.time())
-  else
-    rng.set_seed(math.floor(love.timer.getTime() * 1000) % 2147483648)
-  end
-  game.seed = rng.get_seed()
-  replay.begin(game.rec, game.seed, mode.id)
-  spawner.reset()
-  music.play(game.ctx)
-  game.games_count = game.games_count + 1
-  storage.saveGamesCount(game.games_count)
-  game.score, game.display_score = 0, 0
-  game.food_count = 0
-  game.lives = 3
-  game.new_record = false
-  game.run_time = 0
-  game.mode_time = 0
-  game.combo = 0
-  game.combo_best = 0
-  game.paused = false
-  game.trauma = 0
-  game.shake_t = 0
-  game.hit_stop = 0
-  game.flash = 0
-  game.coins = 0
-  game.effects = { magnet = 0, shield = 0, freeze = 0, double = 0 }
-  abilities.reset(game.ab)
-  game.rules_seen = {}
-  game.bosses_defeated = 0
-  game.purchases = 0
-  game.dashes = 0
-  game.shields_used = 0
-  game.gold_caught = 0
-  game.show_shop = false
-  hazards.reset(game.hazard)
-  if mode.id == "coop" or mode.id == "versus" then
-    multiplayer.begin(game.mp, mode.id)
-  else
-    game.mp.enabled = false
-  end
-  ui.show_stats = false
-  ui.screen = nil
-  game.state = "playing"
+    game.mode = mode
+    spawner.configure(mode)
+    rulemanager.resetToDefaults(game.ctx)
+    rulemanager.max_active = mode.start_rules > 1 and 3 or 1
+    rulemanager.draft = mode.id == "chaos"
+    if mode.id == "daily" then
+      rng.set_seed(daily.seed())
+    elseif mode.id == "chaos" then
+      rng.set_seed(os.time())
+    else
+      rng.set_seed(math.floor(love.timer.getTime() * 1000) % 2147483648)
+    end
+    game.seed = rng.get_seed()
+    replay.begin(game.rec, game.seed, mode.id)
+    spawner.reset()
+    music.play(game.ctx)
+    game.games_count = game.games_count + 1
+    storage.saveGamesCount(game.games_count)
+    game.score, game.display_score = 0, 0
+    game.food_count = 0
+    game.lives = 3
+    game.new_record = false
+    game.run_time = 0
+    game.mode_time = 0
+    game.combo = 0
+    game.combo_best = 0
+    game.paused = false
+    game.trauma = 0
+    game.shake_t = 0
+    game.hit_stop = 0
+    game.flash = 0
+    game.coins = 0
+    game.effects = { magnet = 0, shield = 0, freeze = 0, double = 0 }
+    abilities.reset(game.ab)
+    game.rules_seen = {}
+    game.bosses_defeated = 0
+    game.purchases = 0
+    game.dashes = 0
+    game.shields_used = 0
+    game.gold_caught = 0
+    game.show_shop = false
+    hazards.reset(game.hazard)
+    if mode.id == "coop" or mode.id == "versus" then
+      multiplayer.begin(game.mp, mode.id)
+    else
+      game.mp.enabled = false
+    end
+    ui.show_stats = false
+    ui.screen = nil
+    game.state = "playing"
+    recap.begin(game.recap)
+  end)
 end
 
 local function run_summary()
@@ -289,6 +311,8 @@ end
 
 function game.gameOver()
   game.state = "gameover"
+  recap.finish(game.recap, game.score, game.run_time, math.max(game.combo_best, game.best_combo_ever), game.rules_seen)
+  toast.push("SESI SELESAI: GRADE " .. game.recap.grade, design.grade_colors[game.recap.grade])
   music.stop()
   replay.stop(game.rec)
   game.display_score = game.score
@@ -434,6 +458,12 @@ end
 
 function game.update(dt)
   game.time = game.time + dt
+  anim.update(dt)
+  transition.update(dt)
+  toast.update(dt)
+  if photomode.active then
+    return
+  end
   if game.display_score ~= game.score then
     local diff = game.score - game.display_score
     game.display_score = game.display_score + diff * math.min(1, dt * 9)
@@ -482,6 +512,7 @@ function game.update(dt)
     for _, rule in ipairs(rulemanager.active) do
       game.rules_seen[rule.name] = true
     end
+    recap.sample(game.recap, game.score, game.run_time)
     world.update(sim_dt)
     if world.score_per_sec > 0 then
       game.score = game.score + world.score_per_sec * dt
@@ -585,6 +616,54 @@ local function menu_enter(screen)
 end
 
 function game.keypressed(key)
+  if game.onboarding > 0 then
+    if key == "return" or key == "kpenter" or key == "space" then
+      game.onboarding = game.onboarding + 1
+      if game.onboarding > 3 then
+        game.onboarding = 0
+      end
+      sfx.play("select")
+    elseif key == "escape" then
+      game.onboarding = 0
+    end
+    return
+  end
+  if ui.screen == "recap" then
+    if key == "escape" or key == "return" then
+      ui.screen = nil
+    end
+    return
+  end
+  if ui.screen == "theme" then
+    if key == "left" or key == "right" then
+      theme_editor.state.preset = (theme_editor.state.preset - 1 + #theme_editor.presets + (key == "right" and 1 or -1))
+          % #theme_editor.presets
+        + 1
+    elseif key == "up" then
+      theme_editor.state.accent = math.max(1, theme_editor.state.accent - 1)
+    elseif key == "down" then
+      theme_editor.state.accent = math.min(#theme_editor.accents, theme_editor.state.accent + 1)
+    elseif key == "return" then
+      local accent = theme_editor.current()
+      theme.cyan = accent.color
+      sfx.play("record")
+    elseif key == "escape" then
+      ui.screen = nil
+    end
+    return
+  end
+  if ui.screen == "modmanager" then
+    if key == "up" then
+      ui.selection = math.max(1, ui.selection - 1)
+    elseif key == "down" then
+      ui.selection = math.min(#game.mod_list, ui.selection + 1)
+    elseif key == "return" then
+      modmanager_v2.toggle(game.mod_list, ui.selection)
+    elseif key == "escape" then
+      ui.screen = nil
+    end
+    return
+  end
   if ui.screen == "shop" then
     if key == "escape" then
       ui.screen = nil
@@ -776,6 +855,14 @@ function game.keypressed(key)
       menu_enter("leaderboard")
     elseif key == "t" then
       menu_enter("tournament")
+    elseif key == "n" then
+      menu_enter("theme")
+    elseif key == "b" then
+      menu_enter("modmanager")
+    elseif key == "v" then
+      menu_enter("recap")
+    elseif key == "h" then
+      game.onboarding = 1
     elseif key == "escape" then
       love.event.quit()
     end
@@ -800,6 +887,10 @@ function game.keypressed(key)
       end
     elseif key == "i" and game.debug_overlay then
       debugpanel.toggle()
+    elseif key == "j" then
+      photomode.toggle()
+    elseif key == "k" and photomode.active then
+      photomode.capture(game)
     elseif game.paused and key == "r" then
       game.startRun(game.mode.id)
     elseif game.paused and key == "q" then
@@ -940,6 +1031,12 @@ function game.draw()
   if ui.draft then
     ui.drawDraft(ui.draft)
   end
+  if game.onboarding > 0 then
+    ui.drawOnboarding(game.onboarding)
+  end
+  toast.draw(ui.FONTS.small)
+  photomode.draw(ui.FONTS.body)
+  transition.draw()
 
   if ui.screen == "modes" then
     ui.drawModeSelect(modes, ui.selection)
@@ -967,6 +1064,12 @@ function game.draw()
     ui.drawLeaderboard(game.board)
   elseif ui.screen == "tournament" then
     ui.drawTournament(game.tourney)
+  elseif ui.screen == "recap" then
+    ui.drawRecap(game.recap, ui.FONTS.body)
+  elseif ui.screen == "theme" then
+    ui.drawThemeEditor(theme_editor.state, theme_editor.accents, theme_editor.presets, ui.selection)
+  elseif ui.screen == "modmanager" then
+    ui.drawModManager(game.mod_list, ui.selection, modmanager_v2.conflict(game.mod_list))
   end
 
   love.graphics.pop()

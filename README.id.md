@@ -103,7 +103,7 @@
 
 | Fitur | Deskripsi |
 | --- | --- |
-| **Test headless** | 395 assertion berjalan di bawah LuaJIT di CI |
+| **Test headless** | 408 assertion berjalan di bawah LuaJIT di CI |
 | **Kode terformat** | StyLua diwajibkan secara lokal dan di CI |
 | **Mode artwork** | Capture `--screenshot` deterministik yang dipakai di README ini |
 | **Overlay debug** | `love . --debug` menampilkan FPS, objek, canvas switch; tekan I untuk toggle |
@@ -144,6 +144,19 @@
 | **Skin** | Delapan skin player terbuka lewat level dengan F10 |
 | **Hazard** | Laser, arena menyusut dan blackout di run panjang |
 | **Papan skor** | Sepuluh terbaik harian dengan L, bracket turnamen dengan T |
+
+### Gerak dan UX
+
+| Sistem | Deskripsi |
+| --- | --- |
+| **Design system** | Token bersama untuk warna, jarak, radius, elevasi dan gerak |
+| **Animasi** | Tween, easing, stagger, wipe layar, squash dan spring |
+| **Onboarding** | Panduan pertama tiga langkah, H untuk ulang |
+| **Rekap** | Grade dan grafik skor setelah run dengan V |
+| **Toast** | Notifikasi sementara untuk pencapaian dan rekor |
+| **Tema** | Editor warna aksen dan preset HUD dengan N |
+| **Mod manager** | Aktif dan nonaktifkan mod dengan B |
+| **Foto mode** | Bekukan dengan J, ambil gambar dengan K |
 
 ---
 
@@ -336,7 +349,7 @@ stylua --check .
 
 | Check | Requirement |
 | --- | --- |
-| `luajit tests/headless_tests.lua` | Semua 395 assertion lolos |
+| `luajit tests/headless_tests.lua` | Semua 408 assertion lolos |
 | `stylua --check .` | Tidak ada output (tidak ada diff) |
 
 Formatting dikonfigurasi di `stylua.toml`.
