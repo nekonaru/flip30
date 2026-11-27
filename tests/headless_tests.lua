@@ -386,6 +386,54 @@ tournament.begin(tr, { "A", "B", "C", "D", "E", "F", "G", "H" })
 local a, b = tournament.pair(tr)
 check(a.name == "A" and b.name == "H", "tournament pair")
 
+local design = require("src.design")
+check(design.grade(1000, 120, 20) == "S", "grade S")
+check(design.grade(0, 0, 0) == "D", "grade D")
+check(design.ease_out(0.5) > 0.5, "ease out")
+
+local anim = require("src.anim")
+anim.clear()
+local obj = { value = 0 }
+anim.to(obj, "value", 10, 1, design.ease_out)
+anim.update(0.5)
+check(obj.value > 0 and obj.value < 10, "anim tween")
+anim.update(0.5)
+check(obj.value == 10 and anim.count() == 0, "anim done")
+
+local transition = require("src.transition")
+transition.start(nil, 0.2)
+transition.update(0.1)
+check(transition.active and transition.phase == "out", "transition out")
+transition.update(0.1)
+check(transition.phase == "in", "transition in")
+
+local toast = require("src.toast")
+toast.clear()
+toast.push("test")
+toast.update(0.1)
+check(#toast.items == 1, "toast push")
+
+local recap = require("src.recap")
+local rp = recap.new()
+recap.begin(rp)
+recap.sample(rp, 10, 1)
+local graded = recap.finish(rp, 500, 60, 8, { A = true })
+check(graded.grade == "S" or graded.grade == "A", "recap grade")
+
+local theme_editor = require("src.theme_editor")
+local accent, preset = theme_editor.current()
+check(accent and preset, "theme current")
+
+local modmanager = require("src.modmanager_v2")
+local mods = modmanager.scan(nil, { { rule = { name = "A", tags = { "speed" } } } })
+check(#mods == 1 and mods[1].enabled, "mod manager scan")
+check(modmanager.toggle(mods, 1).enabled == false, "mod toggle")
+local tag = modmanager.conflict({
+  { name = "A", tags = { "speed" }, enabled = true },
+  { name = "B", tags = { "speed" }, enabled = true },
+})
+check(tag == "speed", "mod conflict")
+
 -- swap cycle: reset state and flip 40 times, must never crash or stick
 rulemanager.rules = {}
 for _, rule in ipairs(bundled_rules) do

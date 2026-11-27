@@ -2,6 +2,21 @@
 
 Perubahan Flip30 didokumentasikan di sini. Bahasa Inggris adalah sumbernya; Bahasa Indonesia (file ini) adalah terjemahan yang selalu selaras.
 
+## v4.0.0
+
+Update gerak dan UX.
+
+### Fitur baru
+
+- **Design system.** Token bersama untuk warna, jarak, radius, elevasi dan gerak.
+- **Animasi.** Tween, easing, stagger, wipe layar, squash dan spring. Semua durasi mengikuti gerak minimal.
+- **Onboarding.** Panduan pertama tiga langkah, H untuk ulang.
+- **Rekap.** Grade, grafik skor, combo puncak dan aturan dilihat, tekan V.
+- **Sistem toast.** Notifikasi sementara untuk pencapaian dan rekor.
+- **Editor tema.** Warna aksen dan preset HUD dengan N.
+- **Mod manager.** Aktif dan nonaktifkan mod dengan B.
+- **Foto mode.** Bekukan dengan J dan simpan PNG dengan K.
+
 ## v3.0.0
 
 Update arena: kampanye, bos, multiplayer, hazard dan craft aturan.

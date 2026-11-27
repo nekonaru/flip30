@@ -103,7 +103,7 @@
 
 | Feature | Description |
 | --- | --- |
-| **Headless tests** | 395 assertions run under LuaJIT in CI |
+| **Headless tests** | 408 assertions run under LuaJIT in CI |
 | **Formatted code** | StyLua enforced locally and in CI |
 | **Artwork mode** | Deterministic `--screenshot` captures used for this README |
 | **Debug overlay** | `love . --debug` shows FPS, objects, canvas switches; press I to toggle |
@@ -144,6 +144,19 @@
 | **Cosmetics** | Eight unlockable player skins with F10 |
 | **Hazards** | Laser, shrinking arena and blackout in long runs |
 | **Leaderboard** | Daily top ten with L, tournament bracket with T |
+
+### Motion and UX
+
+| System | Description |
+| --- | --- |
+| **Design system** | Shared tokens for colour, spacing, radius, elevation and motion |
+| **Animations** | Tweens, easing, stagger, screen wipe, squash and spring |
+| **Onboarding** | Three-step first-run guide with H to replay |
+| **Recap** | Post-run grade and score graph with V |
+| **Toast** | Transient notifications for achievements and records |
+| **Theme** | Accent colour and HUD preset editor with N |
+| **Mod manager** | Enable and disable mods with B |
+| **Photo mode** | Freeze with J, capture with K |
 
 ---
 
@@ -336,7 +349,7 @@ stylua --check .
 
 | Check | Requirement |
 | --- | --- |
-| `luajit tests/headless_tests.lua` | All 395 assertions pass |
+| `luajit tests/headless_tests.lua` | All 408 assertions pass |
 | `stylua --check .` | No output (no diffs) |
 
 Formatting is configured in `stylua.toml`.

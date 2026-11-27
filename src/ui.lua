@@ -769,6 +769,64 @@ function ui.drawTournament(t)
   end
 end
 
+function ui.drawRecap(r, font)
+  r.draw(r, font or FONTS.body)
+  love.graphics.setFont(FONTS.small)
+  love.graphics.setColor(theme.text_mute[1], theme.text_mute[2], theme.text_mute[3], 1)
+  love.graphics.printf("ESC kembali ke menu", 200, 440, 400, "center")
+end
+
+function ui.drawThemeEditor(state, accents, presets, selection)
+  local px, py, w, h = overlay_panel("TEMA", 640, 440)
+  for i, accent in ipairs(accents) do
+    local c = accent.color
+    love.graphics.setColor(c[1], c[2], c[3], 1)
+    love.graphics.rectangle("fill", px + 40, py + 70 + (i - 1) * 36, 20, 20, 4, 4)
+    menu_row(accent.name, px + 70, py + 70 + (i - 1) * 36, 260, i == state.accent)
+  end
+  love.graphics.setColor(theme.text_dim[1], theme.text_dim[2], theme.text_dim[3], 1)
+  menu_row("PRESET: " .. presets[state.preset], px + 340, py + 70, 260, true)
+  love.graphics.setFont(FONTS.small)
+  love.graphics.printf("PANAH pilih   ·   ENTER simpan   ·   ESC kembali", px, py + h - 40, w, "center")
+end
+
+function ui.drawModManager(items, selection, conflict)
+  local px, py, w, h = overlay_panel("MOD MANAGER", 660, 460)
+  for i, item in ipairs(items) do
+    menu_row(
+      (item.enabled and "[x] " or "[ ] ") .. item.name,
+      px + 40,
+      py + 76 + (i - 1) * 36,
+      w - 80,
+      i == selection,
+      item.source
+    )
+  end
+  if conflict then
+    love.graphics.setFont(FONTS.small)
+    love.graphics.setColor(1, 0.3, 0.36, 1)
+    love.graphics.printf("KONFLIK TAG: " .. conflict, px, py + h - 60, w, "center")
+  end
+end
+
+function ui.drawOnboarding(step)
+  local px, py, w, h = overlay_panel("PANDUAN CEPAT", 620, 360)
+  local messages = {
+    { "GERAK", "A / D atau panah untuk menggeser kotak." },
+    { "TANGKAP", "Makanan hijau menambah skor. Musuh merah mengurangi nyawa." },
+    { "ATURAN", "Aturan berganti tiap 30 detik. Perhatikan banner." },
+  }
+  local m = messages[step] or messages[1]
+  love.graphics.setFont(FONTS.big)
+  love.graphics.setColor(theme.cyan[1], theme.cyan[2], theme.cyan[3], 1)
+  love.graphics.printf(m[1], px, py + 90, w, "center")
+  love.graphics.setFont(FONTS.body)
+  love.graphics.setColor(theme.text_dim[1], theme.text_dim[2], theme.text_dim[3], 1)
+  love.graphics.printf(m[2], px + 30, py + 160, w - 60, "center")
+  love.graphics.setFont(FONTS.small)
+  love.graphics.printf("ENTER lanjut   ·   ESC lewati", px, py + h - 50, w, "center")
+end
+
 ui.FONTS = FONTS
 
 return ui
