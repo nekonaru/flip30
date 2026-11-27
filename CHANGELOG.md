@@ -2,6 +2,21 @@
 
 Changes to Flip30 are documented here. English is the source; Indonesian ([CHANGELOG.id.md](CHANGELOG.id.md)) is a faithful translation kept in sync.
 
+## v3.0.0
+
+The arena update: campaign, bosses, multiplayer, hazards and rule crafting.
+
+### New features
+
+- **Campaign.** Eight chapters with score, survival and boss goals, selectable with F9.
+- **Bosses.** Five patterns with distinct HP, speed and transparency.
+- **Multiplayer.** Co-op, versus and hot-seat with F11.
+- **Crafting.** Combine condition and effect into a reversible rule with F12.
+- **Cosmetics.** Eight skins with F10.
+- **Hazards.** Laser, shrinking arena and blackout.
+- **Leaderboard and tournament.** Daily top ten with L, eight-player bracket with T.
+- **Final design document.** `docs/GDD.md` and `docs/GDD.id.md`.
+
 ## v2.0.0
 
 The biggest Flip30 update: seven modes, thirty rules, enemy variants, pickups, abilities, progression and replay.
